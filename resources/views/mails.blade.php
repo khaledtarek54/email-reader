@@ -1,5 +1,14 @@
 @extends('layouts.dashbordlayout')
 @section('content')
+
+
+<!-- Navbar (Gmail-style) -->
+<nav class="navbar">
+    <div class="navbar-brand">
+        <i class="fas fa-bars" id="menu-toggle"></i> Mail Reader
+    </div>
+    <i class="fas fa-search" style="color: white; float: right; margin-top: -25px;"></i>
+</nav>
 <!-- Email list (Gmail-style) -->
 <ul class="container email-list">
     <a href="/mailview" style="text-decoration: none; color: inherit;">

@@ -1,5 +1,13 @@
 @extends('layouts.dashbordlayout')
 @section('content')
+
+<!-- Navbar (Gmail-style) -->
+<nav class="navbar">
+    <div class="navbar-brand">
+        <i class="fas fa-bars" id="menu-toggle"></i> Phase Plan 
+    </div>
+    <i class="fas fa-search" style="color: white; float: right; margin-top: -25px;"></i>
+</nav>
 <!-- Form Container -->
 <div class="container">
     <div class="form-header">Phase Plan Form</div>
