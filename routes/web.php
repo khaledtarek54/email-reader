@@ -16,3 +16,6 @@ Route::get('/jobdata', function () {
 Route::get('/jobplan', function () {
     return view('jobplan');
 });
+Route::get('/trash', function () {
+    return view('trash');
+});
