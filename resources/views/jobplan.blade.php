@@ -1,22 +1,13 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Phase Plan Form - Gmail Theme</title>
-    <link href="{{ asset('css/bootstrap.min.css') }}" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" href="{{ asset('css/core.css') }}" class="template-customizer-core-css" />
-</head>
-<body>
+@extends('layouts.dashbordlayout')
+@section('content')
 
-<!-- Gmail-like Red Navbar -->
+<!-- Navbar (Gmail-style) -->
 <nav class="navbar">
-    <a class="navbar-brand" href="#">
-        <i class="fas fa-arrow-left"></i> Phase Plan
-    </a>
+    <div class="navbar-brand">
+        <i class="fas fa-bars" id="menu-toggle"></i> Phase Plan 
+    </div>
+    <i class="fas fa-search" style="color: white; float: right; margin-top: -25px;"></i>
 </nav>
-
 <!-- Form Container -->
 <div class="container">
     <div class="form-header">Phase Plan Form</div>
@@ -162,23 +153,4 @@
         </div>
     </form>
 </div>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-    // Toggle between Translation and Revision buttons
-    const translationBtn = document.getElementById('translationBtn');
-    const revisionBtn = document.getElementById('revisionBtn');
-
-    translationBtn.addEventListener('click', function() {
-        translationBtn.classList.add('btn-active');
-        revisionBtn.classList.remove('btn-active');
-    });
-
-    revisionBtn.addEventListener('click', function() {
-        revisionBtn.classList.add('btn-active');
-        translationBtn.classList.remove('btn-active');
-    });
-</script>
-
-</body>
-</html>
+@endsection

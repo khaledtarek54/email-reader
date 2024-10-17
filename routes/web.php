@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('mails');
 });Route::get('/mailview', function () {
     return view('mailview');
 });
@@ -16,6 +16,9 @@ Route::get('/jobdata', function () {
 });
 Route::get('/jobplan', function () {
     return view('jobplan');
+});
+Route::get('/trash', function () {
+    return view('trash');
 });
 
 Route::get('/dashboard', function () {
