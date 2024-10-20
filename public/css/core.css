@@ -410,3 +410,46 @@ body {
     color: white;
     margin-right: 20px;
 }
+
+        /* Centered form container */
+        .login-container {
+            max-width: 400px;
+            margin: 100px auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .login-container h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .form-control {
+            border-radius: 24px;
+            padding: 10px;
+        }
+
+        .form-control:focus {
+            box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.2);
+            border-color: #d93025;
+        }
+
+        .btn-login {
+            background-color: #d93025;
+            color: white;
+            width: 100%;
+            padding: 10px;
+            border-radius: 24px;
+            margin-top: 20px;
+        }
+
+        .btn-login:hover {
+            background-color: #c1271c;
+        }
+
+        .form-text {
+            text-align: center;
+            margin-top: 15px;
+        }
