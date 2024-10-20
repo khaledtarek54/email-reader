@@ -20,7 +20,9 @@ Route::get('/jobplan', function () {
 Route::get('/trash', function () {
     return view('trash');
 });
-
+Route::get('/login', function () {
+    return view('login');
+});
 Route::get('/dashboard', function () {
     return 'Welcome to your dashboard!';
 })->name('dashboard');
