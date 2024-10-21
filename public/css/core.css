@@ -453,3 +453,8 @@ body {
             text-align: center;
             margin-top: 15px;
         }
+        .logout-link {
+            cursor: pointer; /* Change cursor to pointer */
+            color: inherit; /* Inherit color from parent */
+        }
+        
