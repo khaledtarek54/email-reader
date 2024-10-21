@@ -7,6 +7,7 @@ class ProductService
 {
     public function getAllProducts()
     {
+        
         return Product::all();
     }
 
