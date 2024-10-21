@@ -19,6 +19,12 @@ class MailController extends Controller
         $mails = $this->mailService->fetchMails();
         return view('mails', compact('mails'));
     }
+
+       public function showMail($id)
+    {
+        $mail = $this->mailService->fetchMailById($id);
+        return view('mailview', compact('mail'));
+    }
     
 
 }

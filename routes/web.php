@@ -10,9 +10,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/', [MailController::class, 'showAllMails'])->name('mails');
     Route::get('/mails', [MailController::class, 'showAllMails'])->name('mails');
     
-    Route::get('/mailview', function () {
-        return view('mailview');
-    })->name('mailview');
+    
+    Route::get('/mailview/{id}', [MailController::class, 'showMail'])->name('mailview');
+    
     Route::get('/jobdata', function () {
         return view('jobdata');
     });
