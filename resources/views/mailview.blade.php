@@ -11,29 +11,18 @@
 <!-- Email Header (Gmail-style) -->
 <div class="email-header container">
     <div class="d-flex align-items-center">
-        <div class="avatar" style="background-color: #fbbc05;">G</div>
+        <div class="avatar" style="background-color: #fbbc05;">{{ strtoupper(substr($mail->from, 0, 1)) }}</div>
         <div>
-            <div class="sender">Google</div>
-            <div class="email-time">3:35 PM (20 minutes ago)</div>
+            <div class="sender">{{$mail->from}}</div>
+            <div class="email-time">{{  \Carbon\Carbon::parse($mail->mail_datetime)->format('Y-m-d H:i:s') }}</div>
         </div>
     </div>
-    <div class="subject">New sign-in from Samsung Galaxy S5</div>
+    <div class="subject">{{$mail->subject}}</div>
 </div>
 
 <!-- Email Body (Gmail-style) -->
 <div class="email-body container">
-    Hi there,
-
-    We noticed a new sign-in to your Google account from a Samsung Galaxy S5. If this was you, you don’t need to do anything. If not, we recommend securing your account.
-
-    Device: Samsung Galaxy S5
-    Time: 3:35 PM
-    Location: Chicago, IL
-
-    If you did not initiate this, please change your password and review recent activity on your account.
-
-    Thanks,
-    The Google Team
+ {!! $mail->html_body !!}
 </div>
 
 <!-- Email Action Buttons (Gmail-style) -->

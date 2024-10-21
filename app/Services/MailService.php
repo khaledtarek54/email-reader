@@ -32,4 +32,18 @@ class MailService
 
         return $mails;
     }
+    public function fetchMailById($id)
+    {
+        $mail = $this->connection->table('mails')->select(
+                'id',
+                'from',
+                'subject',
+                'html_body',
+                'mail_datetime'
+            )
+            ->where('id', $id)
+            ->first();
+
+        return $mail;
+    }
 }
