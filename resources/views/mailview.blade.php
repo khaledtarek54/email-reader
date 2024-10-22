@@ -40,18 +40,21 @@
 <!-- Email Action Buttons (Gmail-style) -->
 <div class="email-actions">
     <button><i class="fas fa-envelope"></i> Original Mail</button>
-    <a href="/jobdata"><button><i class="fas fa-film"></i> Job data</button></a>
+    <form action="{{ route('jobdata', ['id' => $mail->id]) }}" method="POST" style="display: inline;">
+        @csrf <!-- This is required for POST requests to protect against CSRF attacks -->
+        <button type="submit"><i class="fas fa-film"></i> Job data</button>
+    </form>
     @if (!$mail)
     <form action="{{ route('mail.recover', ['id' => $mail->id]) }}" method="POST">
         @csrf
-        <button type="submit" >
+        <button type="submit">
             <i class="fas fa-undo"></i> Recover
         </button>
     </form>
     @else
     <form action="{{ route('mail.trash', ['id' => $mail->id]) }}" method="POST">
         @csrf
-        <button type="submit" >
+        <button type="submit">
             <i class="fas fa-archive"></i> Trash
         </button>
     </form>

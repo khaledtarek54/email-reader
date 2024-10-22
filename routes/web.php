@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\JobSpecController;
 use App\Http\Controllers\MailController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
@@ -19,9 +20,12 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/mailview/{id}', [MailController::class, 'showMail'])->name('mailview');
     
 
-    Route::get('/jobdata', function () {
-        return view('jobdata');
-    });
+    Route::post('/jobdata/{id}' ,[JobSpecController::class, 'JobData'])->name('jobdata');
+    Route::get('/get-workflows', [JobSpecController::class, 'Workflows'])->name('Workflows');
+
+    //Route::get('/jobdata' ,[JobSpecController::class, 'showJobData'])->name('jobdata');
+
+    
     Route::get('/jobplan', function () {
         return view('jobplan');
     });
