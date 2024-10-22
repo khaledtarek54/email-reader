@@ -19,12 +19,38 @@ class MailController extends Controller
         $mails = $this->mailService->fetchMails();
         return view('mails', compact('mails'));
     }
+    public function showAllTrashedMails()
+    {
+        $mails = $this->mailService->fetchTrashMails();
+        return view('trash', compact('mails'));
+    }
 
-       public function showMail($id)
+    public function showMail($id)
     {
         $mail = $this->mailService->fetchMailById($id);
         return view('mailview', compact('mail'));
     }
-    
-
+    public function refreshMails()
+    {
+        $mails = $this->mailService->fetchMails();
+        return view('mails', compact('mails'));
+    }
+    public function trashMail($id)
+    {
+        $result = $this->mailService->trashMail($id);
+        if ($result) {
+            return redirect()->back()->with('success', 'Mail successfully moved to trash.');
+        } else {
+            return redirect()->back()->with('error', 'Failed to move mail to trash.');
+        }
+    }
+    public function recoverMail($id)
+    {
+        $result = $this->mailService->recoverMail($id);
+        if ($result) {
+            return redirect()->back()->with('success', 'Mail successfully recovered.');
+        } else {
+            return redirect()->back()->with('error', 'Failed to recover mail.');
+        }
+    }
 }

@@ -21,13 +21,29 @@ class MailService
     public function fetchMails()
     {
         $mails = $this->connection->table('mails')->select(
-                'id',
-                'from',
-                DB::raw('SUBSTRING(subject, 1, 50) as subject'), // Limit subject to 100 chars
-                DB::raw('SUBSTRING(html_body, 1, 250) as html_body'), // Limit html_body to 100 chars
-                'mail_datetime'
-            )
+            'id',
+            'from',
+            DB::raw('SUBSTRING(subject, 1, 50) as subject'), // Limit subject to 100 chars
+            DB::raw('SUBSTRING(html_body, 1, 250) as html_body'), // Limit html_body to 100 chars
+            'mail_datetime'
+        )
             ->where('TP_PM_ID', 449756)
+            ->orderBy('creation_time', 'desc')
+            ->paginate(5);
+
+        return $mails;
+    }
+    public function fetchTrashMails()
+    {
+        $mails = $this->connection->table('mails')->select(
+            'id',
+            'from',
+            DB::raw('SUBSTRING(subject, 1, 50) as subject'), // Limit subject to 100 chars
+            DB::raw('SUBSTRING(html_body, 1, 250) as html_body'), // Limit html_body to 100 chars
+            'mail_datetime'
+        )
+            ->where('TP_PM_ID', 449756)
+            ->orderBy('creation_time', 'desc')
             ->paginate(5);
 
         return $mails;
@@ -35,15 +51,33 @@ class MailService
     public function fetchMailById($id)
     {
         $mail = $this->connection->table('mails')->select(
-                'id',
-                'from',
-                'subject',
-                'html_body',
-                'mail_datetime'
-            )
+            'id',
+            'from',
+            'subject',
+            'html_body',
+            'mail_datetime'
+        )
             ->where('id', $id)
             ->first();
 
         return $mail;
+    }
+    public function trashMail($id)
+    {
+        return true;
+        $result = $this->connection->table('mails')
+            ->where('id', $id)
+            ->update(['deleted' => 1]);
+
+        return $result;
+    }
+    public function recoverMail($id)
+    {
+        return true;
+        $result = $this->connection->table('mails')
+            ->where('id', $id)
+            ->update(['deleted' => 0]);
+        
+        return $result;
     }
 }

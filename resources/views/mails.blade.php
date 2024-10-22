@@ -2,14 +2,29 @@
 @section('content')
 
 
-<!-- Navbar (Gmail-style) -->
+
 <nav class="navbar">
     <div class="navbar-brand">
-        <i class="fas fa-bars" id="menu-toggle"></i> Mail Reader
+        <i class="fas fa-bars" id="menu-toggle"></i> Inbox
     </div>
-    <i class="fas fa-search" style="color: white; float: right; margin-top: -25px;"></i>
+    <a href="{{ route('refresh-mails') }}" style="text-decoration: none; color: inherit;">
+        <i class="fas fa-sync-alt fa-2x" style="color: white; float: right; margin-top: -5px;" aria-hidden="true"></i>
+    </a>
+
 </nav>
-<!-- Email list (Gmail-style) -->
+
+@if (session('success'))
+    <div class="alert alert-success">
+        {{ session('success') }}
+    </div>
+@endif
+
+@if (session('error'))
+    <div class="alert alert-danger">
+        {{ session('error') }}
+    </div>
+@endif
+
 <ul class="container email-list">
     @foreach ($mails as $mail)
     <a href="{{ route('mailview', ['id' => $mail->id]) }}" style="text-decoration: none; color: inherit;">
@@ -36,7 +51,7 @@
 </ul>
 
 <!-- Render pagination links -->
-<div class="pagination-container">
+<div class="d-flex justify-content-end">
     {{ $mails->links('pagination::bootstrap-4') }}
 </div>
 

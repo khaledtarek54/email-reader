@@ -9,19 +9,23 @@ Route::middleware(['auth'])->group(function () {
     
     Route::get('/', [MailController::class, 'showAllMails'])->name('mails');
     Route::get('/mails', [MailController::class, 'showAllMails'])->name('mails');
+    Route::get('/trash', [MailController::class, 'showAllTrashedMails'])->name('trash');
+    Route::post('mail/trash/{id}', [MailController::class, 'trashMail'])->name('mail.trash');
+    Route::post('mail/recover/{id}', [MailController::class, 'recoverMail'])->name('mail.recover');
+
+    Route::get('/', [MailController::class, 'refreshMails'])->name('refresh-mails');
     
     
     Route::get('/mailview/{id}', [MailController::class, 'showMail'])->name('mailview');
     
+
     Route::get('/jobdata', function () {
         return view('jobdata');
     });
     Route::get('/jobplan', function () {
         return view('jobplan');
     });
-    Route::get('/trash', function () {
-        return view('trash');
-    });
+
     
     
 
