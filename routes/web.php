@@ -1,9 +1,10 @@
 <?php
 
-use App\Http\Controllers\JobSpecController;
-use App\Http\Controllers\MailController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\MailController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\JobSpecController;
+use App\Http\Controllers\ExtractorController;
 
 
 Route::middleware(['auth'])->group(function () {
@@ -23,12 +24,11 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/jobdata/{id}' ,[JobSpecController::class, 'JobData'])->name('jobdata');
     Route::get('/get-workflows', [JobSpecController::class, 'Workflows'])->name('Workflows');
 
-    //Route::get('/jobdata' ,[JobSpecController::class, 'showJobData'])->name('jobdata');
 
+
+    Route::post('/extractApi/{id}', [ExtractorController::class, 'extractApi'])->name('extractApi');    
     
-    Route::get('/jobplan', function () {
-        return view('jobplan');
-    });
+    
 
     
     

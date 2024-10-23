@@ -49,7 +49,7 @@
                 <div class="form-group">
                     <label for="workflow">Initial Workflow <span class="text-danger">*</span></label>
                     <select id="workflow">
-                        
+
                     </select>
                 </div>
             </div>
@@ -72,7 +72,7 @@
             <div class="col-md-4">
                 <div class="form-group">
                     <label for="deliveryDateTimezone">Delivery Date Timezone<span class="text-danger">*</span></label>
-                    <input type="datetime-local" id="deliveryDateTimezone" name="deliveryDateTimezone">
+                    <input type="text" id="deliveryDateTimezone" name="deliveryDateTimezone">
                 </div>
             </div>
         </div>
@@ -148,8 +148,9 @@
                 <div class="form-group">
                     <label for="autoPlanStrategy">Auto Plan Strategy <span class="text-danger">*</span></label>
                     <select id="autoPlanStrategy">
-                        <option value="1">productivity </option>
                         <option value="2">ratio</option>
+                        <option value="1">productivity </option>
+
                     </select>
                 </div>
             </div>
@@ -260,7 +261,9 @@
                 $.ajax({
                     url: '{{ route("Workflows") }}',
                     type: 'GET',
-                    data: { job_type_id: jobTypeId },
+                    data: {
+                        job_type_id: jobTypeId
+                    },
                     success: function(response) {
                         $('#workflow').empty();
                         $.each(response, function(key, workflow) {
