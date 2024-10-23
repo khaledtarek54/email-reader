@@ -39,9 +39,12 @@
 
 <!-- Email Action Buttons (Gmail-style) -->
 <div class="email-actions">
-    <button><i class="fas fa-envelope"></i> Original Mail</button>
+    <form action="{{ route('extractApi', ['id' => $mail->id]) }}" method="POST" style="display: inline;">
+        @csrf
+        <button type="submit"><i class="fas fa-film"></i>Extractor</button>
+    </form>
     <form action="{{ route('jobdata', ['id' => $mail->id]) }}" method="POST" style="display: inline;">
-        @csrf <!-- This is required for POST requests to protect against CSRF attacks -->
+        @csrf
         <button type="submit"><i class="fas fa-film"></i> Job data</button>
     </form>
     @if (!$mail)
