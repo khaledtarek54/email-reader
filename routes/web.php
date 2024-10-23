@@ -4,7 +4,7 @@ use App\Http\Controllers\JobSpecController;
 use App\Http\Controllers\MailController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
-
+use App\Http\Controllers\FileUploadController;
 
 Route::middleware(['auth'])->group(function () {
     
@@ -38,3 +38,9 @@ Route::get('/login', [UserController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [UserController::class, 'login']);
 Route::post('/logout', [UserController::class, 'logout'])->name('logout');
 
+
+Route::get('/upload', function () {
+    return view('upload_form');
+})->name('upload.form');
+
+Route::post('/upload', [FileUploadController::class, 'uploadMethod'])->name('upload.file');
