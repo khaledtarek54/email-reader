@@ -10,17 +10,18 @@ use Illuminate\Routing\Controller;
 class ExtractorController extends Controller
 {
     protected $extractorService;
-    protected $mailService;
+    
 
-    public function __construct(ExtractorService $extractorService,MailService $mailService)
+    public function __construct(ExtractorService $extractorService)
     {
         $this->extractorService = $extractorService;
-        $this->mailService = $mailService;
+        
     }
     public function extractApi($id)
     {
-        $mail = $this->mailService->fetchMailById($id);
-        $response = $this->extractorService->createChecker($mail->html_body);
+
+        
+        $response = $this->extractorService->mapExtractedValues($id);
        
         return $response;
     }

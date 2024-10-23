@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\JobController;
 use App\Http\Controllers\MailController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\JobSpecController;
@@ -26,7 +27,9 @@ Route::middleware(['auth'])->group(function () {
 
 
 
-    Route::post('/extractApi/{id}', [ExtractorController::class, 'extractApi'])->name('extractApi');    
+    Route::post('/extractApi/{id}', [ExtractorController::class, 'extractApi'])->name('extractApi');
+
+    Route::get('/extract-data/{id}', [JobController::class, 'extractData'])->name('extractData');   
     
     
 

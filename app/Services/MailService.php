@@ -55,6 +55,7 @@ class MailService
             'from',
             'subject',
             'html_body',
+            'contact_id',
             'mail_datetime'
         )
             ->where('id', $id)
