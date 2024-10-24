@@ -133,9 +133,6 @@ class JobSpecsService
     }
     public function fetchFiles($id)
     {
-        $files = File::where('email_id', $id)
-            ->get();
-
-        return $files;
+        return File::where('email_id', $id)->get();
     }
 }
