@@ -21,7 +21,7 @@ class FileUploadController extends Controller
         // Validate the request
         $request->validate([
             'email_id' => 'required',
-            'file' => 'required|file|mimes:jpg,jpeg,png,pdf,doc,docx|max:2048', // Adjust mime types and max size as needed
+            'file' => 'required', // Adjust mime types and max size as needed
         ]);
 
         // Retrieve the email ID and file from the request

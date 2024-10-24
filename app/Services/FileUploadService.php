@@ -1,7 +1,9 @@
 <?php
+
 namespace App\Services;
 
 use Illuminate\Support\Facades\Storage;
+use App\Models\File;
 
 class FileUploadService
 {
@@ -10,10 +12,9 @@ class FileUploadService
         // Define the storage path based on the email_id
         $path = "uploads/{$emailId}";
 
-        // Create the directory if it doesn't exist and set 0777 permission
+        // Create the directory if it doesn't exist
         if (!Storage::exists($path)) {
             Storage::makeDirectory($path);
-            // Set 0777 permission for the folder
             @chmod(storage_path("app/$path"), 0777);
         }
 
@@ -23,6 +24,13 @@ class FileUploadService
 
         // Set 0777 permission for the file
         @chmod(storage_path("app/$filePath"), 0777);
+
+        // Store the file path and email ID in the database
+        File::create([
+            'email_id' => $emailId,
+            'file_path' => $filePath,
+            'file_name' => $fileName,
+        ]);
 
         // Return the file path
         return $filePath;
