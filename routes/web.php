@@ -24,13 +24,12 @@ Route::middleware(['auth'])->group(function () {
     
 
     Route::post('/jobdata/{id}' ,[JobSpecController::class, 'JobData'])->name('jobdata');
-    Route::get('/get-workflows', [JobSpecController::class, 'Workflows'])->name('Workflows');
+    Route::get('/Workflows', [JobSpecController::class, 'Workflows'])->name('Workflows');
 
 
 
     Route::post('/extractApi/{id}', [ExtractorController::class, 'extractApi'])->name('extractApi');
-
-    Route::get('/extract-data/{id}', [JobController::class, 'extractData'])->name('extractData');   
+  
     
     
 

@@ -67,7 +67,7 @@ class ExtractorService
         $mappedInstructionsfolder = $jobData['Instructions folder'] != "not found" ? $jobData['Instructions folder'] : null;
         $mappedReferencefolder = $jobData['Reference folder'] != "not found" ? $jobData['Reference folder'] : null;
         $mappedDeliveryTimeZone  = $jobData['Delivery Time Zone '] != "not found" ? $jobData['Delivery Time Zone '] : null;
-        $mappedOnlineSourceFiles = $jobData['In folder'] != "not found" && $jobData['Instructions folder'] != "not found" && $jobData['Reference folder'] != "not found" ? true : false;
+        $mappedOnlineSourceFiles = $jobData['In folder'] == "not found" && $jobData['Instructions folder'] == "not found" && $jobData['Reference folder'] == "not found" ? true : false;
 
         $job = Savedjob::create([
             'mail_id' => $mailId,
@@ -101,6 +101,7 @@ class ExtractorService
         }
         $mappedJobType = $this->connection->table('job_types')
             ->where('name', $jobtype)
+            ->where('record_status', "a")
             ->first();
         return $mappedJobType->id;
     }
@@ -111,6 +112,7 @@ class ExtractorService
         }
         $SourceLanguage = $this->connection->table('source_languages')
             ->where('name', $SourceLanguage)
+            ->where('record_status', "a")
             ->first();
         return $SourceLanguage->id;
     }
@@ -121,6 +123,7 @@ class ExtractorService
         }
         $TargetLanguage = $this->connection->table('target_languages')
             ->where('name', $TargetLanguage)
+            ->where('record_status', "a")
             ->first();
         return $TargetLanguage->id;
     }
@@ -131,6 +134,7 @@ class ExtractorService
         }
         $unit = $this->connection->table('units')
             ->where('name', $unit)
+            ->where('record_status', "a")
             ->first();
         return $unit->id;
     }
@@ -141,6 +145,7 @@ class ExtractorService
         }
         $ContentType = $this->connection->table('content_types')
             ->where('name', $ContentType)
+            ->where('record_status', "a")
             ->first();
         return $ContentType->id;
     }
@@ -151,6 +156,7 @@ class ExtractorService
         }
         $SubjectMatter = $this->connection->table('subject_matters')
             ->where('name', $SubjectMatter)
+            ->where('record_status', "a")
             ->first();
         return $SubjectMatter->id;
     }
@@ -161,6 +167,7 @@ class ExtractorService
         }
         $Plan = $this->connection->table('plans')
             ->where('name', $Plan)
+            ->where('record_status', "a")
             ->first();
         return $Plan->id;
     }

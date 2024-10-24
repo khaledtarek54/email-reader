@@ -19,8 +19,6 @@ class ExtractorController extends Controller
     }
     public function extractApi($id)
     {
-
-        
         $response = $this->extractorService->mapExtractedValues($id);
        
         return $response;
