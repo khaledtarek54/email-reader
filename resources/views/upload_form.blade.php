@@ -10,16 +10,17 @@
 <body>
     <h1>Upload File</h1>
     <form action="{{ route('upload.file') }}" method="POST" enctype="multipart/form-data">
-        @csrf
-        <label for="email_id">Email ID:</label>
-        <input type="text" name="email_id" id="email_id" required>
-        <br>
+@csrf
+<label for="email_id">Email ID:</label>
+<input type="text" name="email_id" id="email_id" required>
+<br>
 
-        <label for="file">Select file:</label>
-        <input type="file" name="file" id="file" required>
-        <br>
+<label for="file">Select files:</label>
+<input type="file" name="file[]" id="file" multiple required> <!-- Allow multiple files -->
+<br>
 
-        <button type="submit">Upload</button>
-    </form>
+<button type="submit">Upload</button>
+</form>
+
 </body>
 </html>
