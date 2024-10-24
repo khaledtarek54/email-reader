@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use Exception;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
@@ -12,13 +13,59 @@ use App\Models\File;
 class JobSpecsService
 {
     protected $connection;
+    protected $mailService;
 
-    public function __construct()
+    public function __construct(MailService $mailService)
     {
         // Using the external connection defined in your config
         $this->connection = DB::connection(env('EXTERNAL_DB_CONNECTION', 'transparentDB'));
+        $this->mailService = $mailService;
     }
+    public function extractContactAndAccounts($mailId)
+    {
+        try {
+            // Fetch contact by mail ID
+            $contact = $this->fetchContactByMailId($mailId);
+            if (!$contact) {
+                throw new Exception('Contact not found for the provided mail ID.');
+            }
 
+            // Fetch accounts by contact ID
+            $accounts = $this->fetchAccountsByContactId($contact->id);
+            if (!$accounts || $accounts->isEmpty()) {
+                throw new Exception('No accounts found for the provided contact ID.');
+            }
+
+            return [
+                'success' => true,
+                'contact' => $contact,
+                'accounts' => $accounts
+            ];
+        } catch (Exception $e) {
+            throw new Exception($e->getMessage());
+        }
+    }
+    public function fetchContactByMailId($mailId)
+    {
+        $mail = $this->mailService->fetchMailById($mailId);
+
+        $contact = $this->connection->table('contacts')
+            ->where('id', $mail->contact_id)
+            ->first();
+
+
+        return $contact;
+    }
+    public function fetchAccountsByContactId($contactId)
+    {
+        $accounts = $this->connection->table('accounts_contacts')
+            ->join('accounts', 'accounts_contacts.account_id', '=', 'accounts.id')
+            ->where('accounts_contacts.contact_id', $contactId)
+            ->select('accounts.*')
+            ->get();
+
+        return $accounts;
+    }
     public function fetchJobTypes()
     {
         $jobTypes = $this->connection->table('job_types')

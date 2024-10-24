@@ -28,6 +28,7 @@ class MailService
             'mail_datetime'
         )
             ->where('TP_PM_ID', 449756)
+            ->where('trash', 0)
             ->orderBy('creation_time', 'desc')
             ->paginate(5);
 
@@ -43,6 +44,7 @@ class MailService
             'mail_datetime'
         )
             ->where('TP_PM_ID', 449756)
+            ->where('trash', 1)
             ->orderBy('creation_time', 'desc')
             ->paginate(5);
 
@@ -55,7 +57,9 @@ class MailService
             'from',
             'subject',
             'html_body',
-            'mail_datetime'
+            'contact_id',
+            'mail_datetime',
+            'trash'
         )
             ->where('id', $id)
             ->first();
@@ -64,20 +68,24 @@ class MailService
     }
     public function trashMail($id)
     {
-        return true;
         $result = $this->connection->table('mails')
             ->where('id', $id)
-            ->update(['deleted' => 1]);
+            ->update([
+                'trash' => 1,
+                'trashed_at' => now()
+            ]);
 
         return $result;
     }
     public function recoverMail($id)
     {
-        return true;
         $result = $this->connection->table('mails')
             ->where('id', $id)
-            ->update(['deleted' => 0]);
-        
+            ->update([
+                'trash' => 0,
+                'trashed_at' => null
+            ]);
+
         return $result;
     }
 }

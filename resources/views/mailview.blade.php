@@ -47,7 +47,7 @@
         @csrf
         <button type="submit"><i class="fas fa-film"></i> Job data</button>
     </form>
-    @if (!$mail)
+    @if ($mail->trash)
     <form action="{{ route('mail.recover', ['id' => $mail->id]) }}" method="POST">
         @csrf
         <button type="submit">

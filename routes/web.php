@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\JobController;
 use App\Http\Controllers\MailController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\FileUploadController;
@@ -23,11 +24,12 @@ Route::middleware(['auth'])->group(function () {
     
 
     Route::post('/jobdata/{id}' ,[JobSpecController::class, 'JobData'])->name('jobdata');
-    Route::get('/get-workflows', [JobSpecController::class, 'Workflows'])->name('Workflows');
+    Route::get('/Workflows', [JobSpecController::class, 'Workflows'])->name('Workflows');
 
 
 
-    Route::post('/extractApi/{id}', [ExtractorController::class, 'extractApi'])->name('extractApi');    
+    Route::post('/extractApi/{id}', [ExtractorController::class, 'extractApi'])->name('extractApi');
+  
     
     
 
