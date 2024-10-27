@@ -15,16 +15,16 @@ class JobController extends Controller
     {
         $this->jobService = $jobService;
     }
-    public function extractData($id)
+    public function autoPlan(Request $request)
     {
         try {
-            $result = $this->jobService->extractData($id);
+            $result = $this->jobService->autoPlan($request);
             return response()->json($result, 200);
         } catch (Exception $e) {
             return response()->json([
                 'error' => 'An error occurred.',
                 'message' => $e->getMessage()
-            ], 500); 
+            ], 500);
         }
     }
 }
