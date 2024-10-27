@@ -51,4 +51,13 @@ class JobSpecController extends Controller
 
         return response()->json($workflows);
     }
+    public function fetchFiles(Request $request,$id)
+    {
+        try {
+            $files = $this->jobSpecsService->fetchFiles($id);
+            return response()->json($files);
+        } catch (Exception $e) {
+            return response()->json(['error' => 'An error occurred while fetching files.'], 500);
+        }
+    }
 }

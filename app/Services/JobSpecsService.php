@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
+use App\Models\File;
 
 class JobSpecsService
 {
@@ -129,5 +130,9 @@ class JobSpecsService
             ->get();
 
         return $phase_types;
+    }
+    public function fetchFiles($id)
+    {
+        return File::where('email_id', $id)->get();
     }
 }
