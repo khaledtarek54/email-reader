@@ -1,289 +1,295 @@
 @extends('layouts.dashbordlayout')
 @section('content')
-    <!-- Navbar (Gmail-style) -->
-    <nav class="navbar">
-        <div class="navbar-brand">
-            <i class="fas fa-bars" id="menu-toggle"></i> Job Data
-        </div>
-    </nav>
-    <div id="loadingOverlay" style="display:none;">
-        <div id="loadingSpinner"></div>
+<!-- Navbar (Gmail-style) -->
+<nav class="navbar">
+    <div class="navbar-brand">
+        <i class="fas fa-bars" id="menu-toggle"></i> Job Data
     </div>
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <!-- Form Container -->
-    <div class="container">
-        <div class="form-header">Job Data Form</div>
-        <form>
-            <!-- Account and Contact Section -->
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label for="account">Account <span class="text-danger">*</span></label>
-                        <select id="account" name="account">
-                            @foreach ($accounts as $account)
-                                <option value="{{ $account->id }}">{{ $account->name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label for="contact">Contact <span class="text-danger">*</span></label>
-                        <input hidden id="contact_id" name="contact_id" value="{{ $contact->id }}">
-                        <input type="text" id="contact" name="contact" type="text" readonly
-                            value="{{ $contact->name }}"></input>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Name Field -->
-            <div class="form-group">
-                <label for="name">Job Name <span class="text-danger">*</span></label>
-                <input type="text" id="job_name" name="job_name" placeholder="Enter job name"
-                    value="{{ $mail->subject }}">
-            </div>
-
-            <!-- Job Type and Workflow Section -->
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label for="Job_Type">Job Type <span class="text-danger">*</span></label>
-                        <select id="Job_Type" name="Job_Type">
-                            <option value="" selected hidden></option>
-                            @foreach ($jobTypes as $jobType)
-                                <option value="{{ $jobType->id }}">{{ $jobType->name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label for="workflow">Initial Workflow <span class="text-danger">*</span></label>
-                        <select id="workflow">
-
-                        </select>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Start Date and Delivery Date Section -->
-            <div class="row">
-                <div class="col-md-4">
-                    <div class="form-group">
-                        <label for="startDate">Start Date <span class="text-danger">*</span></label>
-                        <input type="datetime-local" id="startDate">
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="form-group">
-                        <label for="deliveryDate">Delivery Date <span class="text-danger">*</span></label>
-                        <input type="datetime-local" id="deliveryDate">
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="form-group">
-                        <label for="deliveryDateTimezone">Delivery Date Timezone<span class="text-danger">*</span></label>
-                        <input type="text" id="deliveryDateTimezone" name="deliveryDateTimezone">
-                    </div>
-                </div>
-            </div>
-
-            <!-- Amount and Unit Section -->
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label for="amount">Amount</label>
-                        <input type="text" id="amount" placeholder="Enter amount">
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label for="unit">Unit <span class="text-danger">*</span></label>
-                        <select id="unit">
-                            <option value="" selected hidden></option>
-                            @foreach ($units as $unit)
-                                <option value="{{ $unit->id }}">{{ $unit->name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Source and Target Language Section -->
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label for="sourceLanguage">Source Language <span class="text-danger">*</span></label>
-                        <select id="sourceLanguage">
-                            @foreach ($sourceLanguages as $sourceLanguage)
-                                <option value="{{ $sourceLanguage->id }}"
-                                    @if ($sourceLanguage->id == 2) selected @endif>
-                                    {{ $sourceLanguage->name }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label for="targetLanguage">Target Language <span class="text-danger">*</span></label>
-                        <select id="targetLanguage">
-                            <option value="" selected hidden></option>
-                            @foreach ($targetLanguages as $targetLanguage)
-                                <option value="{{ $targetLanguage->id }}">{{ $targetLanguage->name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                </div>
-            </div>
-            <!-- Subject Matter Section -->
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label for="subjectMatter">Subject Matter <span class="text-danger">*</span></label>
-                        <select id="subjectMatter">
-                            @foreach ($subjectMatters as $subjectMatter)
-                                <option value="{{ $subjectMatter->id }}"
-                                    @if ($subjectMatter->id == 80) selected @endif>{{ $subjectMatter->name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label for="contentType">Content Type<span class="text-danger">*</span></label>
-                        <select id="contentType">
-                            @foreach ($contentTypes as $contentType)
-                                <option value="{{ $contentType->id }}">{{ $contentType->name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-11">
-                    <div class="form-group">
-                        <label for="autoPlanStrategy">Auto Plan Strategy <span class="text-danger">*</span></label>
-                        <select id="autoPlanStrategy">
-                            <option value="2">ratio</option>
-                            <option value="1">productivity </option>
-
-                        </select>
-                    </div>
-                </div>
-                <!-- Popup Trigger Button -->
-                <div class="col-md-1">
-                    <div class="form-group" style="margin-top: 21px;">
-                        <button type="button" class="btn-submit" data-bs-toggle="modal"
-                            data-bs-target="#autoPlanModal">
-                            Setup
-                        </button>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label for="autoAssignment">Auto assignment <span class="text-danger">*</span></label>
-                        <select id="autoAssignment">
-
-                        </select>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label for="targetLanguage">selection plan <span class="text-danger">*</span></label>
-                        <select id="targetLanguage">
-                            @foreach ($plans as $plan)
-                                <option value="{{ $plan->id }}">{{ $plan->name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                </div>
-            </div>
-            <div>
-                <label for="online_source_files">
-                    <input type="checkbox" id="online_source_files" name="online_source_files" value="0">
-                    online source file
-                </label>
-            </div>
-            
-            <div id="fetchedFiles" class="fetched-files">
-    <h5>Files:</h5>
-    <ul id="fileList" class="list-inline"></ul>
-    
+</nav>
+<div id="loadingOverlay" style="display:none;">
+    <div id="loadingSpinner"></div>
 </div>
+<meta name="csrf-token" content="{{ csrf_token() }}">
+<!-- Form Container -->
+<div class="container">
+    <div class="form-header">Job Data Form</div>
+    <form>
+        <!-- Account and Contact Section -->
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="account">Account <span class="text-danger">*</span></label>
+                    <select id="account" name="account">
+                        @foreach ($accounts as $account)
+                        <option value="{{ $account->id }}">{{ $account->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="contact">Contact <span class="text-danger">*</span></label>
+                    <input hidden id="contact_id" name="contact_id" value="{{ $contact->id }}">
+                    <input type="text" id="contact" name="contact" type="text" readonly
+                        value="{{ $contact->name }}"></input>
+                </div>
+            </div>
+        </div>
+
+        <!-- Name Field -->
+        <div class="form-group">
+            <label for="name">Job Name <span class="text-danger">*</span></label>
+            <input type="text" id="job_name" name="job_name" placeholder="Enter job name"
+                value="{{ $mail->subject }}">
+        </div>
+
+        <!-- Job Type and Workflow Section -->
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="Job_Type">Job Type <span class="text-danger">*</span></label>
+                    <select id="Job_Type" name="Job_Type">
+                        <option value="" selected hidden></option>
+                        @foreach ($jobTypes as $jobType)
+                        <option value="{{ $jobType->id }}">{{ $jobType->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="workflow">Initial Workflow <span class="text-danger">*</span></label>
+                    <select id="workflow">
+
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Start Date and Delivery Date Section -->
+        <div class="row">
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="startDate">Start Date <span class="text-danger">*</span></label>
+                    <input type="datetime-local" id="startDate">
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="deliveryDate">Delivery Date <span class="text-danger">*</span></label>
+                    <input type="datetime-local" id="deliveryDate">
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="deliveryDateTimezone">Delivery Date Timezone<span class="text-danger">*</span></label>
+                    <input type="text" id="deliveryDateTimezone" name="deliveryDateTimezone">
+                </div>
+            </div>
+        </div>
+
+        <!-- Amount and Unit Section -->
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="amount">Amount</label>
+                    <input type="text" id="amount" placeholder="Enter amount">
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="unit">Unit <span class="text-danger">*</span></label>
+                    <select id="unit">
+                        <option value="" selected hidden></option>
+                        @foreach ($units as $unit)
+                        <option value="{{ $unit->id }}">{{ $unit->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Source and Target Language Section -->
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="sourceLanguage">Source Language <span class="text-danger">*</span></label>
+                    <select id="sourceLanguage">
+                        @foreach ($sourceLanguages as $sourceLanguage)
+                        <option value="{{ $sourceLanguage->id }}"
+                            @if ($sourceLanguage->id == 2) selected @endif>
+                            {{ $sourceLanguage->name }}
+                        </option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="targetLanguage">Target Language <span class="text-danger">*</span></label>
+                    <select id="targetLanguage">
+                        <option value="" selected hidden></option>
+                        @foreach ($targetLanguages as $targetLanguage)
+                        <option value="{{ $targetLanguage->id }}">{{ $targetLanguage->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+        </div>
+        <!-- Subject Matter Section -->
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="subjectMatter">Subject Matter <span class="text-danger">*</span></label>
+                    <select id="subjectMatter">
+                        @foreach ($subjectMatters as $subjectMatter)
+                        <option value="{{ $subjectMatter->id }}"
+                            @if ($subjectMatter->id == 80) selected @endif>{{ $subjectMatter->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="contentType">Content Type<span class="text-danger">*</span></label>
+                    <select id="contentType">
+                        @foreach ($contentTypes as $contentType)
+                        <option value="{{ $contentType->id }}">{{ $contentType->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-11">
+                <div class="form-group">
+                    <label for="autoPlanStrategy">Auto Plan Strategy <span class="text-danger">*</span></label>
+                    <select id="autoPlanStrategy">
+                        <option value="2">ratio</option>
+                        <option value="1">productivity </option>
+
+                    </select>
+                </div>
+            </div>
+            <!-- Popup Trigger Button -->
+            <div class="col-md-1">
+                <div class="form-group" style="margin-top: 21px;">
+                    <button type="button" class="btn-submit" data-bs-toggle="modal"
+                        data-bs-target="#autoPlanModal">
+                        Setup
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="autoAssignment">Auto assignment <span class="text-danger">*</span></label>
+                    <select id="autoAssignment">
+
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="targetLanguage">selection plan <span class="text-danger">*</span></label>
+                    <select id="targetLanguage">
+                        @foreach ($plans as $plan)
+                        <option value="{{ $plan->id }}">{{ $plan->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div>
+            <label for="online_source_files">
+                <input type="checkbox" id="online_source_files" name="online_source_files" value="0">
+                online source file
+            </label>
+        </div>
+
+        <div id="fetchedFiles" class="fetched-files">
+            <h5>Files:</h5>
+            <ul id="fileList" class="list-inline"></ul>
+            <input type="file" id="inFiles" class="file-upload" multiple>
+        </div>
 
 
-            <!-- File Uploads Section -->
-            <div class="section-title">File Uploads</div>
+        <!-- File Uploads Section -->
+        <div class="section-title">File Uploads</div>
 
-            <div class="form-group">
-                <label for="inFiles">In Folder</label>
-                <div class="file-drop-zone">Drag and drop files here</div>
-    <input type="file" id="inFiles" class="file-upload" multiple>
+        <div class="form-group">
+    <label for="inFiles">In Folder</label>
+    <div class="file-drop-zone">Drag and drop files here</div>
+
     <div id="drag-drop-area" class="file-upload-drop-zone" style="border: 2px dashed #ccc; padding: 20px; margin-top: 20px;">
+    </div>
+    <ul id="in-fileList"></ul>
 </div>
 
-<ul id="fileList"></ul>
+<div class="form-group">
+    <label for="instructionFiles">Instruction Folder</label>
+    <div class="file-drop-zone">Drag and drop files here</div>
 
+    <div id="drag-drop-area1" class="file-upload-drop-zone" style="border: 2px dashed #ccc; padding: 20px; margin-top: 20px;">
     </div>
-            
-            <div class="form-group">
-                <label for="instructionFiles">Instruction Folder</label>
-                <div class="file-drop-zone">Drag and drop files here</div>
-    <input type="file" id="instructionFiles" class="file-upload" multiple>
-    </div>
-            
-            <div class="form-group">
-                <label for="referenceFiles">Reference Folder</label>
-                <div class="file-drop-zone">Drag and drop files here</div>
-    <input type="file" id="referenceFiles" class="file-upload" multiple>
-    </div>
-            
+    <ul id="instruction-fileList"></ul>
+</div>
 
-            <!-- Shared Instructions Section -->
-            <div class="form-group">
-                <label for="sharedInstructions">Shared Instructions</label>
-                <textarea id="sharedInstructions" class="rich-text-editor" placeholder="Enter any special instructions..."></textarea>
+<div class="form-group">
+    <label for="referenceFiles">Reference Folder</label>
+    <div class="file-drop-zone">Drag and drop files here</div>
+
+    <div id="drag-drop-area2" class="file-upload-drop-zone" style="border: 2px dashed #ccc; padding: 20px; margin-top: 20px;">
+    </div>
+    <ul id="reference-fileList"></ul>
+</div>
+
+
+
+
+                <!-- Shared Instructions Section -->
+                <div class="form-group">
+                    <label for="sharedInstructions">Shared Instructions</label>
+                    <textarea id="sharedInstructions" class="rich-text-editor" placeholder="Enter any special instructions..."></textarea>
+                </div>
+
+
+
+                <!-- Submit Button -->
+                <div class="form-group text-center">
+                    <button type="button" class="btn-submit">Submit</button>
+                </div>
+    </form>
+</div>
+
+<!-- Auto Plan Strategy Modal -->
+<div class="modal fade" id="autoPlanModal" tabindex="-1" aria-labelledby="autoPlanModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h5 class="modal-title" id="autoPlanModalLabel">Auto Plan Strategy Configuration</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
 
-
-
-            <!-- Submit Button -->
-            <div class="form-group text-center">
-                <button type="button" class="btn-submit">Submit</button>
+            <!-- Modal Body -->
+            <div class="modal-body">
+                <!-- Add your form elements for configuring the strategy -->
+                <div class="form-group">
+                    <label for="strategyDetails">Details</label>
+                    <textarea id="strategyDetails" class="form-control" rows="4" placeholder="Enter strategy details..."></textarea>
+                </div>
             </div>
-        </form>
-    </div>
 
-    <!-- Auto Plan Strategy Modal -->
-    <div class="modal fade" id="autoPlanModal" tabindex="-1" aria-labelledby="autoPlanModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <!-- Modal Header -->
-                <div class="modal-header">
-                    <h5 class="modal-title" id="autoPlanModalLabel">Auto Plan Strategy Configuration</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-
-                <!-- Modal Body -->
-                <div class="modal-body">
-                    <!-- Add your form elements for configuring the strategy -->
-                    <div class="form-group">
-                        <label for="strategyDetails">Details</label>
-                        <textarea id="strategyDetails" class="form-control" rows="4" placeholder="Enter strategy details..."></textarea>
-                    </div>
-                </div>
-
-                <!-- Modal Footer with Save and Back Buttons -->
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Back</button>
-                    <button type="button" class="btn btn-success">Save</button>
-                </div>
+            <!-- Modal Footer with Save and Back Buttons -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Back</button>
+                <button type="button" class="btn btn-success">Save</button>
             </div>
         </div>
     </div>
+</div>
 @endsection
 
 
@@ -390,78 +396,44 @@
                 }
             });
         }
-function fetchFiles(mailId) {
-        $.ajax({
-            url: '/fetch-files/' + mailId,
-            type: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            success: function(response) {
-                displayFiles(response);
-            },
-            error: function(xhr, status, error) {
-                console.error("Error fetching files:", error);
-            }
-        });
-    }
 
-    
+        function fetchFiles(mailId) {
+            $.ajax({
+                url: '/fetch-files/' + mailId,
+                type: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function(response) {
+                    displayFiles(response);
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error fetching files:", error);
+                }
+            });
+        }
 
-    function getFileIcon(fileName) {
-        var extension = fileName.split('.').pop().toLowerCase();
-        var icons = {
-            'pdf': '<i class="fas fa-file-pdf"></i>',
-            'doc': '<i class="fas fa-file-word"></i>',
-            'docx': '<i class="fas fa-file-word"></i>',
-            'xls': '<i class="fas fa-file-excel"></i>',
-            'xlsx': '<i class="fas fa-file-excel"></i>',
-            'txt': '<i class="fas fa-file-alt"></i>',
-            'jpg': '<i class="fas fa-file-image"></i>',
-            'png': '<i class="fas fa-file-image"></i>',
-            'zip': '<i class="fas fa-file-archive"></i>',
-            'default': '<i class="fas fa-file"></i>'
-        };
-        return icons[extension] || icons['default'];
-    }
 
-    function addDragAndDropEvents() {
-        // Drag start event
-        $('.file-draggable').on('dragstart', function(event) {
-            $(this).addClass('dragging');
-            event.originalEvent.dataTransfer.setData('text/plain', $(this).data('file-name'));
-        });
 
-        // Drag end event
-        $('.file-draggable').on('dragend', function() {
-            $(this).removeClass('dragging');
-        });
+        function getFileIcon(fileName) {
+            var extension = fileName.split('.').pop().toLowerCase();
+            var icons = {
+                'pdf': '<i class="fas fa-file-pdf"></i>',
+                'doc': '<i class="fas fa-file-word"></i>',
+                'docx': '<i class="fas fa-file-word"></i>',
+                'xls': '<i class="fas fa-file-excel"></i>',
+                'xlsx': '<i class="fas fa-file-excel"></i>',
+                'txt': '<i class="fas fa-file-alt"></i>',
+                'jpg': '<i class="fas fa-file-image"></i>',
+                'png': '<i class="fas fa-file-image"></i>',
+                'zip': '<i class="fas fa-file-archive"></i>',
+                'default': '<i class="fas fa-file"></i>'
+            };
+            return icons[extension] || icons['default'];
+        }
 
-        // Drag over and drop events for each folder drop area
-        $('.drop-area').on('dragover', function(event) {
-            event.preventDefault();
-            $(this).addClass('dragover');
-        });
 
-        $('.drop-area').on('dragleave', function() {
-            $(this).removeClass('dragover');
-        });
 
-        $('.drop-area').on('drop', function(event) {
-            event.preventDefault();
-            $(this).removeClass('dragover');
-            var fileName = event.originalEvent.dataTransfer.getData('text/plain');
-            var dropAreaId = $(this).attr('id');
-
-            moveFileToFolder(fileName, dropAreaId);
-        });
-    }
-
-    function moveFileToFolder(fileName, folder) {
-        // You can modify this to perform AJAX calls to update the file location on the server
-        console.log('File "' + fileName + '" moved to ' + folder);
-        alert('File "' + fileName + '" has been moved to ' + folder);
-    }
         function mapJobData(data) {
 
             //populateSelect('workflow', data.workflows);
@@ -491,37 +463,40 @@ function fetchFiles(mailId) {
 
         }
 
-       
 
-function displayFiles(files) {
-    $('#fileList').empty(); // Clear the existing list
 
-    // Add files to the list and make them draggable
-    $.each(files, function(index, file) {
-        var listItem = $('<li></li>')
-            .addClass('list-inline-item draggable-file')
-            .attr('draggable', true) // Make it draggable
-            .attr('data-file-name', file.file_name) // Store file name in a data attribute
-            .text(file.file_name)
-            .css({
-                marginRight: '15px',
-                padding: '5px 10px',
-                border: '1px solid #ccc',
-                borderRadius: '5px',
-                cursor: 'grab'
+        function displayFiles(files) {
+            $('#fileList').empty(); // Clear the existing list
+
+            // Add files to the list and make them draggable
+            $.each(files, function(index, file) {
+                var listItem = $('<li></li>')
+                    .addClass('list-inline-item draggable-file')
+                    .attr('draggable', true) // Make it draggable
+                    .attr('data-file-name', file.file_name) // Store file name in a data attribute
+                    .text(file.file_name)
+                    .css({
+                        marginRight: '15px',
+                        padding: '5px 10px',
+                        border: '1px solid #ccc',
+                        borderRadius: '5px',
+                        cursor: 'grab'
+                    });
+
+                $('#fileList').append(listItem);
             });
 
-        $('#fileList').append(listItem);
-    });
+            setupDragAndDrop();
+        }
 
-    setupDragAndDrop();
-}
-
-function setupDragAndDrop() {
+    function setupDragAndDrop() {
     // Allow file items to be draggable
     $('.draggable-file').on('dragstart', function(e) {
-        e.originalEvent.dataTransfer.setData('text/plain', $(this).data('file-name')); // Store file name in the drag data
-        $(this).css('opacity', '0.5'); // Change appearance during drag
+        var fileName = $(this).data('file-name');
+        if (fileName) {
+            e.originalEvent.dataTransfer.setData('text/plain', fileName); // Store file name in the drag data
+            $(this).css('opacity', '0.5'); // Change appearance during drag
+        }
     });
 
     $('.draggable-file').on('dragend', function() {
@@ -529,7 +504,9 @@ function setupDragAndDrop() {
     });
 
     // Setup droppable area
-    var dropZone = $('#drag-drop-area'); // The specific drop area
+    var dropZone = $('#drag-drop-area');
+    var dropZone1 = $('#drag-drop-area1');
+    var dropZone2 = $('#drag-drop-area2');
     dropZone.on('dragover', function(e) {
         e.preventDefault(); // Allow drop
         $(this).addClass('dragover'); // Optional: Add a highlight effect when dragging over
@@ -543,7 +520,20 @@ function setupDragAndDrop() {
     dropZone.on('drop', function(e) {
         e.preventDefault();
         var droppedFile = e.originalEvent.dataTransfer.getData('text/plain'); // Get the dragged file name
-        console.log('File dropped:', droppedFile); // Handle file drop here
+        
+        if (!droppedFile) {
+            console.log('No file data was dropped');
+            return; // Exit if no valid file was dropped
+        }
+        
+        console.log('File dropped:', droppedFile);
+
+        // Check if the file already exists in the drop zone
+        var existingDroppedFile = $(this).find(`div:contains('${droppedFile}')`);
+        if (existingDroppedFile.length > 0) {
+            console.log('File already dropped:', droppedFile);
+            return; // Prevent duplicate file drops
+        }
 
         // Add the dropped file to the drop zone
         var droppedItem = $('<div></div>')
@@ -552,13 +542,238 @@ function setupDragAndDrop() {
                 padding: '5px 10px',
                 border: '1px solid #ccc',
                 borderRadius: '5px',
-                marginBottom: '10px'
+                marginBottom: '10px',
+                position: 'relative'
             });
-        
+
+        // Create delete button
+        var deleteButton = $('<button></button>')
+            .text('Delete')
+            .css({
+                position: 'absolute',
+                right: '5px',
+                top: '5px',
+                background: 'red',
+                color: 'white',
+                border: 'none',
+                borderRadius: '3px',
+                padding: '2px 5px',
+                cursor: 'pointer'
+            })
+            .data('file-name', droppedFile) // Store the file name in the button's data attributes
+            .on('click', function() {
+                var fileNameToRestore = $(this).data('file-name'); // Retrieve the file name when clicked
+                console.log('Restoring file:', fileNameToRestore);
+
+                // Restore file to the list
+                var listItem = $('<li></li>')
+                    .addClass('list-inline-item draggable-file')
+                    .attr('draggable', true)
+                    .attr('data-file-name', fileNameToRestore)
+                    .text(fileNameToRestore)
+                    .css({
+                        marginRight: '15px',
+                        padding: '5px 10px',
+                        border: '1px solid #ccc',
+                        borderRadius: '5px',
+                        cursor: 'grab'
+                    });
+
+                $('#fileList').append(listItem); // Restore file to the list
+                droppedItem.remove(); // Remove from drop area
+
+                setupDragAndDrop(); // Reinitialize drag events for restored files
+            });
+
+        droppedItem.append(deleteButton); // Add delete button to the dropped item
         $(this).append(droppedItem); // Add the dropped file inside the drop area
         $(this).removeClass('dragover'); // Remove highlight effect when dropped
+
+        // Remove the dragged file from the file list
+        $('li[data-file-name="' + droppedFile + '"]').remove();
+
+        setupDragAndDrop(); // Reinitialize drag events for all files after changes
     });
+
+    dropZone1.on('dragover', function(e) {
+        e.preventDefault(); // Allow drop
+        $(this).addClass('dragover'); // Optional: Add a highlight effect when dragging over
+    });
+
+    dropZone1.on('dragleave', function() {
+        $(this).removeClass('dragover'); // Remove highlight effect when leaving
+    });
+
+    // Handle file drop
+    dropZone1.on('drop', function(e) {
+        e.preventDefault();
+        var droppedFile = e.originalEvent.dataTransfer.getData('text/plain'); // Get the dragged file name
+        
+        if (!droppedFile) {
+            console.log('No file data was dropped');
+            return; // Exit if no valid file was dropped
+        }
+        
+        console.log('File dropped:', droppedFile);
+
+        // Check if the file already exists in the drop zone
+        var existingDroppedFile = $(this).find(`div:contains('${droppedFile}')`);
+        if (existingDroppedFile.length > 0) {
+            console.log('File already dropped:', droppedFile);
+            return; // Prevent duplicate file drops
+        }
+
+        // Add the dropped file to the drop zone
+        var droppedItem = $('<div></div>')
+            .text(droppedFile)
+            .css({
+                padding: '5px 10px',
+                border: '1px solid #ccc',
+                borderRadius: '5px',
+                marginBottom: '10px',
+                position: 'relative'
+            });
+
+        // Create delete button
+        var deleteButton = $('<button></button>')
+            .text('Delete')
+            .css({
+                position: 'absolute',
+                right: '5px',
+                top: '5px',
+                background: 'red',
+                color: 'white',
+                border: 'none',
+                borderRadius: '3px',
+                padding: '2px 5px',
+                cursor: 'pointer'
+            })
+            .data('file-name', droppedFile) // Store the file name in the button's data attributes
+            .on('click', function() {
+                var fileNameToRestore = $(this).data('file-name'); // Retrieve the file name when clicked
+                console.log('Restoring file:', fileNameToRestore);
+
+                // Restore file to the list
+                var listItem = $('<li></li>')
+                    .addClass('list-inline-item draggable-file')
+                    .attr('draggable', true)
+                    .attr('data-file-name', fileNameToRestore)
+                    .text(fileNameToRestore)
+                    .css({
+                        marginRight: '15px',
+                        padding: '5px 10px',
+                        border: '1px solid #ccc',
+                        borderRadius: '5px',
+                        cursor: 'grab'
+                    });
+
+                $('#fileList').append(listItem); // Restore file to the list
+                droppedItem.remove(); // Remove from drop area
+
+                setupDragAndDrop(); // Reinitialize drag events for restored files
+            });
+
+        droppedItem.append(deleteButton); // Add delete button to the dropped item
+        $(this).append(droppedItem); // Add the dropped file inside the drop area
+        $(this).removeClass('dragover'); // Remove highlight effect when dropped
+
+        // Remove the dragged file from the file list
+        $('li[data-file-name="' + droppedFile + '"]').remove();
+
+        setupDragAndDrop(); // Reinitialize drag events for all files after changes
+    });
+    dropZone2.on('dragover', function(e) {
+        e.preventDefault(); // Allow drop
+        $(this).addClass('dragover'); // Optional: Add a highlight effect when dragging over
+    });
+
+    dropZone2.on('dragleave', function() {
+        $(this).removeClass('dragover'); // Remove highlight effect when leaving
+    });
+
+    // Handle file drop
+    dropZone2.on('drop', function(e) {
+        e.preventDefault();
+        var droppedFile = e.originalEvent.dataTransfer.getData('text/plain'); // Get the dragged file name
+        
+        if (!droppedFile) {
+            console.log('No file data was dropped');
+            return; // Exit if no valid file was dropped
+        }
+        
+        console.log('File dropped:', droppedFile);
+
+        // Check if the file already exists in the drop zone
+        var existingDroppedFile = $(this).find(`div:contains('${droppedFile}')`);
+        if (existingDroppedFile.length > 0) {
+            console.log('File already dropped:', droppedFile);
+            return; // Prevent duplicate file drops
+        }
+
+        // Add the dropped file to the drop zone
+        var droppedItem = $('<div></div>')
+            .text(droppedFile)
+            .css({
+                padding: '5px 10px',
+                border: '1px solid #ccc',
+                borderRadius: '5px',
+                marginBottom: '10px',
+                position: 'relative'
+            });
+
+        // Create delete button
+        var deleteButton = $('<button></button>')
+            .text('Delete')
+            .css({
+                position: 'absolute',
+                right: '5px',
+                top: '5px',
+                background: 'red',
+                color: 'white',
+                border: 'none',
+                borderRadius: '3px',
+                padding: '2px 5px',
+                cursor: 'pointer'
+            })
+            .data('file-name', droppedFile) // Store the file name in the button's data attributes
+            .on('click', function() {
+                var fileNameToRestore = $(this).data('file-name'); // Retrieve the file name when clicked
+                console.log('Restoring file:', fileNameToRestore);
+
+                // Restore file to the list
+                var listItem = $('<li></li>')
+                    .addClass('list-inline-item draggable-file')
+                    .attr('draggable', true)
+                    .attr('data-file-name', fileNameToRestore)
+                    .text(fileNameToRestore)
+                    .css({
+                        marginRight: '15px',
+                        padding: '5px 10px',
+                        border: '1px solid #ccc',
+                        borderRadius: '5px',
+                        cursor: 'grab'
+                    });
+
+                $('#fileList').append(listItem); // Restore file to the list
+                droppedItem.remove(); // Remove from drop area
+
+                setupDragAndDrop(); // Reinitialize drag events for restored files
+            });
+
+        droppedItem.append(deleteButton); // Add delete button to the dropped item
+        $(this).append(droppedItem); // Add the dropped file inside the drop area
+        $(this).removeClass('dragover'); // Remove highlight effect when dropped
+
+        // Remove the dragged file from the file list
+        $('li[data-file-name="' + droppedFile + '"]').remove();
+
+        setupDragAndDrop(); // Reinitialize drag events for all files after changes
+    });
+
 }
 
+// Call the function to set up the initial drag and drop functionality
+setupDragAndDrop();
+    
     });
 </script>
