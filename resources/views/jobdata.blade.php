@@ -406,20 +406,7 @@ function fetchFiles(mailId) {
         });
     }
 
-    function displayFiles(files) {
-        $('#fileList').empty(); // Clear the existing list
-        $.each(files, function(index, file) {
-            var fileTypeIcon = getFileIcon(file.file_name);
-            $('#fileList').append(
-                '<li class="list-inline-item file-draggable" draggable="true" data-file-name="' + file.file_name + '">' +
-                '<span class="file-icon">' + fileTypeIcon + '</span>' +
-                '<span class="file-name">' + file.file_name + '</span>' +
-                '</li>'
-            );
-        });
-
-        addDragAndDropEvents();
-    }
+    
 
     function getFileIcon(fileName) {
         var extension = fileName.split('.').pop().toLowerCase();
@@ -504,21 +491,7 @@ function fetchFiles(mailId) {
 
         }
 
-        function fetchFiles(mailId) {
-    $.ajax({
-        url: '/fetch-files/' + mailId,
-        type: 'POST',
-        headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        },
-        success: function(response) {
-            displayFiles(response);
-        },
-        error: function(xhr, status, error) {
-            console.error("Error fetching files:", error);
-        }
-    });
-}
+       
 
 function displayFiles(files) {
     $('#fileList').empty(); // Clear the existing list
