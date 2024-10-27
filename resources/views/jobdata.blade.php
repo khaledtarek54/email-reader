@@ -209,25 +209,38 @@
             </div>
             
             <div id="fetchedFiles" class="fetched-files">
-                <h5>Files:</h5>
-                <ul id="fileList" class="list-inline"></ul>
-            </div>
+    <h5>Files:</h5>
+    <ul id="fileList" class="list-inline"></ul>
+    
+</div>
+
 
             <!-- File Uploads Section -->
             <div class="section-title">File Uploads</div>
 
             <div class="form-group">
                 <label for="inFiles">In Folder</label>
-                <input type="file" id="inFiles" class="file-upload" multiple>
-            </div>
+                <div class="file-drop-zone">Drag and drop files here</div>
+    <input type="file" id="inFiles" class="file-upload" multiple>
+    <div id="drag-drop-area" class="file-upload-drop-zone" style="border: 2px dashed #ccc; padding: 20px; margin-top: 20px;">
+</div>
+
+<ul id="fileList"></ul>
+
+    </div>
+            
             <div class="form-group">
                 <label for="instructionFiles">Instruction Folder</label>
-                <input type="file" id="instructionFiles" class="file-upload" multiple>
-            </div>
+                <div class="file-drop-zone">Drag and drop files here</div>
+    <input type="file" id="instructionFiles" class="file-upload" multiple>
+    </div>
+            
             <div class="form-group">
                 <label for="referenceFiles">Reference Folder</label>
-                <input type="file" id="referenceFiles" class="file-upload" multiple>
-            </div>
+                <div class="file-drop-zone">Drag and drop files here</div>
+    <input type="file" id="referenceFiles" class="file-upload" multiple>
+    </div>
+            
 
             <!-- Shared Instructions Section -->
             <div class="form-group">
@@ -334,7 +347,91 @@
                 }
             });
         }
+function fetchFiles(mailId) {
+        $.ajax({
+            url: '/fetch-files/' + mailId,
+            type: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            success: function(response) {
+                displayFiles(response);
+            },
+            error: function(xhr, status, error) {
+                console.error("Error fetching files:", error);
+            }
+        });
+    }
 
+    function displayFiles(files) {
+        $('#fileList').empty(); // Clear the existing list
+        $.each(files, function(index, file) {
+            var fileTypeIcon = getFileIcon(file.file_name);
+            $('#fileList').append(
+                '<li class="list-inline-item file-draggable" draggable="true" data-file-name="' + file.file_name + '">' +
+                '<span class="file-icon">' + fileTypeIcon + '</span>' +
+                '<span class="file-name">' + file.file_name + '</span>' +
+                '</li>'
+            );
+        });
+
+        addDragAndDropEvents();
+    }
+
+    function getFileIcon(fileName) {
+        var extension = fileName.split('.').pop().toLowerCase();
+        var icons = {
+            'pdf': '<i class="fas fa-file-pdf"></i>',
+            'doc': '<i class="fas fa-file-word"></i>',
+            'docx': '<i class="fas fa-file-word"></i>',
+            'xls': '<i class="fas fa-file-excel"></i>',
+            'xlsx': '<i class="fas fa-file-excel"></i>',
+            'txt': '<i class="fas fa-file-alt"></i>',
+            'jpg': '<i class="fas fa-file-image"></i>',
+            'png': '<i class="fas fa-file-image"></i>',
+            'zip': '<i class="fas fa-file-archive"></i>',
+            'default': '<i class="fas fa-file"></i>'
+        };
+        return icons[extension] || icons['default'];
+    }
+
+    function addDragAndDropEvents() {
+        // Drag start event
+        $('.file-draggable').on('dragstart', function(event) {
+            $(this).addClass('dragging');
+            event.originalEvent.dataTransfer.setData('text/plain', $(this).data('file-name'));
+        });
+
+        // Drag end event
+        $('.file-draggable').on('dragend', function() {
+            $(this).removeClass('dragging');
+        });
+
+        // Drag over and drop events for each folder drop area
+        $('.drop-area').on('dragover', function(event) {
+            event.preventDefault();
+            $(this).addClass('dragover');
+        });
+
+        $('.drop-area').on('dragleave', function() {
+            $(this).removeClass('dragover');
+        });
+
+        $('.drop-area').on('drop', function(event) {
+            event.preventDefault();
+            $(this).removeClass('dragover');
+            var fileName = event.originalEvent.dataTransfer.getData('text/plain');
+            var dropAreaId = $(this).attr('id');
+
+            moveFileToFolder(fileName, dropAreaId);
+        });
+    }
+
+    function moveFileToFolder(fileName, folder) {
+        // You can modify this to perform AJAX calls to update the file location on the server
+        console.log('File "' + fileName + '" moved to ' + folder);
+        alert('File "' + fileName + '" has been moved to ' + folder);
+    }
         function mapJobData(data) {
 
             //populateSelect('workflow', data.workflows);
@@ -365,26 +462,87 @@
         }
 
         function fetchFiles(mailId) {
-            $.ajax({
-                url: '/fetch-files/' + mailId,
-                type: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                success: function(response) {
-                    displayFiles(response);
-                },
-                error: function(xhr, status, error) {
-                    console.error("Error fetching files:", error);
-                }
-            });
+    $.ajax({
+        url: '/fetch-files/' + mailId,
+        type: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        },
+        success: function(response) {
+            displayFiles(response);
+        },
+        error: function(xhr, status, error) {
+            console.error("Error fetching files:", error);
         }
+    });
+}
 
-        function displayFiles(files) {
-            $('#fileList').empty(); // Clear the existing list
-            $.each(files, function(index, file) {
-                $('#fileList').append('<li class="list-inline-item" style="margin-right: 15px;">' + file.file_name + '</li>');
+function displayFiles(files) {
+    $('#fileList').empty(); // Clear the existing list
+
+    // Add files to the list and make them draggable
+    $.each(files, function(index, file) {
+        var listItem = $('<li></li>')
+            .addClass('list-inline-item draggable-file')
+            .attr('draggable', true) // Make it draggable
+            .attr('data-file-name', file.file_name) // Store file name in a data attribute
+            .text(file.file_name)
+            .css({
+                marginRight: '15px',
+                padding: '5px 10px',
+                border: '1px solid #ccc',
+                borderRadius: '5px',
+                cursor: 'grab'
             });
-        }
+
+        $('#fileList').append(listItem);
+    });
+
+    setupDragAndDrop();
+}
+
+function setupDragAndDrop() {
+    // Allow file items to be draggable
+    $('.draggable-file').on('dragstart', function(e) {
+        e.originalEvent.dataTransfer.setData('text/plain', $(this).data('file-name')); // Store file name in the drag data
+        $(this).css('opacity', '0.5'); // Change appearance during drag
+    });
+
+    $('.draggable-file').on('dragend', function() {
+        $(this).css('opacity', '1'); // Reset appearance when drag ends
+    });
+
+    // Setup droppable area
+    var dropZone = $('#drag-drop-area'); // The specific drop area
+    dropZone.on('dragover', function(e) {
+        e.preventDefault(); // Allow drop
+        $(this).addClass('dragover'); // Optional: Add a highlight effect when dragging over
+    });
+
+    dropZone.on('dragleave', function() {
+        $(this).removeClass('dragover'); // Remove highlight effect when leaving
+    });
+
+    // Handle file drop
+    dropZone.on('drop', function(e) {
+        e.preventDefault();
+        var droppedFile = e.originalEvent.dataTransfer.getData('text/plain'); // Get the dragged file name
+        console.log('File dropped:', droppedFile); // Handle file drop here
+
+        // Add the dropped file to the drop zone
+        var droppedItem = $('<div></div>')
+            .text(droppedFile)
+            .css({
+                padding: '5px 10px',
+                border: '1px solid #ccc',
+                borderRadius: '5px',
+                marginBottom: '10px'
+            });
+        
+        $(this).append(droppedItem); // Add the dropped file inside the drop area
+        $(this).removeClass('dragover'); // Remove highlight effect when dropped
+    });
+}
+
     });
 </script>

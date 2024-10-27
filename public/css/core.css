@@ -482,6 +482,76 @@ body {
     height: 60px;
     animation: spin 1s linear infinite;
 }
+.drop-area {
+    border: 2px dashed #ccc;
+    padding: 20px;
+    text-align: center;
+    margin-bottom: 20px;
+    cursor: pointer;
+}
+
+.drop-area.dragover {
+    border-color: #666;
+}
+
+.file-icon {
+    display: inline-block;
+    margin-right: 10px;
+}
+
+.file-name {
+    display: inline-block;
+}
+
+.file-draggable {
+    cursor: grab;
+    display: inline-flex;
+    align-items: center;
+}
+
+.dragging {
+    opacity: 0.5;
+}
+.file-drop-area {
+    position: relative;
+    border: 2px dashed #ccc;
+    padding: 20px;
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+.file-drop-zone {
+    color: #888;
+    font-size: 16px;
+}
+
+.file-drop-area.dragover {
+    border-color: #007bff;
+    background-color: #f0f8ff;
+}
+.dragover {
+    background-color: #f0f8ff; /* Add a background color when dragging over */
+    border: 2px dashed #007bff;
+}
+
+.draggable-file {
+    background-color: #fff;
+    border: 1px solid #ccc;
+    padding: 5px;
+    border-radius: 4px;
+    display: inline-block;
+    margin-right: 10px;
+}
+.file-upload-drop-zone {
+    background-color: #f9f9f9;
+    text-align: center;
+}
+
+.file-upload-drop-zone.dragover {
+    background-color: #e0e0e0;
+    border-color: #000;
+}
+
 
 @keyframes spin {
     0% {
