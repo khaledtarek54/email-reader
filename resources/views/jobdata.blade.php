@@ -188,8 +188,8 @@
             </div>
             <div class="col-md-6">
                 <div class="form-group">
-                    <label for="targetLanguage">selection plan <span class="text-danger">*</span></label>
-                    <select id="targetLanguage">
+                    <label for="selectionPlan">selection plan <span class="text-danger">*</span></label>
+                    <select id="selectionPlan">
                         @foreach ($plans as $plan)
                         <option value="{{ $plan->id }}">{{ $plan->name }}</option>
                         @endforeach
@@ -242,17 +242,13 @@
         <div class="modal-content">
             <!-- Modal Header -->
             <div class="modal-header">
-                <h5 class="modal-title" id="autoPlanModalLabel">Auto Plan Strategy Configuration</h5>
+                <h5 class="modal-title" id="autoPlanModalLabel">Auto Plan</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
 
             <!-- Modal Body -->
             <div class="modal-body">
-                <!-- Add your form elements for configuring the strategy -->
-                <div class="form-group">
-                    <label for="strategyDetails">Details</label>
-                    <textarea id="strategyDetails" class="form-control" rows="4" placeholder="Enter strategy details..."></textarea>
-                </div>
+
             </div>
 
             <!-- Modal Footer with Save and Back Buttons -->
@@ -272,6 +268,49 @@
 
 <script>
     $(document).ready(function() {
+
+        const setupButton = document.querySelector('[data-bs-target="#autoPlanModal"]');
+
+        setupButton.addEventListener('click', function() {
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+            const formData = new FormData();
+
+            formData.append('amount', document.getElementById('amount').value);
+            formData.append('start_date', document.getElementById('startDate').value);
+            formData.append('end_date', document.getElementById('deliveryDate').value);
+            formData.append('JobAutoplanStrategyId', document.getElementById('autoPlanStrategy').value);
+            formData.append('job_type_id', document.getElementById('Job_Type').value);
+            formData.append('unit_id', document.getElementById('unit').value);
+            formData.append('plan_id', document.getElementById('selectionPlan').value);
+            formData.append('phase_type_id', document.getElementById('workflow').value);
+            formData.append('account_id', document.getElementById('account').value);
+            formData.append('source_language_id', document.getElementById('sourceLanguage').value);
+            formData.append('target_language_id', document.getElementById('targetLanguage').value);
+            formData.append('subject_matter_id', document.getElementById('subjectMatter').value);
+            formData.append('content_type_id', document.getElementById('contentType').value);
+
+
+
+            formData.append('contact_id', document.getElementById('contact_id').value);
+
+
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', '/autoPlan', true);
+            xhr.setRequestHeader('X-CSRF-TOKEN', csrfToken);
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    console.log('Data submitted successfully:', xhr.responseText);
+                } else {
+                    console.error('Error submitting data:', xhr.statusText);
+                }
+            };
+            xhr.send(formData);
+        });
+
+
+
+
+
         $('#Job_Type').change(function() {
             var jobTypeId = $(this).val();
 
