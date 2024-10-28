@@ -24,6 +24,15 @@ class FileUploadService
         // Loop through each file and store it
         foreach ($files as $file) {
             $fileName = $file->getClientOriginalName();
+
+            // Check if a file with the same name exists in the database
+            while (File::where('email_id', $emailId)->where('file_name', $fileName)->exists()) {
+                // Add ".copy" before the file extension
+                $fileInfo = pathinfo($fileName);
+                $fileName = $fileInfo['filename'] . '-copy.' . $fileInfo['extension'];
+            }
+
+            // Store the file with the unique name
             $filePath = $file->storeAs($path, $fileName);
 
             // Set 0777 permission for the file
