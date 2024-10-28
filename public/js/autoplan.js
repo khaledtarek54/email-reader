@@ -26,7 +26,7 @@ function changeAutoPlan(weekdays, end_date) {
     formData.append("rs_plan_id", autoassignid);
     formData.append("workflow_id", workflowid);
     formData.append("unit_id", document.getElementById("unit").value);
-    formData.append("job_type_id", document.getElementById("job_type").value);
+    formData.append("job_type_id", document.getElementById("Job_Type").value);
     formData.append("account_id", document.getElementById("account").value);
     $.ajax({
         data: formData,

@@ -19,7 +19,7 @@
     <div class="sidebar" id="sidebar">
         <a href="/mails"><i class="fas fa-inbox"></i> Inbox</a>
         <a href="/trash"><i class="fas fa-trash-alt"></i> Trash</a>
-        <a href="#"><i class="fas fa-paperclip"></i> Attachment</a>
+        <!-- <a href="#"><i class="fas fa-paperclip"></i> Attachment</a> -->
         <a href="#" class="logout-link" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
             <i class="fas fa-lock"></i> Logout
         </a>

@@ -48,12 +48,12 @@ class JobService
                         <label class="font-bold control-label no-padding-top">
                             Plan Start
                         </label>
-                        <input class="form-control" type="datetime-local" id="planstart" name="planstart" onchange="changeAutoPlan(<?= $weekDaysJson ?>,<?= $data['user_id'] ?>,'<?= $data['end_date'] ?>')" value="<?= htmlspecialchars($data['start_date']) ?>">
+                        <input class="form-control" type="datetime-local" id="planstart" name="planstart" onchange="changeAutoPlan(<?= $weekDaysJson ?>,'<?= $data['end_date'] ?>')" value="<?= htmlspecialchars($data['start_date']) ?>">
 
                         <label class="font-bold control-label no-padding-top">
                             Plan Amount
                         </label>
-                        <input class="form-control" type="text" id="planamount" name="planamount" onchange="changeAutoPlan(<?= $weekDaysJson ?>,<?= $data['user_id'] ?>,'<?= $data['end_date'] ?>')" value="<?= $data['amount'] ?>">
+                        <input class="form-control" type="text" id="planamount" name="planamount" onchange="changeAutoPlan(<?= $weekDaysJson ?>,'<?= $data['end_date'] ?>')" value="<?= $data['amount'] ?>">
 
 
                     </div>
@@ -75,30 +75,33 @@ class JobService
                                 <label class="form-check-label  label-day" for="weekDay_<?= $dayId ?>">
                                     <?= $dayName ?>
                                 </label>
-                                <input class="form-check-input day-checkbox" type="checkbox" id="weekDay_<?= $dayId ?>" name="weekDay_<?= $dayId ?>" value="<?= $dayId ?>" <?= $checked ?> onchange="changeAutoPlan(<?= $weekDaysJson ?>,<?= $data['user_id'] ?>,'<?= $data['end_date'] ?>')">
+                                <input class="form-check-input day-checkbox" type="checkbox" id="weekDay_<?= $dayId ?>" name="weekDay_<?= $dayId ?>" value="<?= $dayId ?>" <?= $checked ?> onchange="changeAutoPlan(<?= $weekDaysJson ?>,'<?= $data['end_date'] ?>')">
 
                             </div>
                         <?php endforeach; ?>
                     </div>
                 </div>
-
-                <div class="tabbable-spcs">
-                    <ul class="nav nav-tabs tabs-cust" id="myTab">
-                        <?php $first = true; ?>
-                        <?php foreach ($tasks as $taskId => $task): ?>
-                            <li class="tabs-li <?php echo $first ? 'active' : ''; ?>">
-                                <a data-toggle="tab" href="#task<?php echo $taskId; ?>">
-                                    <?php echo $task['name']; ?>
-                                </a>
-                            </li>
-                            <?php $first = false; ?>
+                <nav>
+                    <div class="nav nav-tabs mt-4 mb-3" id="nav-tab" role="tablist">
+                        <?php
+                        $first = true; // Initialize a flag to track the first tab
+                        foreach ($tasks as $taskId => $task):
+                        ?>
+                            <button class="nav-link <?php echo $first ? 'active' : ''; ?>" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#task<?php echo $taskId; ?>" type="button" role="tab" aria-controls="task<?php echo $taskId; ?>" aria-selected="<?php echo $first ? 'true' : 'false'; ?>">
+                                <?php echo $task['name']; ?>
+                            </button>
+                            <?php $first = false; // Set flag to false after the first iteration 
+                            ?>
                         <?php endforeach; ?>
-                    </ul>
-                </div>
-                <div class="tab-content">
-                    <?php $first = true; ?>
-                    <?php foreach ($tasks as $taskId => $job): ?>
-                        <div id="task<?php echo $taskId; ?>" class="tab-pane fade <?php echo $first ? 'in active' : ''; ?>">
+                    </div>
+                </nav>
+
+                <div class="tab-content" id="nav-tabContent">
+
+                    <?php
+                    $isFirst = true;
+                    foreach ($tasks as $taskId => $job): ?>
+                        <div class="tab-pane fade <?php echo $isFirst ? 'show active' : ''; ?>" id="task<?php echo $taskId; ?>" role="tabpanel" aria-labelledby="nav-home-tab" tabindex="0">
                             <div class="row">
                                 <div class="col-md-6 mb-15">
                                     <label class="font-bold control-label no-padding-top">
@@ -175,9 +178,12 @@ class JobService
                                 <?php endforeach; ?>
                             </div>
                             <!-- END row item -->
+
                         </div>
-                        <?php $first = false; ?>
-                    <?php endforeach; ?>
+
+                    <?php
+                        $isFirst = false;
+                    endforeach; ?>
                 </div>
             </div>
             </div>
@@ -258,7 +264,6 @@ class JobService
         $datetime->sub($interval);
         return $datetime->format('Y-m-d H:i:s');
     }
-
     public function getUpdatedJobAutoPlanFromTransparent($data)
     {
         $weekend_days_array = explode(",", $data['weekend_days']);
@@ -296,7 +301,6 @@ class JobService
     }
     public function saveAutoPlanSpecs($data)
     {
-
         $response =  $this->updateJobSpecs($data);
         return $response;
     }

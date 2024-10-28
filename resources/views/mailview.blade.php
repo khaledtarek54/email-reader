@@ -39,10 +39,7 @@
 
 <!-- Email Action Buttons (Gmail-style) -->
 <div class="email-actions">
-    <form action="{{ route('extractApi', ['id' => $mail->id]) }}" method="POST" style="display: inline;">
-        @csrf
-        <button type="submit"><i class="fas fa-film"></i>Extractor</button>
-    </form>
+    
     <form action="{{ route('jobdata', ['id' => $mail->id]) }}" method="POST" style="display: inline;">
         @csrf
         <button type="submit"><i class="fas fa-film"></i> Job data</button>

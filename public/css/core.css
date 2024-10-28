@@ -560,5 +560,63 @@ body {
         transform: rotate(360deg);
     }
 }
+li.active.tabs-li a,
+li.active.tabs-li a:hover,
+li.tabs-li a:hover,
+li.active.tabs-li a:focus,
+li.tabs-li a:focus {
+    background: #00afdf;
+    border: 0;
+    color: #fff;
+}
+li.tabs-li:first-child a {
+    border-radius: 15px 0px 0px 15px !important;
+}
+li.tabs-li:last-child a {
+    border-radius: 0px 15px 15px 0px !important;
+}
+li.tabs-li a {
+    background: #e9ecf1;
+    border: 0;
+    color: #000;
+    border-radius: 0;
+}
+.tabs-cust {
+    border-bottom: 0 !important;
+    margin-bottom: 15px;
+    display: inline-block;
+}
+.tabbable-spcs {
+    margin: 20px 0 0 0;
+    display: block;
+    text-align: center;
+}
+.padd-top-40 {
+    padding-top: 40px;
+}
+.day-div {
+    display: table;
+    float: left;
+    margin: 0 7px;
+}
+.label-day {
+    display: table-row;
+}
+/* Center tabs within the modal */
+.nav-tabs {
+    display: flex;
+    justify-content: center;
+}
 
+/* Set the active tab color to red */
+.nav-tabs .nav-link.active {
+    background-color: red !important;
+    color: white !important;
+    border-color: red !important;
+}
+
+/* Style inactive tabs for contrast */
+.nav-tabs .nav-link {
+    color: black;
+}
 
