@@ -21,7 +21,7 @@ class FileUploadController extends Controller
     // Retrieve the email ID and files from the request
     $emailId = $request->input('email_id');
     $files = $request->file('file'); // Expecting an array of files
-    
+
     // Use the service to upload the files and set permissions
     $filePaths = $this->fileUploadService->uploadFiles($emailId, $files);
     
