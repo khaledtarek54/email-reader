@@ -20,7 +20,8 @@
         <a href="/mails"><i class="fas fa-inbox"></i> Inbox</a>
         <a href="/trash"><i class="fas fa-trash-alt"></i> Trash</a>
         <a href="#"><i class="fas fa-paperclip"></i> Attachment</a>
-        <a href="#" class="logout-link" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+        <a href="#" class="logout-link"
+            onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
             <i class="fas fa-lock"></i> Logout
         </a>
         <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
@@ -39,6 +40,9 @@
     </div> -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <script src="{{ asset('js/sidebar.js') }}"></script>
+    <script src="{{ asset('js/autoplan.js') }}"></script>
+    <script src="{{ asset('js/job.js') }}"></script>
+    <script src="{{ asset('js/files.js') }}"></script>
 
 </body>
 
