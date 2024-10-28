@@ -30,7 +30,10 @@ Route::middleware(['auth'])->group(function () {
 
     Route::post('/extractApi/{id}', [ExtractorController::class, 'extractApi'])->name('extractApi');
   
-    Route::get('/autoPlan', [JobController::class, 'autoPlan'])->name('autoPlan');
+    
+    Route::post('/fetch-files/{id}', [JobSpecController::class, 'fetchFiles']);
+
+    Route::post('/autoPlan', [JobController::class, 'autoPlan'])->name('autoPlan');
     
 
     

@@ -18,24 +18,18 @@ class FileUploadController extends Controller
 
     public function uploadMethod(Request $request)
     {
-        // Validate the request
-        $request->validate([
-            'email_id' => 'required',
-            'file' => 'required|file|mimes:jpg,jpeg,png,pdf,doc,docx|max:2048', // Adjust mime types and max size as needed
-        ]);
+    // Retrieve the email ID and files from the request
+    $emailId = $request->input('email_id');
+    $files = $request->file('file'); // Expecting an array of files
 
-        // Retrieve the email ID and file from the request
-        $emailId = $request->input('email_id');
-        $file = $request->file('file');
-
-        // Use the service to upload the file and set permissions
-        $filePath = $this->fileUploadService->uploadFile($emailId, $file);
-
-        // Return a JSON response with the uploaded file details
-        return response()->json([
-            'message' => 'File uploaded successfully!',
-            'email_id' => $emailId,
-            'file_path' => $filePath,
-        ]);
+    // Use the service to upload the files and set permissions
+    $filePaths = $this->fileUploadService->uploadFiles($emailId, $files);
+    
+    // Return a JSON response with the uploaded file details
+    return response()->json([
+    'message' => 'Files uploaded successfully!',
+    'email_id' => $emailId,
+    'file_paths' => $filePaths,
+    ]);
     }
 }
