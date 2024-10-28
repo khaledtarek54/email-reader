@@ -19,7 +19,7 @@ class JobController extends Controller
     {
         try {
             $result = $this->jobService->autoPlan($request);
-            return response()->json($result, 200);
+            return response()->json(['html' => $result]);
         } catch (Exception $e) {
             return response()->json([
                 'error' => 'An error occurred.',
