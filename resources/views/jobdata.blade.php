@@ -346,6 +346,3 @@
         });
     });
 </script>
-<script src="{{ asset('js/autoplan.js') }}"></script>
-<script src="{{ asset('js/job.js') }}"></script>
-<script src="{{ asset('js/files.js') }}"></script>
