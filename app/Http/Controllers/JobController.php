@@ -27,4 +27,28 @@ class JobController extends Controller
             ], 500);
         }
     }
+    public function autoPlanEdit(Request $request)
+    {
+        try {
+            $result = $this->jobService->getUpdatedJobAutoPlanFromTransparent($request);
+            return response()->json($result);
+        } catch (Exception $e) {
+            return response()->json([
+                'error' => 'An error occurred.',
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+    public function saveAutoPlanSpecs(Request $request)
+    {
+        try {
+            $result = $this->jobService->saveAutoPlanSpecs($request);
+            return response()->json($result);
+        } catch (Exception $e) {
+            return response()->json([
+                'error' => 'An error occurred.',
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
 }

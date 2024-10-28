@@ -11,6 +11,7 @@ class Savedjob extends Model
         'source_language',
         'target_language',
         'job_type',
+        'workflow',
         'amount',
         'unit',
         'start_date',
