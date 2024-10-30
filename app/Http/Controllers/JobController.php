@@ -6,6 +6,7 @@ use Exception;
 use App\Services\JobService;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use App\View\Components\AutoPlanForm;
 
 class JobController extends Controller
 {
@@ -19,6 +20,13 @@ class JobController extends Controller
     {
         try {
             $result = $this->jobService->autoPlan($request);
+            $data = $request;
+            $response = $result;
+            //return $data;
+            $componentHtml = (new AutoPlanForm($response, $data))->render()->render();
+            return response()->json([
+                'html' => $componentHtml
+            ]);
             return response()->json(['html' => $result]);
         } catch (Exception $e) {
             return response()->json([

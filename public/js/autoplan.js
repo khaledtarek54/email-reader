@@ -1,13 +1,14 @@
-function changeAutoPlan(weekdays, end_date) {
+function changeAutoPlan(weekdayss, end_date) {
+    
     $("#loadingOverlay").show();
-
+    
     const planStart = document.getElementById("planstart").value;
     const planAmount = document.getElementById("planamount").value;
     const autoplanid = document.getElementById("autoPlanStrategy").value;
     const autoassignid = document.getElementById("selectionPlan").value;
     const workflowid = document.getElementById("workflow").value;
     const weekendDays = [];
-
+    weekdays = JSON.parse(weekdayss);
     weekdays.forEach((day) => {
         const checkbox = document.getElementById(
             "weekDay_" + day.WeekDay.number
