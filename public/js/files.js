@@ -36,6 +36,28 @@ function displayFiles(files) {
 
     setupDragAndDrop();
 }
+function mapUploadedFiles(){
+    let fileInput = document.getElementById('file');
+    const files = fileInput.files;
+     // Add files to the list and make them draggable
+     $.each(files, function(index, file) {
+        var listItem = $('<li></li>')
+            .addClass('list-inline-item draggable-file')
+            .attr('draggable', true) // Make it draggable
+            .attr('data-file-name', file.name) // Store file name in a data attribute
+            .text(file.name)
+            .css({
+                marginRight: '15px',
+                padding: '5px 10px',
+                border: '1px solid #ccc',
+                borderRadius: '5px',
+                cursor: 'grab'
+            });
+
+        $('#fileList').append(listItem);
+    });
+
+}
 function setupDragAndDrop() {
     // Allow file items to be draggable
     $('.draggable-file').on('dragstart', function(e) {
