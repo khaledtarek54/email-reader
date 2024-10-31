@@ -13,6 +13,7 @@ function fetchFiles(mailId) {
         }
     });
 }       
+
 function displayFiles(files) {
     $('#fileList').empty(); // Clear the existing list
 
@@ -344,4 +345,39 @@ function setupDragAndDrop() {
 
         setupDragAndDrop(); // Reinitialize drag events for all files after changes
     });
+}
+function getDroppedFiles() {
+    var inFolderFiles = [];
+    var instructionsFolderFiles = [];
+    var referenceFolderFiles = [];
+
+    // For the In Folder
+    $('#drag-drop-area div').each(function() {
+        var fileName = $(this).contents().get(0).nodeValue.trim(); // Get only the file name, excluding the delete button
+        if (fileName) {
+            inFolderFiles.push(fileName);
+        }
+    });
+
+    // For the Instructions Folder
+    $('#drag-drop-area1 div').each(function() {
+        var fileName = $(this).contents().get(0).nodeValue.trim(); // Get only the file name, excluding the delete button
+        if (fileName) {
+            instructionsFolderFiles.push(fileName);
+        }
+    });
+
+    // For the Reference Folder
+    $('#drag-drop-area2 div').each(function() {
+        var fileName = $(this).contents().get(0).nodeValue.trim(); // Get only the file name, excluding the delete button
+        if (fileName) {
+            referenceFolderFiles.push(fileName);
+        }
+    });
+
+    return {
+        inFolder: inFolderFiles,
+        instructionsFolder: instructionsFolderFiles,
+        referenceFolder: referenceFolderFiles
+    };
 }
