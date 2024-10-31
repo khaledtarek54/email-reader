@@ -337,7 +337,7 @@
                 processData: false,
                 contentType: false,
                 success: function(response) {
-                    fetchFiles(document.getElementById('email_id').value);
+                    mapUploadedFiles();
                 },
                 error: function(xhr, status, error) {
                     alert("Upload failed. Please try again.");
