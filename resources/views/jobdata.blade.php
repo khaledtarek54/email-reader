@@ -336,6 +336,9 @@
                 data: formData,
                 processData: false,
                 contentType: false,
+                success: function(response) {
+                    mapUploadedFiles();
+                },
                 error: function(xhr, status, error) {
                     alert("Upload failed. Please try again.");
                 }
