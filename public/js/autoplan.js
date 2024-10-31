@@ -37,7 +37,6 @@ function changeAutoPlan(weekdayss, end_date) {
         contentType: false,
         processData: false,
         success: function (data, textStatus) {
-            console.log("Response:", data);
             populateFormFields(data);
             $("#loadingOverlay").hide();
         },
