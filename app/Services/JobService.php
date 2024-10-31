@@ -5,8 +5,10 @@ namespace App\Services;
 use DateTime;
 use Exception;
 use DateInterval;
+use App\Models\Autoplan;
 use App\Services\MailService;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Session;
 
@@ -27,7 +29,6 @@ class JobService
     {
         $response = $this->getAutoPlanFieldsFromTransparent($data);
         return $response;
-        
     }
     public function getAutoPlanFieldsFromTransparent($data)
     {
@@ -70,8 +71,9 @@ class JobService
 
         foreach ($tasks['tasks'] as $taskId => $task) {
             /////////change date to GMT
-            $formattedStartDate = isset($task['start_date']) ? $this->formatDate($task['start_date'], $_SESSION['timezone']) : '';
-            $formattedEndDate = isset($task['end_date']) ? $this->formatDate($task['end_date'], $_SESSION['timezone']) : '';
+            $timezone = 0;
+            $formattedStartDate = isset($task['start_date']) ? $this->formatDate($task['start_date'], $timezone) : '';
+            $formattedEndDate = isset($task['end_date']) ? $this->formatDate($task['end_date'], $timezone) : '';
             $selected_plan = $task['plans']['selected'];
             $taskPlanId = $selected_plan ? $selected_plan : "NULLVAL";
             $specification = [
@@ -122,7 +124,7 @@ class JobService
         $job_data['phase_type_id'] = $data['workflow_id'] ? $data['workflow_id'] : "NULLVAL";
         $job_data['account_id'] = $data['account_id'];
 
-        
+
         //return $job_data;
         try {
             $response = Http::withHeaders([
@@ -138,88 +140,129 @@ class JobService
             throw new Exception($e->getMessage());
         }
     }
-    public function saveAutoPlanSpecs($data)
+    public function saveAutoPlanSpecs($data, $mailId)
     {
-        $response =  $this->updateJobSpecs($data);
+        $response =  $this->updateJobSpecs($data, $mailId);
         return $response;
     }
-    public function updateJobSpecs($data)
+    public function updateJobSpecs($data, $mailId)
     {
-
+        //Log::info('Incoming data:', $data); // Log incoming data
         $jsonArray = json_decode($data['oldSpecs'], true);
+        // Ensure tasks contain default values for specified keys
         if (isset($jsonArray['tasks'])) {
             foreach ($jsonArray['tasks'] as &$task) {
-                // Add the new keys with default values if they don't exist
-                if (!isset($task['TaskEstimated'])) {
-                    $task['TaskEstimated'] = 0; // Default value for unchecked
-                }
-                if (!isset($task['TaskMaxPrice'])) {
-                    $task['TaskMaxPrice'] = 0; // Default value for max price
-                }
-                if (!isset($task['TaskSharedPhaseInstructions'])) {
-                    $task['TaskSharedPhaseInstructions'] = ''; // Default value for shared phase instructions
-                }
+                $task = array_merge([
+                    'TaskEstimated' => 0, // Default unchecked
+                    'TaskMaxPrice' => 0, // Default max price
+                    'TaskOtherTool' => '', // Default other tool
+                    'TaskSharedPhaseInstructions' => '' // Default shared phase instructions
+                ], $task);
             }
         }
+
+        // Process each field in $data
         foreach ($data as $key => $value) {
-            // Skip "planstart", "planamount", and "weekDay"
-            if (strpos($key, 'planstart') !== false || strpos($key, 'planamount') !== false || strpos($key, 'weekDay') !== false || strpos($key, 'unit_id') !== false || strpos($key, 'unit_name') !== false) {
-                continue;
-            }
+            // Check if key ends with an underscore followed by digits
+            $lastUnderscorePos = strrpos($key, '_');
+            $lastDashPos = strrpos($key, '-');
+            $separatorPos = max($lastUnderscorePos, $lastDashPos);
+            if ($separatorPos !== false) {
+                // Extract task ID assuming it's the portion after the last separator
+                $taskId = substr($key, $separatorPos + 1);
 
-            // Extract the task ID from the key
-            if (preg_match('/_(\d+)$/', $key, $matches)) {
-                $taskId = $matches[1]; // Extracted task ID from the key
-                $fieldName = str_replace('_' . $taskId, '', $key);
+                // Validate if taskId is numeric
+                if (is_numeric($taskId)) {
+                    $fieldName = substr($key, 0, $separatorPos); // Get field name part
 
-                // Check if the task with the extracted task ID exists
-                if (isset($jsonArray['tasks'][$taskId])) {
-                    // Reference the specific task to be updated
-                    $task = &$jsonArray['tasks'][$taskId];
+                    // Check if the task exists and update the corresponding fields
+                    if (isset($jsonArray['tasks'][$taskId])) {
+                        $task = &$jsonArray['tasks'][$taskId];
 
-                    // Update the task fields dynamically
-                    switch ($fieldName) {
-                        case 'start_date':
-                            $task['start_date'] = $value;
-                            break;
-                        case 'end_date':
-                            $task['end_date'] = $value;
-                            break;
-                        case 'TaskAmount':
-                            $task['amount'] = $value;
-                            break;
-                        case 'TaskPlanId':
-                            $task['plans']['selected'] = $value;
-                            break;
-                        case 'TaskEstimated':
-                            $task['TaskEstimated'] = $value;
-                            break;
-                        case 'TaskMaxPrice':
-                            $task['TaskMaxPrice'] = $value;
-                            break;
-                        case 'TaskSharedPhaseInstructions':
-                            $task['TaskSharedPhaseInstructions'] = $value;
-                            break;
-                        default:
-                            // Update any other dynamic fields within 'filds'
-                            foreach ($task['filds'] as &$field) {
-                                if ($field['name'] === $fieldName) {
-                                    $field['selected'] = $value;
-                                    break;
+                        // Update task fields based on the extracted fieldName
+                        switch ($fieldName) {
+                            case 'start_date':
+                                $task['start_date'] = $value;
+                                break;
+                            case 'end_date':
+                                $task['end_date'] = $value;
+                                break;
+                            case 'TaskAmount':
+                                $task['amount'] = $value;
+                                break;
+                            case 'TaskPlanId':
+                                $task['plans']['selected'] = $value;
+                                break;
+                            case 'TaskEstimated':
+                                $task['TaskEstimated'] = $value;
+                                break;
+                            case 'TaskMaxPrice':
+                                $task['TaskMaxPrice'] = $value;
+                                break;
+                            case 'TaskSharedPhaseInstructions':
+                                $task['TaskSharedPhaseInstructions'] = $value;
+                                break;
+                            default:
+                                // Handle dynamic fields within 'filds'
+                                foreach ($task['filds'] as &$field) {
+                                    if ($field['name'] === $fieldName) {
+                                        $field['selected'] = $value;
+                                        break;
+                                    }
                                 }
-                            }
-                            break;
+                                break;
+                        }
                     }
                 }
             }
         }
 
-        //$transparent_specs = $this->generateTaskObject($jsonArray);
-        // $transparent_specs_json = VerifyInput(json_encode($transparent_specs, true));
-        // $specs_json = VerifyInput(json_encode($jsonArray, true));
-        // mysql_command("INSERT INTO job_auto_plan_spec_details (job_id,transparent_specs,unsaved_specs,created_at) VALUES ('" . $data['job_id'] . "','" . $transparent_specs_json . "','" . $specs_json . "','" . gmdate("Y-m-d H:i:s") . "') ON DUPLICATE KEY UPDATE transparent_specs='" . $transparent_specs_json . "',unsaved_specs='" . $specs_json . "', updated_at='" . gmdate("Y-m-d H:i:s") . "' ");
-
+        // Convert to JSON and update or create Autoplan record
+        $transparent_specs_json = json_encode($this->generateTaskObject($jsonArray), true);
+        $autoplan = Autoplan::firstOrNew(['mail_id' => $mailId]);
+        $autoplan->specs = $transparent_specs_json;
+        $autoplan->save();
 
         return $jsonArray;
+    }
+
+    public function createJob($data, $id)
+    {
+
+        //$mailAutoPlan = $this->mailService->fetchAutoPlanById($id);
+        //$userId = session::get('user_id');
+        //$draftId = ???;
+        $jobData = $this->getJobData($data);
+        //$task_estimation = $mailAutoPlan->specs;
+        //$files_folders = $this->getFilesAndFolders($data);
+        return $jobData;
+    }
+    private function getJobData($inputData)
+    {
+        $mappedData = [
+            'JobAccountId' => $inputData['account'] ?? null,
+            'JobContactId' => $inputData['contact_id'] ?? null,
+            'JobJobTypeId' => $inputData['Job_Type'] ?? null, // Adjust mapping if needed
+            'JobName' => $inputData['job_name'] ?? null,
+            'JobAmount' => $inputData['amount'] ?? null,
+            'JobUnitId' => $inputData['unit'] ?? null,
+            'JobStartDate' => $inputData['startDate'] ?? null,
+            'JobDeliveryDate' => $inputData['deliveryDate'] ?? null,
+            'JobPhaseTypeId' => $inputData['workflow'] ?? null, // Adjust mapping if needed
+            'JobAutoPlan' => "1", // Assuming it's the same
+            'JobAutoplanStrategyId' => $inputData['autoPlanStrategy'] ?? null,
+            'JobAutoassignment' => "1", // Adjust based on your logic
+            'JobSelectionPlanId' => $inputData['selectionPlan'] ?? null,
+            'JobSourceLanguageId' => $inputData['sourceLanguage'] ?? null,
+            'JobTargetLanguageId' => $inputData['targetLanguage'] ?? null,
+            'JobSubjectMatterId' => $inputData['subjectMatter'] ?? null,
+            'JobContentTypeId' => $inputData['contentType'] ?? null,
+        ];
+
+        return $mappedData;
+    }
+    private function getFilesAndFolders($data)
+    {
+        return $data;
     }
 }

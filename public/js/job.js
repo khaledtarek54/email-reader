@@ -78,3 +78,50 @@ function getWorkflow(jobTypeId) {
         },
     });
 }
+function createJob(mailId) {
+    var formData = getJobDataFromFields();
+
+    $.ajax({
+        url: "/createJob/" + mailId,
+        type: "POST",
+        data: formData,
+        contentType: false,
+        processData: false,
+        headers: {
+            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+        },
+        success: function (response) {
+            
+        },
+        error: function (xhr, status, error) {
+            console.error("Error fetching job data:", error);
+        },
+        complete: function () {
+            $("#loadingOverlay").hide();
+        },
+    });
+}
+function getJobDataFromFields() {
+    const formData = new FormData();
+
+
+    formData.append('account', document.getElementById('account').value);
+    formData.append('contact_id', document.getElementById('contact_id').value);
+    formData.append('job_name', document.getElementById('job_name').value);
+    formData.append('Job_Type', document.getElementById('Job_Type').value);
+    formData.append('workflow', document.getElementById('workflow').value);
+    formData.append('startDate', document.getElementById('startDate').value);
+    formData.append('deliveryDate', document.getElementById('deliveryDate').value);
+    formData.append('deliveryDateTimezone', document.getElementById('deliveryDateTimezone').value);
+    formData.append('amount', document.getElementById('amount').value);
+    formData.append('unit', document.getElementById('unit').value);
+    formData.append('sourceLanguage', document.getElementById('sourceLanguage').value);
+    formData.append('targetLanguage', document.getElementById('targetLanguage').value);
+    formData.append('subjectMatter', document.getElementById('subjectMatter').value);
+    formData.append('contentType', document.getElementById('contentType').value);
+    formData.append('autoPlanStrategy', document.getElementById('autoPlanStrategy').value);
+    formData.append('selectionPlan', document.getElementById('selectionPlan').value);
+    formData.append('online_source_files', document.getElementById('online_source_files').checked ? 1 : 0);
+    formData.append('sharedInstructions', document.getElementById('sharedInstructions').value);
+    return formData
+}

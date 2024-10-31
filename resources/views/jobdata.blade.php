@@ -250,7 +250,7 @@
 
         <!-- Submit Button -->
         <div class="form-group text-center">
-            <button type="button" class="btn-submit">Submit</button>
+            <button type="button" id="submitJobDatabutton" class="btn-submit">Submit</button>
         </div>
     </form>
 </div>
@@ -272,7 +272,7 @@
 
             <!-- Modal Footer with Save and Back Buttons -->
             <div class="modal-footer">
-                <button type="button" class="btn btn-success" onclick="saveAutoPlanSpecs()">Save</button>
+                <button type="button" class="btn btn-success" onclick="saveAutoPlanSpecs('{{$mail->id}}')">Save</button>
             </div>
         </div>
     </div>
@@ -308,6 +308,13 @@
         //////////
 
 
+        ////////////// createJobButton
+        document.getElementById('submitJobDatabutton').addEventListener('click', function() {
+            createJob(mailId);
+        });
+        ///////////////
+
+
         ///////on change jobtype
         $('#Job_Type').change(function() {
             var jobTypeId = $(this).val();
@@ -319,7 +326,6 @@
             }
         });
         //////////
-       
 
 
         // Trigger AJAX upload on file selection

@@ -35,7 +35,10 @@ Route::middleware(['auth'])->group(function () {
 
     Route::post('/autoPlan', [JobController::class, 'autoPlan'])->name('autoPlan');
     Route::post('/autoPlanEdit', [JobController::class, 'autoPlanEdit'])->name('autoPlanEdit');
-    Route::post('/saveAutoPlanSpecs', [JobController::class, 'saveAutoPlanSpecs'])->name('saveAutoPlanSpecs');
+    Route::post('/saveAutoPlanSpecs/{id}', [JobController::class, 'saveAutoPlanSpecs'])->name('saveAutoPlanSpecs');
+
+    Route::post('/createJob/{id}', [JobController::class, 'createJob'])->name('createJob');
+    
 });
 
 Route::get('/login', [UserController::class, 'showLoginForm'])->name('login');

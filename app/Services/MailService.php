@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Autoplan;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
@@ -54,6 +55,7 @@ class MailService
     {
         $mail = $this->connection->table('mails')->select(
             'id',
+            'mail_id',
             'from',
             'subject',
             'html_body',
@@ -87,5 +89,11 @@ class MailService
             ]);
 
         return $result;
+    }
+    public function fetchAutoPlanById($id)
+    {
+        $autoPlan = Autoplan::where('mail_id',$id)->first();
+
+        return $autoPlan;
     }
 }

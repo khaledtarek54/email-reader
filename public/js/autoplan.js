@@ -68,18 +68,18 @@ function populateFormFields(response) {
     }
 }
 
-function saveAutoPlanSpecs() {
+function saveAutoPlanSpecs(mailId) {
     $("#loadingOverlay").show();
     var formData = $("#job_specs_form").serialize();
 
     $.ajax({
         data: formData,
         type: "post",
-        url: "/saveAutoPlanSpecs",
+        url: "/saveAutoPlanSpecs/"+mailId,
         dataType: "json",
         success: function (data, textStatus) {
             $("#loadingOverlay").hide();
-            //$("#autoPlanModal").modal('hide');
+            $("#autoPlanModal").modal('hide');
         },
     });
 }

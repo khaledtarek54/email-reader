@@ -36,9 +36,9 @@ class ExtractorService
         if ($existingJob) {
             return $existingJob;
         }
-        // $mail = $this->mailService->fetchMailById($mailId);
-        // $jsonResponse = $this->createChecker($mail);
-        $jsonResponse = '{"data":{"Requesting Job Order":{"Requesting Job Order":[{"Source Language":"English (United States)","target language":"Persian (Iran)","Job Type":"not found","Amount":"not found","Unit":"not found","Start Date":"not found","Delivery time":"Wed 25th Sept 2024","Shared Instructions":"not found","Unit Price":"not found","Currency":"not found","In folder":"not found","Instructions folder":"not found","Reference folder":"not found","Content type":"not found","Subject Matter":"not found","Auto Plan Strategy":"not found","Auto Assignment":"not found","Selection Plan":"not found","Delivery Time Zone ":"America\/Santiago"}]}}}';
+        $mail = $this->mailService->fetchMailById($mailId);
+        $jsonResponse = $this->createChecker($mail);
+        //$jsonResponse = '{"data":{"Requesting Job Order":{"Requesting Job Order":[{"Source Language":"English (United States)","target language":"Persian (Iran)","Job Type":"not found","Amount":"not found","Unit":"not found","Start Date":"not found","Delivery time":"Wed 25th Sept 2024","Shared Instructions":"not found","Unit Price":"not found","Currency":"not found","In folder":"not found","Instructions folder":"not found","Reference folder":"not found","Content type":"not found","Subject Matter":"not found","Auto Plan Strategy":"not found","Auto Assignment":"not found","Selection Plan":"not found","Delivery Time Zone ":"America\/Santiago"}]}}}';
         $decodedResponse = json_decode($jsonResponse, true);
         $jobData = $decodedResponse['data']['Requesting Job Order']['Requesting Job Order'][0];
 
@@ -71,6 +71,7 @@ class ExtractorService
 
         $job = Savedjob::create([
             'mail_id' => $mailId,
+            'mail_id_tp'=> $mail->mail_id,
             'source_language' => $mappedSourceLanguage,
             'target_language' => $mappedTargetLanguage,
             'job_type' => $mappedJobType,
