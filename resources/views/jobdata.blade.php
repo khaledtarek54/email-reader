@@ -247,7 +247,7 @@
             </div>
             <ul id="reference-fileList"></ul>
         </div>
-
+        <button id="get-files-btn">Get Dropped Files</button>
         <!-- Submit Button -->
         <div class="form-group text-center">
             <button type="button" class="btn-submit">Submit</button>
@@ -319,7 +319,26 @@
             }
         });
         //////////
-       
+        $(document).ready(function() {
+    $('#get-files-btn').on('click', function() {
+        var files = getDroppedFiles();
+
+        // Access the arrays of file names from the returned object
+        var inFolderFiles = files.inFolder;
+        var instructionsFolderFiles = files.instructionsFolder;
+        var referenceFolderFiles = files.referenceFolder;
+
+        // You can now use the arrays however you like, for example, display an alert with the file names
+        alert('In Folder Files: ' + inFolderFiles.join(', '));
+        alert('Instructions Folder Files: ' + instructionsFolderFiles.join(', '));
+        alert('Reference Folder Files: ' + referenceFolderFiles.join(', '));
+
+        // Or log them to the console
+        console.log('In Folder Files:', inFolderFiles);
+        console.log('Instructions Folder Files:', instructionsFolderFiles);
+        console.log('Reference Folder Files:', referenceFolderFiles);
+    });
+});
 
 
         // Trigger AJAX upload on file selection
@@ -345,4 +364,5 @@
             });
         });
     });
+
 </script>
