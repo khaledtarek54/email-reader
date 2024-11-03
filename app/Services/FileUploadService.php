@@ -2,8 +2,9 @@
 
 namespace App\Services;
 
-use Illuminate\Support\Facades\Storage;
 use App\Models\File;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Storage;
 
 class FileUploadService
 {
@@ -51,5 +52,53 @@ class FileUploadService
 
         // Return the array of file paths
         return $storedFiles;
+    }
+    public function uploadFilesFromApiResponse($emailId, $files)
+    {
+        // Convert base64 data to files
+        $decodedFiles = [];
+        foreach ($files as $fileData) {
+            $filename = $fileData['filename'];
+            $mimeType = $fileData['mimeType'];
+            $base64Data = $fileData['data'];
+
+            // Decode base64 data and save it to a temporary file
+            $decodedContent = base64_decode($base64Data);
+            $tempFilePath = sys_get_temp_dir() . '/' . $filename;
+
+            file_put_contents($tempFilePath, $decodedContent);
+
+            // Create an UploadedFile instance
+            $uploadedFile = new \Illuminate\Http\UploadedFile(
+                $tempFilePath,
+                $filename,
+                $mimeType,
+                null,
+                true // Indicates that this is a test file (it won't be uploaded via HTTP)
+            );
+
+            $decodedFiles[] = $uploadedFile;
+        }
+
+        // Call the existing uploadFiles method
+        return $this->uploadFiles($emailId->mail_id, $decodedFiles);
+    }
+    public function getAndDecodeAttachment($mailId)
+    {
+
+        // Make the request to the API with the hard-coded mail ID
+        $response = Http::get("https://stg.gotransparent.com/transparent_updates/mailAttachments.php", [
+            'mail_id' => $mailId
+        ]);
+
+        // Check if the request was successful
+        if ($response->successful()) {
+            // Decode the JSON response
+            $responseData = $response->json();
+            return $responseData;
+
+        } else {
+            return response()->json(['error' => 'Failed to fetch data from the API'], 500);
+        }
     }
 }

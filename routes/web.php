@@ -32,6 +32,8 @@ Route::middleware(['auth'])->group(function () {
         return view('upload_form');
     })->name('upload.form');
     Route::post('/upload', [FileUploadController::class, 'uploadMethod'])->name('upload.file');
+    Route::post('/fetch-files-tp/{id}', [FileUploadController::class, 'uploadFilesFromTP'])->name('uploadFilesFromTP');
+
 
     Route::post('/autoPlan', [JobController::class, 'autoPlan'])->name('autoPlan');
     Route::post('/autoPlanEdit', [JobController::class, 'autoPlanEdit'])->name('autoPlanEdit');
