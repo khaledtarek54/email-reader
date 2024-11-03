@@ -2,15 +2,18 @@
 
 namespace App\Services;
 
+use CURLFile;
 use DateTime;
 use Exception;
 use DateInterval;
+use App\Models\File;
 use App\Models\Autoplan;
 use App\Services\MailService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Storage;
 
 
 
@@ -18,6 +21,7 @@ class JobService
 {
     protected $connection;
     protected $mailService;
+    protected $apiUrl = 'https://stg.gotransparent.com/addJobAPI/FunctionsV2/createJobsForAiEmails';
     public $autoPlanSpecs;
 
     public function __construct(MailService $mailService)
@@ -229,13 +233,61 @@ class JobService
     public function createJob($data, $id)
     {
 
-        //$mailAutoPlan = $this->mailService->fetchAutoPlanById($id);
-        //$userId = session::get('user_id');
-        //$draftId = ???;
+        $username = 'transparent'; // Replace with your actual username
+        $password = '1q2w3e';
+        //return $data;
+        $mailAutoPlan = $this->mailService->fetchAutoPlanById($id);
+        $userId = session::get('user_id');
         $jobData = $this->getJobData($data);
-        //$task_estimation = $mailAutoPlan->specs;
-        //$files_folders = $this->getFilesAndFolders($data);
-        return $jobData;
+        $task_estimation = $mailAutoPlan->specs;
+
+        ////////get file folders
+        $inFolderFiles = explode(',', $data['inFolderFiles'] ?? '');
+        $instructionsFolderFiles = explode(',', $data['instructionsFolderFiles'] ?? '');
+        $referenceFolderFiles = explode(',', $data['referenceFolderFiles'] ?? '');
+        $filesArray = [];
+        $foldersArray = [];
+        $this->addFilesToRequest($inFolderFiles, 2, $filesArray, $foldersArray);
+        $this->addFilesToRequest($instructionsFolderFiles, 20, $filesArray, $foldersArray);
+        $this->addFilesToRequest($referenceFolderFiles, 21, $filesArray, $foldersArray);
+        ////////////////////
+
+        $apiPayload = [
+            'user_id' => $userId,
+            'draft_id' => $id,
+            'jobData' => $jobData,
+            'tasks_estimation' => $task_estimation,
+        ];
+
+
+        $ch = curl_init($this->apiUrl);
+        curl_setopt($ch, CURLOPT_USERPWD, "$username:$password");
+        $curlFiles = [];
+        $curlFolders = [];
+        // Attach files to the request
+        foreach ($filesArray as $index => $filePath) {
+            $fullPath = storage_path("app/{$filePath}");
+
+            if (file_exists($fullPath)) {
+                $curlFiles["files[$index]"] = new CURLFile($fullPath);
+            } else {
+                return response()->json(['error' => 'File not found.', 'path' => $fullPath], 404);
+            }
+            $curlFolders["folder[$index]"] = $foldersArray[$index]; 
+        }
+
+        $postFields = array_merge($apiPayload, $curlFiles, $curlFolders);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $postFields);
+        $response = curl_exec($ch);
+        if (curl_errno($ch)) {
+            $error_msg = curl_error($ch);
+            curl_close($ch);
+            return response()->json(['error' => 'An error occurred.', 'message' => $error_msg], 500);
+        }
+        curl_close($ch);
+        return response()->json(['data' => json_decode($response, true)]);
     }
     private function getJobData($inputData)
     {
@@ -261,8 +313,17 @@ class JobService
 
         return $mappedData;
     }
-    private function getFilesAndFolders($data)
+    private function addFilesToRequest($fileNames, $folderId, &$filesArray, &$foldersArray)
     {
-        return $data;
+
+        foreach ($fileNames as $fileName) {
+            $fileName = trim($fileName);
+            $queryResult = File::where('file_name', $fileName)->get(); // Adjust the model and column name
+
+            foreach ($queryResult as $file) {
+                $filesArray[] = $file->file_path; // Open the file for reading
+                $foldersArray[] = $folderId;
+            }
+        }
     }
 }

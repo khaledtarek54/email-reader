@@ -102,6 +102,7 @@ function createJob(mailId) {
     });
 }
 function getJobDataFromFields() {
+    var files = getDroppedFiles();
     const formData = new FormData();
 
 
@@ -123,5 +124,13 @@ function getJobDataFromFields() {
     formData.append('selectionPlan', document.getElementById('selectionPlan').value);
     formData.append('online_source_files', document.getElementById('online_source_files').checked ? 1 : 0);
     formData.append('sharedInstructions', document.getElementById('sharedInstructions').value);
+    formData.append('inFolderFiles', files.inFolder);
+    formData.append('instructionsFolderFiles', files.instructionsFolder);
+    formData.append('referenceFolderFiles', files.referenceFolder);
+
+
+
+
+
     return formData
 }

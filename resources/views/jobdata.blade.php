@@ -247,7 +247,7 @@
             </div>
             <ul id="reference-fileList"></ul>
         </div>
-
+        
         <!-- Submit Button -->
         <div class="form-group text-center">
             <button type="button" id="submitJobDatabutton" class="btn-submit">Submit</button>
@@ -326,6 +326,7 @@
             }
         });
         //////////
+        
 
 
         // Trigger AJAX upload on file selection
@@ -350,5 +351,6 @@
                 }
             });
         });
-    });
+    }); 
 </script>
+
