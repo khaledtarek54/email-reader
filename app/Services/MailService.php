@@ -106,7 +106,7 @@ class MailService
 
         return $mailid;
     }
-    public function updataAttachmentStatus($id)
+    public function updateAttachmentStatus($id)
     {
 
         // Attempt to update the `mail_attachment_fetched` status
