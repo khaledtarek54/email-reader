@@ -2,8 +2,9 @@
 
 namespace App\Services;
 
-use App\Models\Autoplan;
 use App\Models\User;
+use App\Models\Autoplan;
+use App\Models\Savedjob;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -92,8 +93,24 @@ class MailService
     }
     public function fetchAutoPlanById($id)
     {
-        $autoPlan = Autoplan::where('mail_id',$id)->first();
+        $autoPlan = Autoplan::where('mail_id', $id)->first();
 
         return $autoPlan;
+    }
+    public function fetchAttachmentStatus($id)
+    {
+        $mailid = Savedjob::select('mail_id')
+            ->where('mail_id_tp', $id)
+            ->where('mail_attachment_fetched', 0)
+            ->first();
+
+        return $mailid;
+    }
+    public function updataAttachmentStatus($id)
+    {
+
+        // Attempt to update the `mail_attachment_fetched` status
+        Savedjob::where('mail_id', $id)
+            ->update(['mail_attachment_fetched' => 1]);
     }
 }

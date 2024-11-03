@@ -381,3 +381,20 @@ function getDroppedFiles() {
         referenceFolder: referenceFolderFiles
     };
 }
+    function fetchFilesFromTP(mailIdTP,mailId){
+        $.ajax({
+            url: '/fetch-files-tp/' + '192e23a005a38235',
+            type: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            success: function(response) {
+                console.log(response)
+                fetchFiles(mailId);
+            },
+            error: function(xhr, status, error) {
+                console.error("Error fetching files:", error);
+            }
+        });
+    }
+
