@@ -45,8 +45,14 @@ class FileUploadController extends Controller
             $fileData = $this->fileUploadService->getAndDecodeAttachment($id);
             $this->fileUploadService->uploadFilesFromApiResponse($mailId, $fileData);
             $this->mailService->updateAttachmentStatus($mailId->mail_id);
-            
+            return response()->json([
+                'message' => 'Files uploaded successfully!',
+                'email_id' => $id,
+            ]);
         }
-        return $mailId;
+        return response()->json([
+            'message' => 'No files uploaded',
+            'email_id' => $id,
+        ]);
     }
 }

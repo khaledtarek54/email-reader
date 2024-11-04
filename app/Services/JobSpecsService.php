@@ -69,6 +69,7 @@ class JobSpecsService
     public function fetchJobTypes()
     {
         $jobTypes = $this->connection->table('job_types')
+            ->select('id', 'name')
             ->whereIn('id', [28, 29, 30, 31, 32])
             ->get();
 
@@ -77,6 +78,7 @@ class JobSpecsService
     public function fetchSourceLanguages()
     {
         $source_languages = $this->connection->table('source_languages')
+            ->select('id', 'name')
             ->where('record_status', "a")
             ->get();
 
@@ -85,6 +87,7 @@ class JobSpecsService
     public function fetchTargetLanguages()
     {
         $source_languages = $this->connection->table('target_languages')
+            ->select('id', 'name')
             ->where('record_status', "a")
             ->get();
 
@@ -93,6 +96,7 @@ class JobSpecsService
     public function fetchUnits()
     {
         $units = $this->connection->table('units')
+            ->select('id', 'name')
             ->where('record_status', "a")
             ->get();
 
@@ -101,6 +105,7 @@ class JobSpecsService
     public function fetchContentTypes()
     {
         $content_types = $this->connection->table('content_types')
+            ->select('id', 'name')
             ->where('record_status', "a")
             ->get();
 
@@ -109,6 +114,7 @@ class JobSpecsService
     public function fetchSubjectMatters()
     {
         $subject_matters = $this->connection->table('subject_matters')
+            ->select('id', 'name')
             ->where('record_status', "a")
             ->get();
 
@@ -117,6 +123,7 @@ class JobSpecsService
     public function fetchPlans()
     {
         $plans = $this->connection->table('plans')
+            ->select('id', 'name')
             ->where('record_status', "a")
             ->get();
 
@@ -125,6 +132,7 @@ class JobSpecsService
     public function fetchWorkflows($id)
     {
         $phase_types = $this->connection->table('phase_types')
+            ->select('id', 'name')
             ->where('job_type_id', $id)
             ->where('record_status', "a")
             ->get();

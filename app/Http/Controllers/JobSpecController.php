@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Services\MailService;
 use App\Services\JobSpecsService;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Cache;
 
 class JobSpecController extends Controller
 {
@@ -21,24 +22,52 @@ class JobSpecController extends Controller
     }
     public function jobData($id)
     {
+
+
         try {
-            $result = $this->jobSpecsService->extractContactAndAccounts($id);
+            $result = Cache::remember("contact_accounts_{$id}", 3600, function () use ($id) {
+                return $this->jobSpecsService->extractContactAndAccounts($id);
+            });
             $contact = $result['contact'];
             $accounts = $result['accounts'];
+
+            $mail = Cache::remember("mail_{$id}", 3600, function () use ($id) {
+                return $this->mailService->fetchMailById($id);
+            });
+
+            $jobTypes = Cache::remember('job_types', 3600, function () {
+                return $this->jobSpecsService->fetchJobTypes();
+            });
+
+            $sourceLanguages = Cache::remember('source_languages', 3600, function () {
+                return $this->jobSpecsService->fetchSourceLanguages();
+            });
+
+            $targetLanguages = Cache::remember('target_languages', 3600, function () {
+                return $this->jobSpecsService->fetchTargetLanguages();
+            });
+
+            $units = Cache::remember('units', 3600, function () {
+                return $this->jobSpecsService->fetchUnits();
+            });
+
+            $contentTypes = Cache::remember('content_types', 3600, function () {
+                return $this->jobSpecsService->fetchContentTypes();
+            });
+
+            $subjectMatters = Cache::remember('subject_matters', 3600, function () {
+                return $this->jobSpecsService->fetchSubjectMatters();
+            });
+
+            $plans = Cache::remember('plans', 3600, function () {
+                return $this->jobSpecsService->fetchPlans();
+            });
         } catch (Exception $e) {
             return response()->json([
                 'error' => 'An error occurred.',
                 'message' => $e->getMessage()
             ], 500);
         }
-        $mail = $this->mailService->fetchMailById($id);
-        $jobTypes = $this->jobSpecsService->fetchJobTypes();
-        $sourceLanguages = $this->jobSpecsService->fetchSourceLanguages();
-        $targetLanguages = $this->jobSpecsService->fetchTargetLanguages();
-        $units = $this->jobSpecsService->fetchUnits();
-        $contentTypes = $this->jobSpecsService->fetchContentTypes();
-        $subjectMatters = $this->jobSpecsService->fetchSubjectMatters();
-        $plans = $this->jobSpecsService->fetchPlans();
         return view('jobdata', compact('mail', 'contact', 'accounts', 'jobTypes', 'sourceLanguages', 'targetLanguages', 'units', 'contentTypes', 'subjectMatters', 'plans'));
     }
     public function Workflows(Request $request)
@@ -51,7 +80,7 @@ class JobSpecController extends Controller
 
         return response()->json($workflows);
     }
-    public function fetchFiles(Request $request,$id)
+    public function fetchFiles($id)
     {
         try {
             $files = $this->jobSpecsService->fetchFiles($id);
