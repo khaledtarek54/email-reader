@@ -8,6 +8,11 @@
     </div>
 
 </nav>
+@if ($errors->has('error'))
+<div class="alert alert-danger">
+    {{ $errors->first('error') }}
+</div>
+@endif
 
 @if (session('success'))
 <div class="alert alert-success">
@@ -39,8 +44,9 @@
 
 <!-- Email Action Buttons (Gmail-style) -->
 <div class="email-actions">
-    
-    <form action="{{ route('jobdata', ['id' => $mail->id]) }}" method="POST" style="display: inline;">
+
+
+    <form action="{{ route('jobdata', ['id' => $mail->id]) }}" method="POST" style="display: inline;" onsubmit="return checkMailStatus();">
         @csrf
         <button type="submit"><i class="fas fa-film"></i> Job data</button>
     </form>
@@ -61,3 +67,18 @@
     @endif
 </div>
 @endsection
+
+<script>
+    function checkMailStatus() {
+        // If the mail is marked as trash, prevent form submission
+        if ({
+                {
+                    json_encode($mail - > trash)
+                }
+            }) {
+            alert('This mail is in the trash, please recover to access job data.');
+            return false; // Prevent form submission
+        }
+        return true; // Allow form submission
+    }
+</script>

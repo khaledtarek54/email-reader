@@ -20,7 +20,7 @@ class AuthService
     public function validateCredentials($username, $password)
     {
         // Assuming your external database has a users table
-        $user = $this->connection->table('users')
+        $user = $this->connection->table('logins')
             ->where('username', $username)
             ->first();
 
@@ -55,16 +55,21 @@ class AuthService
     protected function getOrCreateLocalUser($externalUser)
     {
         // You can check if the user exists locally in your application's users table
-        $localUser = User::where('external_id', $externalUser->id)->first();
+        $user = $this->connection->table('users')
+        ->where('login_id', $externalUser->id)
+        ->first();
+        Session::put('contact_id', $user->contact_id);
+
+        $localUser = User::where('external_id', $user->id)->first();
 
         // If the user doesn't exist locally, create it
         if (!$localUser) {
             $localUser = User::create([
-                'name'=>$externalUser->name,
-                'email'=>$externalUser->name,
-                'password'=>$externalUser->name,
-                'username' => $externalUser->name,
-                'external_id' => $externalUser->id,
+                'name'=>$user->name,
+                'email'=>$user->name,
+                'password'=>$user->name,
+                'username' => $user->name,
+                'external_id' => $user->id,
             ]);
         }
 

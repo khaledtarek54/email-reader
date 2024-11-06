@@ -383,7 +383,7 @@ function getDroppedFiles() {
 }
     function fetchFilesFromTP(mailIdTP,mailId){
         $.ajax({
-            url: '/fetch-files-tp/' + '192e23a005a38235',
+            url: '/fetch-files-tp/' + mailIdTP,
             type: 'POST',
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')

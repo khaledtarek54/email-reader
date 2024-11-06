@@ -63,10 +63,7 @@ class JobSpecController extends Controller
                 return $this->jobSpecsService->fetchPlans();
             });
         } catch (Exception $e) {
-            return response()->json([
-                'error' => 'An error occurred.',
-                'message' => $e->getMessage()
-            ], 500);
+            return redirect()->back()->withErrors(['error' => 'An error occurred: ' . $e->getMessage()]);
         }
         return view('jobdata', compact('mail', 'contact', 'accounts', 'jobTypes', 'sourceLanguages', 'targetLanguages', 'units', 'contentTypes', 'subjectMatters', 'plans'));
     }

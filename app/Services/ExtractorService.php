@@ -37,10 +37,12 @@ class ExtractorService
             return $existingJob;
         }
         $mail = $this->mailService->fetchMailById($mailId);
+        //return strip_tags($mail->html_body);
         $jsonResponse = $this->createChecker($mail);
+        //return $jsonResponse;
         //$jsonResponse = '{"data":{"Requesting Job Order":{"Requesting Job Order":[{"Source Language":"English (United States)","target language":"Persian (Iran)","Job Type":"not found","Amount":"not found","Unit":"not found","Start Date":"not found","Delivery time":"Wed 25th Sept 2024","Shared Instructions":"not found","Unit Price":"not found","Currency":"not found","In folder":"not found","Instructions folder":"not found","Reference folder":"not found","Content type":"not found","Subject Matter":"not found","Auto Plan Strategy":"not found","Auto Assignment":"not found","Selection Plan":"not found","Delivery Time Zone ":"America\/Santiago"}]}}}';
-        $decodedResponse = json_decode($jsonResponse, true);
-        $jobData = $decodedResponse['data']['Requesting Job Order']['Requesting Job Order'][0];
+        //$decodedResponse = json_decode($jsonResponse, true);
+        $jobData = $jsonResponse['data']['Requesting Job Order']['Requesting Job Order'][0];
 
         $mappedJobType = $this->mapJobTypes($jobData['Job Type']);
         $mappedSourceLanguage = $this->mapSourceLanguage($jobData['Source Language']);
@@ -50,15 +52,18 @@ class ExtractorService
         $mappedSubjectMatter = $this->mapSubjectMatter($jobData['Subject Matter']);
         $mappedPlan = $this->mapPlan($jobData['Selection Plan']);
 
+
         $mappedAmount = $jobData['Amount'] != "not found" ? $jobData['Amount'] : null;
-        $mappedUnit = $jobData['Unit'] != "not found" ? $jobData['Unit'] : null;
-
-
-        $dateTime = DateTime::createFromFormat('D dS M Y', $jobData['Start Date']);
-        $mappedStartDate = $jobData['Start Date'] != "not found" ? $dateTime->format('Y-m-d H:i:s') : null;
-        $dateTime = DateTime::createFromFormat('D dS M Y', $jobData['Delivery time']);
-        $mappedDeliverytime = $jobData['Delivery time'] != "not found" ? $dateTime->format('Y-m-d H:i:s') : null;
-
+        $mappedStartDate = null;
+        $mappedDeliverytime = null;
+        if ($jobData['Start Date'] != "not found") {
+            $dateTime = DateTime::createFromFormat('m/d/Y h:i:s', $jobData['Start Date']);
+            $mappedStartDate = $dateTime->format('Y-m-d H:i:s');
+        }
+        if ($jobData['Delivery time'] != "not found") {
+            $dateTime = DateTime::createFromFormat('m/d/Y h:i:s', $jobData['Delivery time']);
+            $mappedDeliverytime =  $dateTime->format('Y-m-d H:i:s');
+        }
 
         $mappedSharedInstructions = $jobData['Shared Instructions'] != "not found" ? $jobData['Shared Instructions'] : null;
         $mappedUnitPrice = $jobData['Unit Price'] != "not found" ? $jobData['Unit Price'] : null;
@@ -66,19 +71,19 @@ class ExtractorService
         $mappedInfolder = $jobData['In folder'] != "not found" ? $jobData['In folder'] : null;
         $mappedInstructionsfolder = $jobData['Instructions folder'] != "not found" ? $jobData['Instructions folder'] : null;
         $mappedReferencefolder = $jobData['Reference folder'] != "not found" ? $jobData['Reference folder'] : null;
-        $mappedDeliveryTimeZone  = $jobData['Delivery Time Zone '] != "not found" ? $jobData['Delivery Time Zone '] : null;
-        $mappedOnlineSourceFiles = $jobData['In folder'] == "not found" && $jobData['Instructions folder'] == "not found" && $jobData['Reference folder'] == "not found" ? true : false;
+        $mappedDeliveryTimeZone  = $jobData['Delivery Time Zone'] != "not found" ? $jobData['Delivery Time Zone'] : null;
+        $mappedOnlineSourceFiles = $jobData['In folder'][0] == "not found" && $jobData['Instructions folder'][0] == "not found" && $jobData['Reference folder'][0] == "not found" ? true : false;
 
         $job = Savedjob::create([
             'mail_id' => $mailId,
-            'mail_id_tp'=> $mail->mail_id,
+            'mail_id_tp' => $mail->mail_id,
             'source_language' => $mappedSourceLanguage,
             'target_language' => $mappedTargetLanguage,
             'job_type' => $mappedJobType,
             'amount' => $mappedAmount,
             'unit' => $mappedUnit,
-            'start_date' => $mappedStartDate,
-            'delivery_time' => $mappedDeliverytime,
+            'start_date' => $mappedStartDate ? $mappedStartDate : null,
+            'delivery_time' => $mappedDeliverytime ? $mappedDeliverytime : null,
             'delivery_timezone' => $mappedDeliveryTimeZone,
             'shared_instructions' => $mappedSharedInstructions,
             'unit_price' => $mappedUnitPrice,
@@ -92,6 +97,7 @@ class ExtractorService
             'auto_plan_strategy' =>  null,
             'auto_assignment' =>  null,
             'selection_plan' => $mappedPlan,
+            'mail_attachment_fetched' => false
         ]);
         return $job;
     }
@@ -104,6 +110,9 @@ class ExtractorService
             ->where('name', $jobtype)
             ->where('record_status', "a")
             ->first();
+        if (!$mappedJobType) {
+            return null;
+        }
         return $mappedJobType->id;
     }
     public function mapSourceLanguage($SourceLanguage)
@@ -112,9 +121,15 @@ class ExtractorService
             return null;
         }
         $SourceLanguage = $this->connection->table('source_languages')
-            ->where('name', $SourceLanguage)
+            ->where(function ($query) use ($SourceLanguage) {
+                $query->where('code2', $SourceLanguage)
+                    ->orWhere('name', $SourceLanguage);
+            })
             ->where('record_status', "a")
             ->first();
+        if (!$SourceLanguage) {
+            return null;
+        }
         return $SourceLanguage->id;
     }
     public function mapTargetLanguage($TargetLanguage)
@@ -123,9 +138,15 @@ class ExtractorService
             return null;
         }
         $TargetLanguage = $this->connection->table('target_languages')
-            ->where('name', $TargetLanguage)
+            ->where(function ($query) use ($TargetLanguage) {
+                $query->where('code2', $TargetLanguage)
+                    ->orWhere('name', $TargetLanguage);
+            })
             ->where('record_status', "a")
             ->first();
+        if (!$TargetLanguage) {
+            return null;
+        }
         return $TargetLanguage->id;
     }
     public function mapUnit($unit)
@@ -137,6 +158,9 @@ class ExtractorService
             ->where('name', $unit)
             ->where('record_status', "a")
             ->first();
+        if (!$unit) {
+            return null;
+        }
         return $unit->id;
     }
     public function mapContentType($ContentType)
@@ -148,6 +172,9 @@ class ExtractorService
             ->where('name', $ContentType)
             ->where('record_status', "a")
             ->first();
+        if (!$ContentType) {
+            return null;
+        }
         return $ContentType->id;
     }
     public function mapSubjectMatter($SubjectMatter)
@@ -159,6 +186,9 @@ class ExtractorService
             ->where('name', $SubjectMatter)
             ->where('record_status', "a")
             ->first();
+        if (!$SubjectMatter) {
+            return null;
+        }
         return $SubjectMatter->id;
     }
     public function mapPlan($Plan)
@@ -170,6 +200,9 @@ class ExtractorService
             ->where('name', $Plan)
             ->where('record_status', "a")
             ->first();
+        if (!$Plan) {
+            return null;
+        }
         return $Plan->id;
     }
     public function createChecker($mail)
@@ -178,13 +211,13 @@ class ExtractorService
             'apiKey' => $this->apiKey,
             'checker_id' => $this->checkerId,
             'checker_type' => $this->checkerType,
-            'extract_content' => $mail->html_body,
+            'extract_content' => strip_tags($mail->html_body),
         ]);
 
         if ($response->successful()) {
             return $response->json();
         }
 
-        return $response->throw();
+        return $response;
     }
 }

@@ -29,7 +29,7 @@ class MailService
             DB::raw('SUBSTRING(html_body, 1, 250) as html_body'), // Limit html_body to 100 chars
             'mail_datetime'
         )
-            ->where('TP_PM_ID', 449756)
+            ->where('TP_PM_ID', session::get('user_id'))
             ->where('trash', 0)
             ->orderBy('creation_time', 'desc')
             ->paginate(5);
@@ -45,7 +45,7 @@ class MailService
             DB::raw('SUBSTRING(html_body, 1, 250) as html_body'), // Limit html_body to 100 chars
             'mail_datetime'
         )
-            ->where('TP_PM_ID', 449756)
+            ->where('TP_PM_ID', session::get('user_id'))
             ->where('trash', 1)
             ->orderBy('creation_time', 'desc')
             ->paginate(5);

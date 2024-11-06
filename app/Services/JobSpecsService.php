@@ -47,10 +47,9 @@ class JobSpecsService
     }
     public function fetchContactByMailId($mailId)
     {
-        $mail = $this->mailService->fetchMailById($mailId);
 
         $contact = $this->connection->table('contacts')
-            ->where('id', $mail->contact_id)
+            ->where('id', session::get('contact_id'))
             ->first();
 
 
