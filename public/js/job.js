@@ -7,6 +7,7 @@ function fetchJobData(mailId) {
         },
         success: function (response) {
             mapJobData(response);
+            fetchFilesFromTP(response.mail_id_tp, mailId,response);
         },
         error: function (xhr, status, error) {
             console.error("Error fetching job data:", error);
@@ -17,7 +18,6 @@ function fetchJobData(mailId) {
     });
 }
 function mapJobData(data) {
-    //populateSelect('workflow', data.workflows);
     if (data.job_type !== null) {
         document.getElementById("Job_Type").value = data.job_type;
         getWorkflow(data.job_type);
@@ -90,9 +90,7 @@ function createJob(mailId) {
         headers: {
             "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
         },
-        success: function (response) {
-            
-        },
+        success: function (response) {},
         error: function (xhr, status, error) {
             console.error("Error fetching job data:", error);
         },
@@ -105,32 +103,57 @@ function getJobDataFromFields() {
     var files = getDroppedFiles();
     const formData = new FormData();
 
+    formData.append("account", document.getElementById("account").value);
+    formData.append("contact_id", document.getElementById("contact_id").value);
+    formData.append("job_name", document.getElementById("job_name").value);
+    formData.append("Job_Type", document.getElementById("Job_Type").value);
+    formData.append("workflow", document.getElementById("workflow").value);
+    formData.append("startDate", document.getElementById("startDate").value);
+    formData.append(
+        "deliveryDate",
+        document.getElementById("deliveryDate").value
+    );
+    formData.append(
+        "deliveryDateTimezone",
+        document.getElementById("deliveryDateTimezone").value
+    );
+    formData.append("amount", document.getElementById("amount").value);
+    formData.append("unit", document.getElementById("unit").value);
+    formData.append(
+        "sourceLanguage",
+        document.getElementById("sourceLanguage").value
+    );
+    formData.append(
+        "targetLanguage",
+        document.getElementById("targetLanguage").value
+    );
+    formData.append(
+        "subjectMatter",
+        document.getElementById("subjectMatter").value
+    );
+    formData.append(
+        "contentType",
+        document.getElementById("contentType").value
+    );
+    formData.append(
+        "autoPlanStrategy",
+        document.getElementById("autoPlanStrategy").value
+    );
+    formData.append(
+        "selectionPlan",
+        document.getElementById("selectionPlan").value
+    );
+    formData.append(
+        "online_source_files",
+        document.getElementById("online_source_files").checked ? 1 : 0
+    );
+    formData.append(
+        "sharedInstructions",
+        document.getElementById("sharedInstructions").value
+    );
+    formData.append("inFolderFiles", files.inFolder);
+    formData.append("instructionsFolderFiles", files.instructionsFolder);
+    formData.append("referenceFolderFiles", files.referenceFolder);
 
-    formData.append('account', document.getElementById('account').value);
-    formData.append('contact_id', document.getElementById('contact_id').value);
-    formData.append('job_name', document.getElementById('job_name').value);
-    formData.append('Job_Type', document.getElementById('Job_Type').value);
-    formData.append('workflow', document.getElementById('workflow').value);
-    formData.append('startDate', document.getElementById('startDate').value);
-    formData.append('deliveryDate', document.getElementById('deliveryDate').value);
-    formData.append('deliveryDateTimezone', document.getElementById('deliveryDateTimezone').value);
-    formData.append('amount', document.getElementById('amount').value);
-    formData.append('unit', document.getElementById('unit').value);
-    formData.append('sourceLanguage', document.getElementById('sourceLanguage').value);
-    formData.append('targetLanguage', document.getElementById('targetLanguage').value);
-    formData.append('subjectMatter', document.getElementById('subjectMatter').value);
-    formData.append('contentType', document.getElementById('contentType').value);
-    formData.append('autoPlanStrategy', document.getElementById('autoPlanStrategy').value);
-    formData.append('selectionPlan', document.getElementById('selectionPlan').value);
-    formData.append('online_source_files', document.getElementById('online_source_files').checked ? 1 : 0);
-    formData.append('sharedInstructions', document.getElementById('sharedInstructions').value);
-    formData.append('inFolderFiles', files.inFolder);
-    formData.append('instructionsFolderFiles', files.instructionsFolder);
-    formData.append('referenceFolderFiles', files.referenceFolder);
-
-
-
-
-
-    return formData
+    return formData;
 }

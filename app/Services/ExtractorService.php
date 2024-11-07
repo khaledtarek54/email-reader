@@ -3,7 +3,9 @@
 namespace App\Services;
 
 use DateTime;
+use Exception;
 use App\Models\Job;
+use DateTimeImmutable;
 use App\Models\Savedjob;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
@@ -40,8 +42,8 @@ class ExtractorService
         //return strip_tags($mail->html_body);
         $jsonResponse = $this->createChecker($mail);
         //return $jsonResponse;
-        //$jsonResponse = '{"data":{"Requesting Job Order":{"Requesting Job Order":[{"Source Language":"English (United States)","target language":"Persian (Iran)","Job Type":"not found","Amount":"not found","Unit":"not found","Start Date":"not found","Delivery time":"Wed 25th Sept 2024","Shared Instructions":"not found","Unit Price":"not found","Currency":"not found","In folder":"not found","Instructions folder":"not found","Reference folder":"not found","Content type":"not found","Subject Matter":"not found","Auto Plan Strategy":"not found","Auto Assignment":"not found","Selection Plan":"not found","Delivery Time Zone ":"America\/Santiago"}]}}}';
-        //$decodedResponse = json_decode($jsonResponse, true);
+
+
         $jobData = $jsonResponse['data']['Requesting Job Order']['Requesting Job Order'][0];
 
         $mappedJobType = $this->mapJobTypes($jobData['Job Type']);
@@ -53,26 +55,32 @@ class ExtractorService
         $mappedPlan = $this->mapPlan($jobData['Selection Plan']);
 
 
-        $mappedAmount = $jobData['Amount'] != "not found" ? $jobData['Amount'] : null;
+        $mappedAmount = $jobData['Amount'] != 'not found' ? $jobData['Amount'] : null;
         $mappedStartDate = null;
         $mappedDeliverytime = null;
-        if ($jobData['Start Date'] != "not found") {
-            $dateTime = DateTime::createFromFormat('m/d/Y h:i:s', $jobData['Start Date']);
-            $mappedStartDate = $dateTime->format('Y-m-d H:i:s');
+        if ($jobData['Start Date'] != 'not found') {
+            try {
+                $mappedStartDate = $this->parseDate($jobData['Start Date']);
+            } catch (Exception $e) {
+                throw new Exception("Date format not recognized");
+            }
         }
-        if ($jobData['Delivery time'] != "not found") {
-            $dateTime = DateTime::createFromFormat('m/d/Y h:i:s', $jobData['Delivery time']);
-            $mappedDeliverytime =  $dateTime->format('Y-m-d H:i:s');
+        if ($jobData['Delivery time'] != 'not found') {
+            try {
+                $mappedDeliverytime = $this->parseDate($jobData['Delivery time']);
+            } catch (Exception $e) {
+                throw new Exception("Date format not recognized");
+            }
         }
 
-        $mappedSharedInstructions = $jobData['Shared Instructions'] != "not found" ? $jobData['Shared Instructions'] : null;
-        $mappedUnitPrice = $jobData['Unit Price'] != "not found" ? $jobData['Unit Price'] : null;
-        $mappedCurrency = $jobData['Currency'] != "not found" ? $jobData['Currency'] : null;
-        $mappedInfolder = $jobData['In folder'] != "not found" ? $jobData['In folder'] : null;
-        $mappedInstructionsfolder = $jobData['Instructions folder'] != "not found" ? $jobData['Instructions folder'] : null;
-        $mappedReferencefolder = $jobData['Reference folder'] != "not found" ? $jobData['Reference folder'] : null;
-        $mappedDeliveryTimeZone  = $jobData['Delivery Time Zone'] != "not found" ? $jobData['Delivery Time Zone'] : null;
-        $mappedOnlineSourceFiles = $jobData['In folder'][0] == "not found" && $jobData['Instructions folder'][0] == "not found" && $jobData['Reference folder'][0] == "not found" ? true : false;
+        $mappedSharedInstructions = $jobData['Shared Instructions'] != 'not found' ? $jobData['Shared Instructions'] : null;
+        $mappedUnitPrice = $jobData['Unit Price'] != 'not found' ? $jobData['Unit Price'] : null;
+        $mappedCurrency = $jobData['Currency'] != 'not found' ? $jobData['Currency'] : null;
+        $mappedInfolder = $jobData['In folder'][0] != 'not found' ? $jobData['In folder'] : null;
+        $mappedInstructionsfolder = $jobData['Instructions folder'][0] != 'not found' ? $jobData['Instructions folder'] : null;
+        $mappedReferencefolder = $jobData['Reference folder'][0] != 'not found' ? $jobData['Reference folder'] : null;
+        $mappedDeliveryTimeZone  = $jobData['Delivery Time Zone'] != 'not found' ? $jobData['Delivery Time Zone'] : null;
+        $mappedOnlineSourceFiles = $jobData['In folder'][0] == 'not found' && $jobData['Instructions folder'][0] == 'not found' && $jobData['Reference folder'][0] == 'not found' ? true : false;
 
         $job = Savedjob::create([
             'mail_id' => $mailId,
@@ -101,14 +109,38 @@ class ExtractorService
         ]);
         return $job;
     }
+    function parseDate($dateString)
+    {
+        // Define accepted date formats
+        $formats = [
+            'm/d/Y h:i:s A',   // 09/07/2020 11:59:00 PM
+            'Y-m-d H:i:s',     // 2020-09-07 23:59:00
+            'd-m-Y H:i',       // 07-09-2020 23:59
+            'Y/m/d H:i:s',     // 2020/09/07 23:59:00
+            'm/d/Y',           // 11/10/2020 
+        ];  
+
+        // Try parsing each format
+        foreach ($formats as $format) {
+            $date = DateTimeImmutable::createFromFormat($format, $dateString);
+            if ($date !== false) {
+                // Successfully parsed date, format it to standard database format
+                return $date->format('Y-m-d H:i:s');
+            }
+        }
+
+        // If no format matched, handle the error
+        throw new Exception("Date format not recognized: $dateString");
+    }
     public function mapJobTypes($jobtype)
     {
-        if ($jobtype == "not found") {
+        if ($jobtype == 'not found') {
             return null;
         }
         $mappedJobType = $this->connection->table('job_types')
             ->where('name', $jobtype)
             ->where('record_status', "a")
+            ->whereIn('id', [28, 29, 30, 31, 32])
             ->first();
         if (!$mappedJobType) {
             return null;
@@ -117,7 +149,7 @@ class ExtractorService
     }
     public function mapSourceLanguage($SourceLanguage)
     {
-        if ($SourceLanguage == "not found") {
+        if ($SourceLanguage == 'not found') {
             return null;
         }
         $SourceLanguage = $this->connection->table('source_languages')
@@ -134,7 +166,7 @@ class ExtractorService
     }
     public function mapTargetLanguage($TargetLanguage)
     {
-        if ($TargetLanguage == "not found") {
+        if ($TargetLanguage == 'not found') {
             return null;
         }
         $TargetLanguage = $this->connection->table('target_languages')
@@ -151,7 +183,7 @@ class ExtractorService
     }
     public function mapUnit($unit)
     {
-        if ($unit == "not found") {
+        if ($unit == 'not found') {
             return null;
         }
         $unit = $this->connection->table('units')
@@ -165,7 +197,7 @@ class ExtractorService
     }
     public function mapContentType($ContentType)
     {
-        if ($ContentType == "not found") {
+        if ($ContentType == 'not found') {
             return null;
         }
         $ContentType = $this->connection->table('content_types')
@@ -179,7 +211,7 @@ class ExtractorService
     }
     public function mapSubjectMatter($SubjectMatter)
     {
-        if ($SubjectMatter == "not found") {
+        if ($SubjectMatter == 'not found') {
             return null;
         }
         $SubjectMatter = $this->connection->table('subject_matters')
@@ -193,7 +225,7 @@ class ExtractorService
     }
     public function mapPlan($Plan)
     {
-        if ($Plan == "not found") {
+        if ($Plan == 'not found') {
             return null;
         }
         $Plan = $this->connection->table('plans')

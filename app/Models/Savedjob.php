@@ -29,6 +29,7 @@ class Savedjob extends Model
         'auto_plan_strategy',
         'auto_assignment',
         'selection_plan',
+        'mail_id_tp',
         'mail_attachment_fetched'
     ];
 }

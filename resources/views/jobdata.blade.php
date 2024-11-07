@@ -296,8 +296,9 @@
         var mailIdTP = <?= json_encode($mail->mail_id) ?>; // Wrap in json_encode to handle quotes
         console.log(mailIdTP);
         $('#loadingOverlay').show();
-        fetchFilesFromTP(mailIdTP, mailId);
         fetchJobData(mailId);
+        
+        
 
 
         //////// autoplan button 
