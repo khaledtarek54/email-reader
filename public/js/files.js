@@ -7,7 +7,10 @@ function fetchFiles(mailId, jobData) {
         },
         success: function (response) {
             displayFiles(response);
-            assignFilesToFolders(jobData);
+            console.log(response);
+            if (!response.length == 0) {
+                assignFilesToFolders(jobData, response);
+            }
         },
         error: function (xhr, status, error) {
             console.error("Error fetching files:", error);
@@ -16,76 +19,102 @@ function fetchFiles(mailId, jobData) {
 }
 function assignFilesToFolders(jobData) {
     // Parse the folders data (assuming they are in JSON string format)
-    const inFolderFiles = jobData.in_folder ? JSON.parse(jobData.in_folder) : [];
-    const instructionsFolderFiles = jobData.instructions_folder ? JSON.parse(jobData.instructions_folder) : [];
-    const referenceFolderFiles = jobData.reference_folder ? JSON.parse(jobData.reference_folder) : [];
+    const inFolderFiles = jobData.in_folder
+        ? JSON.parse(jobData.in_folder)
+        : [];
+    const instructionsFolderFiles = jobData.instructions_folder
+        ? JSON.parse(jobData.instructions_folder)
+        : [];
+    const referenceFolderFiles = jobData.reference_folder
+        ? JSON.parse(jobData.reference_folder)
+        : [];
 
     // Define the drop zones for each folder
     var inFolderZone = $("#drag-drop-area"); // Assuming this is for in_folder
     var instructionsFolderZone = $("#drag-drop-area1"); // Assuming this is for instructions_folder
     var referenceFolderZone = $("#drag-drop-area2"); // Assuming this is for reference_folder
 
+    function removeFileFromFolders(file) {
+        [inFolderFiles, instructionsFolderFiles, referenceFolderFiles].forEach(
+            (folder) => {
+                const index = folder.indexOf(file);
+                if (index !== -1) {
+                    folder.splice(index, 1); // Remove the file from this specific folder array
+                }
+            }
+        );
+    }
+
     // Helper function to add files to the appropriate drop zone
     function addFilesToDropZone(zone, files) {
         files.forEach(function (file) {
             // Check if the file is already in the drop zone
-            var existingFile = zone.find(`div:contains('${file}')`);
-            if (existingFile.length > 0) {
-                console.log(`File already exists in the drop zone: ${file}`);
-                return;
-            }
+            if (
+                inFolderFiles.includes(file) ||
+                instructionsFolderFiles.includes(file) ||
+                referenceFolderFiles.includes(file)
+            ) {
+                removeFileFromFolders(file); // Remove the file from all folder arrays
+                var existingFile = zone.find(`div:contains('${file}')`);
+                if (existingFile.length > 0) {
+                    console.log(
+                        `File already exists in the drop zone: ${file}`
+                    );
+                    return;
+                }
 
-            // Add the file to the drop zone
-            var droppedItem = $("<div></div>").text(file).css({
-                padding: "5px 10px",
-                border: "1px solid #ccc",
-                borderRadius: "5px",
-                marginBottom: "10px",
-                position: "relative",
-            });
-
-            // Create delete button
-            var deleteButton = $("<button></button>")
-                .text("Delete")
-                .css({
-                    position: "absolute",
-                    right: "5px",
-                    top: "5px",
-                    background: "red",
-                    color: "white",
-                    border: "none",
-                    borderRadius: "3px",
-                    padding: "2px 5px",
-                    cursor: "pointer",
-                })
-                .data("file-name", file)
-                .on("click", function () {
-                    var fileNameToRestore = $(this).data("file-name");
-                    console.log("Restoring file:", fileNameToRestore);
-
-                    // Restore file to the list
-                    var listItem = $("<li></li>")
-                        .addClass("list-inline-item draggable-file")
-                        .attr("draggable", true)
-                        .attr("data-file-name", fileNameToRestore)
-                        .text(fileNameToRestore)
-                        .css({
-                            marginRight: "15px",
-                            padding: "5px 10px",
-                            border: "1px solid #ccc",
-                            borderRadius: "5px",
-                            cursor: "grab",
-                        });
-
-                    $("#fileList").append(listItem); // Restore file to the list
-                    droppedItem.remove(); // Remove from drop area
-
-                    setupDragAndDrop(); // Reinitialize drag events for restored files
+                // Add the file to the drop zone
+                var droppedItem = $("<div></div>").text(file).css({
+                    padding: "5px 10px",
+                    border: "1px solid #ccc",
+                    borderRadius: "5px",
+                    marginBottom: "10px",
+                    position: "relative",
                 });
 
-            droppedItem.append(deleteButton); // Add delete button to the dropped item
-            zone.append(droppedItem); // Add the dropped file inside the drop area
-            $("#fileList").find(`li[data-file-name="${file}"]`).remove();
+                // Create delete button
+                var deleteButton = $("<button></button>")
+                    .text("Delete")
+                    .css({
+                        position: "absolute",
+                        right: "5px",
+                        top: "5px",
+                        background: "red",
+                        color: "white",
+                        border: "none",
+                        borderRadius: "3px",
+                        padding: "2px 5px",
+                        cursor: "pointer",
+                    })
+                    .data("file-name", file)
+                    .on("click", function () {
+                        var fileNameToRestore = $(this).data("file-name");
+                        console.log("Restoring file:", fileNameToRestore);
+
+                        // Restore file to the list
+                        var listItem = $("<li></li>")
+                            .addClass("list-inline-item draggable-file")
+                            .attr("draggable", true)
+                            .attr("data-file-name", fileNameToRestore)
+                            .text(fileNameToRestore)
+                            .css({
+                                marginRight: "15px",
+                                padding: "5px 10px",
+                                border: "1px solid #ccc",
+                                borderRadius: "5px",
+                                cursor: "grab",
+                            });
+
+                        $("#fileList").append(listItem); // Restore file to the list
+                        droppedItem.remove(); // Remove from drop area
+
+                        setupDragAndDrop(); // Reinitialize drag events for restored files
+                    });
+
+                droppedItem.append(deleteButton); // Add delete button to the dropped item
+                zone.append(droppedItem); // Add the dropped file inside the drop area
+                $("#fileList").find(`li[data-file-name="${file}"]`).remove();
+            }
         });
     }
 

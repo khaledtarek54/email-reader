@@ -13,6 +13,8 @@ use Illuminate\Support\Facades\Http;
 
 class ExtractorService
 {
+    private const NOT_FOUND = 'not found';
+
     protected $connection;
     protected $apiUrl;
     protected $apiKey;
@@ -31,18 +33,15 @@ class ExtractorService
         $this->mailService = $mailService;
         $this->jobSpecsService = $jobSpecsService;
     }
+
     public function mapExtractedValues($mailId)
     {
-
         $existingJob = Savedjob::where('mail_id', $mailId)->first();
         if ($existingJob) {
             return $existingJob;
         }
         $mail = $this->mailService->fetchMailById($mailId);
-        //return strip_tags($mail->html_body);
         $jsonResponse = $this->createChecker($mail);
-        //return $jsonResponse;
-
 
         $jobData = $jsonResponse['data']['Requesting Job Order']['Requesting Job Order'][0];
 
@@ -54,18 +53,17 @@ class ExtractorService
         $mappedSubjectMatter = $this->mapSubjectMatter($jobData['Subject Matter']);
         $mappedPlan = $this->mapPlan($jobData['Selection Plan']);
 
-
-        $mappedAmount = $jobData['Amount'] != 'not found' ? $jobData['Amount'] : null;
+        $mappedAmount = $jobData['Amount'] != self::NOT_FOUND ? $jobData['Amount'] : null;
         $mappedStartDate = null;
         $mappedDeliverytime = null;
-        if ($jobData['Start Date'] != 'not found') {
+        if ($jobData['Start Date'] != self::NOT_FOUND) {
             try {
                 $mappedStartDate = $this->parseDate($jobData['Start Date']);
             } catch (Exception $e) {
                 throw new Exception("Date format not recognized");
             }
         }
-        if ($jobData['Delivery time'] != 'not found') {
+        if ($jobData['Delivery time'] != self::NOT_FOUND) {
             try {
                 $mappedDeliverytime = $this->parseDate($jobData['Delivery time']);
             } catch (Exception $e) {
@@ -73,14 +71,14 @@ class ExtractorService
             }
         }
 
-        $mappedSharedInstructions = $jobData['Shared Instructions'] != 'not found' ? $jobData['Shared Instructions'] : null;
-        $mappedUnitPrice = $jobData['Unit Price'] != 'not found' ? $jobData['Unit Price'] : null;
-        $mappedCurrency = $jobData['Currency'] != 'not found' ? $jobData['Currency'] : null;
-        $mappedInfolder = $jobData['In folder'][0] != 'not found' ? $jobData['In folder'] : null;
-        $mappedInstructionsfolder = $jobData['Instructions folder'][0] != 'not found' ? $jobData['Instructions folder'] : null;
-        $mappedReferencefolder = $jobData['Reference folder'][0] != 'not found' ? $jobData['Reference folder'] : null;
-        $mappedDeliveryTimeZone  = $jobData['Delivery Time Zone'] != 'not found' ? $jobData['Delivery Time Zone'] : null;
-        $mappedOnlineSourceFiles = $jobData['In folder'][0] == 'not found' && $jobData['Instructions folder'][0] == 'not found' && $jobData['Reference folder'][0] == 'not found' ? true : false;
+        $mappedSharedInstructions = $jobData['Shared Instructions'] != self::NOT_FOUND ? $jobData['Shared Instructions'] : null;
+        $mappedUnitPrice = $jobData['Unit Price'] != self::NOT_FOUND ? $jobData['Unit Price'] : null;
+        $mappedCurrency = $jobData['Currency'] != self::NOT_FOUND ? $jobData['Currency'] : null;
+        $mappedInfolder = $jobData['In folder'][0] != self::NOT_FOUND ? $jobData['In folder'] : null;
+        $mappedInstructionsfolder = $jobData['Instructions folder'][0] != self::NOT_FOUND ? $jobData['Instructions folder'] : null;
+        $mappedReferencefolder = $jobData['Reference folder'][0] != self::NOT_FOUND ? $jobData['Reference folder'] : null;
+        $mappedDeliveryTimeZone  = $jobData['Delivery Time Zone'] != self::NOT_FOUND ? $jobData['Delivery Time Zone'] : null;
+        $mappedOnlineSourceFiles = $jobData['In folder'][0] == self::NOT_FOUND && $jobData['Instructions folder'][0] == self::NOT_FOUND && $jobData['Reference folder'][0] == self::NOT_FOUND ? true : false;
 
         $job = Savedjob::create([
             'mail_id' => $mailId,
@@ -118,7 +116,7 @@ class ExtractorService
             'd-m-Y H:i',       // 07-09-2020 23:59
             'Y/m/d H:i:s',     // 2020/09/07 23:59:00
             'm/d/Y',           // 11/10/2020 
-        ];  
+        ];
 
         // Try parsing each format
         foreach ($formats as $format) {
@@ -134,7 +132,7 @@ class ExtractorService
     }
     public function mapJobTypes($jobtype)
     {
-        if ($jobtype == 'not found') {
+        if ($jobtype == self::NOT_FOUND) {
             return null;
         }
         $mappedJobType = $this->connection->table('job_types')
@@ -147,9 +145,10 @@ class ExtractorService
         }
         return $mappedJobType->id;
     }
+
     public function mapSourceLanguage($SourceLanguage)
     {
-        if ($SourceLanguage == 'not found') {
+        if ($SourceLanguage == self::NOT_FOUND) {
             return null;
         }
         $SourceLanguage = $this->connection->table('source_languages')
@@ -164,9 +163,10 @@ class ExtractorService
         }
         return $SourceLanguage->id;
     }
+
     public function mapTargetLanguage($TargetLanguage)
     {
-        if ($TargetLanguage == 'not found') {
+        if ($TargetLanguage == self::NOT_FOUND) {
             return null;
         }
         $TargetLanguage = $this->connection->table('target_languages')
@@ -181,9 +181,10 @@ class ExtractorService
         }
         return $TargetLanguage->id;
     }
+
     public function mapUnit($unit)
     {
-        if ($unit == 'not found') {
+        if ($unit == self::NOT_FOUND) {
             return null;
         }
         $unit = $this->connection->table('units')
@@ -195,9 +196,10 @@ class ExtractorService
         }
         return $unit->id;
     }
+
     public function mapContentType($ContentType)
     {
-        if ($ContentType == 'not found') {
+        if ($ContentType == self::NOT_FOUND) {
             return null;
         }
         $ContentType = $this->connection->table('content_types')
@@ -209,9 +211,10 @@ class ExtractorService
         }
         return $ContentType->id;
     }
+
     public function mapSubjectMatter($SubjectMatter)
     {
-        if ($SubjectMatter == 'not found') {
+        if ($SubjectMatter == self::NOT_FOUND) {
             return null;
         }
         $SubjectMatter = $this->connection->table('subject_matters')
@@ -223,9 +226,10 @@ class ExtractorService
         }
         return $SubjectMatter->id;
     }
+
     public function mapPlan($Plan)
     {
-        if ($Plan == 'not found') {
+        if ($Plan == self::NOT_FOUND) {
             return null;
         }
         $Plan = $this->connection->table('plans')
@@ -237,6 +241,7 @@ class ExtractorService
         }
         return $Plan->id;
     }
+
     public function createChecker($mail)
     {
         $response = Http::post($this->apiUrl, [
