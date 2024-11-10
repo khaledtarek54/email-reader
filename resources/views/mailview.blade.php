@@ -48,7 +48,7 @@
 
     <form action="{{ route('jobdata', ['id' => $mail->id]) }}" method="POST" style="display: inline;" onsubmit="return checkMailStatus();">
         @csrf
-        <button type="submit"><i class="fas fa-film"></i> Job data</button>
+        <button type="submit"><i class="fas fa-cog"></i> Job data</button>
     </form>
     @if ($mail->trash)
     <form action="{{ route('mail.recover', ['id' => $mail->id]) }}" method="POST">
@@ -61,7 +61,7 @@
     <form action="{{ route('mail.trash', ['id' => $mail->id]) }}" method="POST">
         @csrf
         <button type="submit">
-            <i class="fas fa-archive"></i> Trash
+            <i class="fas fa-trash-alt"></i> Trash
         </button>
     </form>
     @endif
