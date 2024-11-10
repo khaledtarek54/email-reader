@@ -71,11 +71,7 @@
 <script>
     function checkMailStatus() {
         // If the mail is marked as trash, prevent form submission
-        if ({
-                {
-                    json_encode($mail - > trash)
-                }
-            }) {
+        if ({{$mail->trash}}) {
             alert('This mail is in the trash, please recover to access job data.');
             return false; // Prevent form submission
         }
