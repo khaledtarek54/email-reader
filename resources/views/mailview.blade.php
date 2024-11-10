@@ -61,7 +61,7 @@
     <form action="{{ route('mail.trash', ['id' => $mail->id]) }}" method="POST">
         @csrf
         <button type="submit">
-            <i class="fas fa-archive"></i> Trash
+            <i class="fas fa-trash-alt"></i> Trash
         </button>
     </form>
     @endif
