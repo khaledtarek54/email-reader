@@ -387,7 +387,7 @@ body {
     justify-content: space-around;
     background-color: white;
     border-top: 1px solid #e0e0e0;
-    position: flex;
+    position: fixed;
     bottom: 0;
     width: 100%;
 }
@@ -397,6 +397,7 @@ body {
     background-color: transparent;
     font-size: 1.2em;
     color: #5f6368;
+    position: flex;
     cursor: pointer;
 }
 
