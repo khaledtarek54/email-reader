@@ -39,7 +39,7 @@ class MailController extends Controller
     {
         $result = $this->mailService->trashMail($id);
         if ($result) {
-            return redirect()->back()->with('success', 'Mail successfully moved to trash.');
+            return redirect('/mails')->with('success', 'Mail successfully trashed.');
         } else {
             return redirect()->back()->with('error', 'Failed to move mail to trash.');
         }
