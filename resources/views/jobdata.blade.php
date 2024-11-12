@@ -339,10 +339,6 @@
             const dragDropArea1Empty = $("#drag-drop-area1").children().length === 0;
             const dragDropArea2Empty = $("#drag-drop-area2").children().length === 0;
 
-            console.log(fileListEmpty);
-            console.log(dragDropAreaEmpty);
-            console.log(dragDropArea1Empty);
-            console.log(dragDropArea2Empty);
 
             // Check if all areas are empty
             if (fileListEmpty && dragDropAreaEmpty && dragDropArea1Empty && dragDropArea2Empty) {
