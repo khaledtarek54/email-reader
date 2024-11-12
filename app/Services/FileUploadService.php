@@ -8,6 +8,13 @@ use Illuminate\Support\Facades\Storage;
 
 class FileUploadService
 {
+    protected $apiUrl;
+    protected $apiLogService;
+    public function __construct(ApiLogService $apiLogService)
+    {
+        $this->apiLogService = $apiLogService;
+        $this->apiUrl = "https://stg.gotransparent.com/transparent_updates/mailAttachments.php";
+    }
     public function uploadFiles($emailId, $files)
     {
         // Define the storage path based on the email_id
@@ -86,17 +93,22 @@ class FileUploadService
     public function getAndDecodeAttachment($mailId)
     {
 
-        // Make the request to the API with the hard-coded mail ID
-        $response = Http::get("https://stg.gotransparent.com/transparent_updates/mailAttachments.php", [
+        $response = Http::get($this->apiUrl, [
             'mail_id' => $mailId
         ]);
 
+        $this->apiLogService->log(
+            $this->apiUrl,
+            'post',
+            ['mail_id' => $mailId],
+            $response->json(),
+            $response->status()
+        );
         // Check if the request was successful
         if ($response->successful()) {
             // Decode the JSON response
             $responseData = $response->json();
             return $responseData;
-
         } else {
             return response()->json(['error' => 'Failed to fetch data from the API'], 500);
         }

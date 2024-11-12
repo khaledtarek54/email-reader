@@ -22,13 +22,15 @@ class JobService
 {
     protected $connection;
     protected $mailService;
-    protected $apiUrl = 'https://stg.gotransparent.com/addJobAPI/FunctionsV2/createJobsForAiEmails';
+    protected $apiUrlCreateJob = 'https://stg.gotransparent.com/addJobAPI/FunctionsV2/createJobsForAiEmails';
     public $autoPlanSpecs;
+    protected $apiLogService;
 
-    public function __construct(MailService $mailService)
+    public function __construct(MailService $mailService, ApiLogService $apiLogService)
     {
         $this->connection = DB::connection(env('EXTERNAL_DB_CONNECTION', 'transparentDB'));
         $this->mailService = $mailService;
+        $this->apiLogService = $apiLogService;
     }
     public function autoPlan($data)
     {
@@ -58,7 +60,7 @@ class JobService
 
             ];
             $response = Http::withHeaders([
-                'Authorization' => 'Basic ' . base64_encode('transparent:1q2w3e'),
+                'Authorization' => 'Basic ' . base64_encode(env('TRANSPARENT_API_USERNAME') . ':' . env('TRANSPARENT_API_PASSWORD')),
                 'Content-Type' => 'application/json',
             ])->post('https://stg.gotransparent.com/transparent/FunctionsV2/bulidAutoPlanScrren', $job_specs);
             if ($response->successful()) {
@@ -68,6 +70,14 @@ class JobService
             }
         } catch (Exception $e) {
             throw new Exception($e->getMessage());
+        } finally {
+            $this->apiLogService->log(
+                'https://stg.gotransparent.com/transparent/FunctionsV2/bulidAutoPlanScrren',
+                'post',
+                [$job_specs],
+                $response->json(),
+                $response->status()
+            );
         }
     }
     public function generateTaskObject($tasks)
@@ -133,7 +143,7 @@ class JobService
         //return $job_data;
         try {
             $response = Http::withHeaders([
-                'Authorization' => 'Basic ' . base64_encode('transparent:1q2w3e'),
+                'Authorization' => 'Basic ' . base64_encode(env('TRANSPARENT_API_USERNAME') . ':' . env('TRANSPARENT_API_PASSWORD')),
                 'Content-Type' => 'application/json',
             ])->post('https://stg.gotransparent.com/transparent/FunctionsV2/OrRePlanJobTasks', $job_data);
             if ($response->successful()) {
@@ -143,6 +153,14 @@ class JobService
             }
         } catch (Exception $e) {
             throw new Exception($e->getMessage());
+        } finally {
+            $this->apiLogService->log(
+                'https://stg.gotransparent.com/transparent/FunctionsV2/OrRePlanJobTasks',
+                'post',
+                [$job_data],
+                $response->json(),
+                $response->status()
+            );
         }
     }
     public function saveAutoPlanSpecs($data, $mailId)
@@ -234,8 +252,7 @@ class JobService
     public function createJob($data, $id)
     {
 
-        $username = 'transparent'; // Replace with your actual username
-        $password = '1q2w3e';
+
         //return $data;
         $mailAutoPlan = $this->mailService->fetchAutoPlanById($id);
         $userId = session::get('user_id');
@@ -262,8 +279,8 @@ class JobService
 
         //return $apiPayload;
 
-        $ch = curl_init($this->apiUrl);
-        curl_setopt($ch, CURLOPT_USERPWD, "$username:$password");
+        $ch = curl_init($this->apiUrlCreateJob);
+        curl_setopt($ch, CURLOPT_USERPWD, env('TRANSPARENT_API_USERNAME') . ':' . env('TRANSPARENT_API_PASSWORD'));
         $curlFiles = [];
         $curlFolders = [];
         // Attach files to the request
@@ -289,7 +306,13 @@ class JobService
             return response()->json(['error' => 'An error occurred.', 'message' => $error_msg], 500);
         }
         curl_close($ch);
-        
+        $this->apiLogService->log(
+            $this->apiUrlCreateJob,
+            'post',
+            [$postFields],
+            $response,
+            200
+        );
         //$this->mailService->updateMailJobId($response,$id);
         return response()->json(['data' => json_decode($response, true)]);
     }

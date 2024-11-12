@@ -38,7 +38,7 @@ class JobController extends Controller
     public function autoPlanEdit(Request $request)
     {
         try {
-            $result = $this->jobService->getUpdatedJobAutoPlanFromTransparent($request);
+            $result = $this->jobService->getUpdatedJobAutoPlanFromTransparent($request->input());
             return response()->json($result);
         } catch (Exception $e) {
             return response()->json([

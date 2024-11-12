@@ -79,6 +79,7 @@ class JobSpecsService
         $source_languages = $this->connection->table('source_languages')
             ->select('id', 'name')
             ->where('record_status', "a")
+            ->orderBy('name', 'asc')
             ->get();
 
         return $source_languages;
@@ -88,6 +89,7 @@ class JobSpecsService
         $source_languages = $this->connection->table('target_languages')
             ->select('id', 'name')
             ->where('record_status', "a")
+            ->orderBy('name', 'asc')
             ->get();
 
         return $source_languages;
@@ -97,6 +99,7 @@ class JobSpecsService
         $units = $this->connection->table('units')
             ->select('id', 'name')
             ->where('record_status', "a")
+            ->orderBy('name', 'asc')
             ->get();
 
         return $units;
@@ -106,6 +109,7 @@ class JobSpecsService
         $content_types = $this->connection->table('content_types')
             ->select('id', 'name')
             ->where('record_status', "a")
+            ->orderBy('name', 'asc')
             ->get();
 
         return $content_types;
@@ -115,6 +119,7 @@ class JobSpecsService
         $subject_matters = $this->connection->table('subject_matters')
             ->select('id', 'name')
             ->where('record_status', "a")
+            ->orderBy('name', 'asc')
             ->get();
 
         return $subject_matters;
@@ -124,6 +129,7 @@ class JobSpecsService
         $plans = $this->connection->table('plans')
             ->select('id', 'name')
             ->where('record_status', "a")
+            ->orderBy('name', 'asc')
             ->get();
 
         return $plans;

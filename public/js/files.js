@@ -24,6 +24,9 @@ function fetchFiles(mailId, jobData) {
             displayFiles(response);
             if (!response.length == 0) {
                 assignFilesToFolders(jobData, response);
+                $("#online_source_files").prop("checked", false);
+            } else {
+                $("#online_source_files").prop("checked", true);
             }
         },
         error: function (xhr, status, error) {
@@ -302,7 +305,6 @@ function transferFileToFolder(fileName, folderName) {
                         cursor: "pointer",
                     })
                     .on("click", function () {
-                        
                         transferFileToFolder(fileName, folder.name);
                         folderMenu.hide();
                     });
@@ -332,7 +334,7 @@ function getDroppedFiles() {
     var inFolderFiles = [];
     var instructionsFolderFiles = [];
     var referenceFolderFiles = [];
- 
+
     // For the In Folder
     $("#drag-drop-area div").each(function () {
         var fileName = $(this).contents().get(0).nodeValue.trim(); // Get only the file name, excluding the delete button
@@ -340,7 +342,7 @@ function getDroppedFiles() {
             inFolderFiles.push(fileName);
         }
     });
- 
+
     // For the Instructions Folder
     $("#drag-drop-area1 div").each(function () {
         var fileName = $(this).contents().get(0).nodeValue.trim(); // Get only the file name, excluding the delete button
@@ -348,7 +350,7 @@ function getDroppedFiles() {
             instructionsFolderFiles.push(fileName);
         }
     });
- 
+
     // For the Reference Folder
     $("#drag-drop-area2 div").each(function () {
         var fileName = $(this).contents().get(0).nodeValue.trim(); // Get only the file name, excluding the delete button
@@ -356,7 +358,7 @@ function getDroppedFiles() {
             referenceFolderFiles.push(fileName);
         }
     });
- 
+
     return {
         inFolder: inFolderFiles,
         instructionsFolder: instructionsFolderFiles,
@@ -448,3 +450,5 @@ function fetchFilesFromTP(mailIdTP, mailId, jobData) {
         },
     });
 }
+
+
