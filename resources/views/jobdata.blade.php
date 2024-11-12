@@ -315,7 +315,58 @@
         });
         ///////////////
 
-
+        $('#account').select2({
+            placeholder: 'Select a account', // Optional placeholder text
+            allowClear: true ,// Optional allow clearing the selection
+            width: '100%'
+        });
+        $('#sourceLanguage').select2({
+            placeholder: 'Select a source language', // Optional placeholder text
+            allowClear: true ,// Optional allow clearing the selection
+            width: '100%', // Ensure full width to match the container
+            dropdownParent: $('#sourceLanguage').parent() // Append dropdown to parent div
+        });
+        $('#targetLanguage').select2({
+            placeholder: 'Select a targetLanguage', // Optional placeholder text
+            allowClear: true ,// Optional allow clearing the selection
+            width: '100%', // Ensure full width to match the container
+            dropdownParent: $('#targetLanguage').parent() // Append dropdown to parent div
+        });
+        $('#Job_Type').select2({
+            placeholder: 'Select a Job Type', // Optional placeholder text
+            allowClear: true ,// Optional allow clearing the selection
+            width: '100%'
+        });
+        $('#workflow').select2({
+            placeholder: 'Select a workflow', // Optional placeholder text
+            allowClear: true ,// Optional allow clearing the selection
+            width: '100%'
+        });
+        $('#unit').select2({
+            placeholder: 'Select a unit', // Optional placeholder text
+            allowClear: true ,// Optional allow clearing the selection
+            width: '100%'
+        });
+        $('#subjectMatter').select2({
+            placeholder: 'Select a subjectMatter', // Optional placeholder text
+            allowClear: true ,// Optional allow clearing the selection
+            width: '100%'
+        });
+        $('#contentType').select2({
+            placeholder: 'Select a contentType', // Optional placeholder text
+            allowClear: true ,// Optional allow clearing the selection
+            width: '100%'
+        });
+        $('#autoPlanStrategy').select2({
+            placeholder: 'Select a autoPlanStrategy', // Optional placeholder text
+            allowClear: true ,// Optional allow clearing the selection
+            width: '100%'
+        });
+        $('#selectionPlan').select2({
+            placeholder: 'Select a selectionPlan', // Optional placeholder text
+            allowClear: true ,// Optional allow clearing the selection
+            width: '100%'
+        });
         ///////on change jobtype
         $('#Job_Type').change(function() {
             var jobTypeId = $(this).val();
@@ -355,7 +406,7 @@
         });
 
     });
-    document.addEventListener("DOMContentLoaded", function () {
+     function setStartDateNow() {
         const startDateInput = document.getElementById("startDate");
         const now = new Date();
 
@@ -368,5 +419,5 @@
 
         const formattedDate = `${year}-${month}-${day}T${hours}:${minutes}`;
         startDateInput.value = formattedDate;
-    });
+    };
 </script>

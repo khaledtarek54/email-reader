@@ -24,6 +24,7 @@ function mapJobData(data) {
     }
     if (data.start_date !== null)
         document.getElementById("startDate").value = data.start_date;
+    else setStartDateNow();
     if (data.delivery_time !== null)
         document.getElementById("deliveryDate").value = data.delivery_time;
     if (data.delivery_timezone !== null)
