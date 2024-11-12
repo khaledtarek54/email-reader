@@ -221,7 +221,7 @@
 
             <div class="form-group">
                 <label for="inFiles">In Folder</label>
-                <div class="file-drop-zone">Drag and drop files here</div>
+                <div class="file-drop-zone">Drop files here</div>
 
                 <div id="drag-drop-area" class="file-upload-drop-zone"
                     style="border: 2px dashed #ccc; padding: 20px; margin-top: 20px;">
@@ -231,7 +231,7 @@
 
             <div class="form-group">
                 <label for="instructionFiles">Instruction Folder</label>
-                <div class="file-drop-zone">Drag and drop files here</div>
+                <div class="file-drop-zone">Drop files here</div>
 
                 <div id="drag-drop-area1" class="file-upload-drop-zone"
                     style="border: 2px dashed #ccc; padding: 20px; margin-top: 20px;">
@@ -241,7 +241,7 @@
 
             <div class="form-group">
                 <label for="referenceFiles">Reference Folder</label>
-                <div class="file-drop-zone">Drag and drop files here</div>
+                <div class="file-drop-zone">Drop files here</div>
 
                 <div id="drag-drop-area2" class="file-upload-drop-zone"
                     style="border: 2px dashed #ccc; padding: 20px; margin-top: 20px;">
