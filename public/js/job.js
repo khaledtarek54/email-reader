@@ -117,6 +117,18 @@ function createJob(mailId) {
                     }
                 }
             }
+            else if (response.status === 500) {
+                errorContainer.append(`<h4>Error:</h4>`);
+                const errorList = $("<ul></ul>");
+
+                response.msg.forEach((error) => {
+                    if (!Array.isArray(error)) {
+                        errorList.append(`<li>${error}</li>`);
+                    }
+                });
+
+                errorContainer.append(errorList);
+            }
             // Check for the second type of response structure (original.data)
             else if (
                 response.original &&

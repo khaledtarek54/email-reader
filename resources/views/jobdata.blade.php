@@ -349,7 +349,6 @@
                 contentType: false,
                 success: function(response) {
                     mapUploadedFiles();
-                    setupDragAndDrop();
                 },
                 error: function(xhr, status, error) {
                     alert("Upload failed. Please try again.");
