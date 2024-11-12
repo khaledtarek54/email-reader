@@ -70,10 +70,10 @@
             <!-- Start Date and Delivery Date Section -->
             <div class="row">
                 <div class="col-md-6">
-                <div class="form-group">
-                    <label for="startDate">Start Date <span class="text-danger">*</span></label>
-                    <input type="datetime-local" id="startDate">
-                </div>
+                    <div class="form-group">
+                        <label for="startDate">Start Date <span class="text-danger">*</span></label>
+                        <input type="datetime-local" id="startDate">
+                    </div>
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
@@ -81,9 +81,9 @@
                         <input type="datetime-local" id="deliveryDate">
                     </div>
                 </div>
-                        
-                        <input type="hidden" id="deliveryDateTimezone" name="deliveryDateTimezone">
-                   
+                <div>
+                    <input type="hidden" id="deliveryDateTimezone" name="deliveryDateTimezone">
+                </div>
             </div>
 
             <!-- Amount and Unit Section -->
@@ -295,8 +295,8 @@
         console.log(mailIdTP);
         $('#loadingOverlay').show();
         fetchJobData(mailId);
-        
-        
+
+
 
 
         //////// autoplan button 
@@ -353,12 +353,12 @@
                 }
             });
         });
-        
+
     });
-    document.addEventListener("DOMContentLoaded", function () {
+    document.addEventListener("DOMContentLoaded", function() {
         const startDateInput = document.getElementById("startDate");
         const now = new Date();
-        
+
         // Format the date to 'YYYY-MM-DDTHH:MM' which is required by the datetime-local input
         const formattedDate = now.toISOString().slice(0, 16);
         startDateInput.value = formattedDate;
