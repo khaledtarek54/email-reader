@@ -62,4 +62,26 @@ class FileUploadController extends Controller
             'email_id' => $id,
         ]);
     }
+    public function uploadedMailFiles($id)
+    {
+
+        $fileData = $this->fileUploadService->getAndDecodeAttachment($id);
+        //return $fileData;
+        if (is_array($fileData) && isset($fileData['success'])) {
+            return response()->json([
+                'message' => 'No files uploaded',
+                'email_id' => $id,
+            ]);
+        } else if (isset($fileData['error'])) {
+            return response()->json([
+                'message' => 'No files uploaded',
+                'email_id' => $id,
+            ]);
+        }
+        $filenames = collect($fileData)->pluck('filename');
+        return response()->json([
+            'message' => $filenames,
+            'email_id' => $id,
+        ]);
+    }
 }

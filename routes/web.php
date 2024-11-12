@@ -33,7 +33,8 @@ Route::middleware(['auth'])->group(function () {
     })->name('upload.form');
     Route::post('/upload', [FileUploadController::class, 'uploadMethod'])->name('upload.file');
     Route::post('/fetch-files-tp/{id}', [FileUploadController::class, 'uploadFilesFromTP'])->name('uploadFilesFromTP');
-
+    Route::post('/fetch-mail-files/{id}', [FileUploadController::class, 'uploadedMailFiles'])->name('uploadedMailFiles');
+    
 
     Route::post('/autoPlan', [JobController::class, 'autoPlan'])->name('autoPlan');
     Route::post('/autoPlanEdit', [JobController::class, 'autoPlanEdit'])->name('autoPlanEdit');

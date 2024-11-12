@@ -22,8 +22,9 @@ class ExtractorService
     protected $checkerType;
     protected $mailService;
     protected $jobSpecsService;
+    protected $apiLogService;
 
-    public function __construct(MailService $mailService, JobSpecsService $jobSpecsService)
+    public function __construct(MailService $mailService, JobSpecsService $jobSpecsService, ApiLogService $apiLogService)
     {
         $this->connection = DB::connection(env('EXTERNAL_DB_CONNECTION', 'transparentDB'));
         $this->apiUrl = env('API_EXTRACTOR_URL');
@@ -32,6 +33,7 @@ class ExtractorService
         $this->checkerType = env('API_EXTRACTOR_TYPE');
         $this->mailService = $mailService;
         $this->jobSpecsService = $jobSpecsService;
+        $this->apiLogService = $apiLogService;
     }
 
     public function mapExtractedValues($mailId)
@@ -250,7 +252,18 @@ class ExtractorService
             'checker_type' => $this->checkerType,
             'extract_content' => strip_tags($mail->html_body),
         ]);
-
+        $this->apiLogService->log(
+            $this->apiUrl,
+            'post',
+            [
+                'apiKey' => $this->apiKey,
+                'checker_id' => $this->checkerId,
+                'checker_type' => $this->checkerType,
+                'extract_content' => strip_tags($mail->html_body),
+            ],
+            $response->json(),
+            $response->status()
+        );
         if ($response->successful()) {
             return $response->json();
         }

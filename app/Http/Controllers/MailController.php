@@ -53,4 +53,5 @@ class MailController extends Controller
             return redirect()->back()->with('error', 'Failed to recover mail.');
         }
     }
+    
 }
