@@ -6,6 +6,7 @@
             <i class="fas fa-bars" id="menu-toggle"></i> Job Data
         </div>
     </nav>
+    <div id="taskErrors"></div>
     <div id="loadingOverlay" style="display:none;">
         <div id="loadingSpinner"></div>
     </div>
@@ -355,5 +356,6 @@
                 }
             });
         });
+        
     });
 </script>

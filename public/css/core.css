@@ -620,4 +620,43 @@ li.tabs-li a {
 .nav-tabs .nav-link {
     color: black;
 }
+.delete-button {
+    position: absolute;
+    right: 5px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    color: red;
+    border: none;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    padding: 0 5px;
+    line-height: 1;
+}
 
+
+.folder-menu li {
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+/* Add hover effect */
+.folder-menu li:hover {
+    background-color: #f0f0f0; /* Light grey background on hover */
+}
+.folder-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    list-style: none;
+    padding: 10px 0; /* Increase vertical padding */
+    margin: 5px 0 0 0;
+    z-index: 1000;
+    min-width: 160px; /* Increase the width of the dropdown */
+    font-size: 18px; /* Increase font size */
+}

@@ -1,3 +1,18 @@
+const folders = [
+    {
+        name: "In folder",
+        div: "drag-drop-area",
+    },
+    {
+        name: "Instructions folder",
+        div: "drag-drop-area1",
+    },
+    {
+        name: "Reference folder",
+        div: "drag-drop-area2",
+    },
+];
+
 function fetchFiles(mailId, jobData) {
     $.ajax({
         url: "/fetch-files/" + mailId,
@@ -7,7 +22,6 @@ function fetchFiles(mailId, jobData) {
         },
         success: function (response) {
             displayFiles(response);
-            console.log(response);
             if (!response.length == 0) {
                 assignFilesToFolders(jobData, response);
             }
@@ -18,7 +32,6 @@ function fetchFiles(mailId, jobData) {
     });
 }
 function assignFilesToFolders(jobData, files) {
-    // Parse the folders data (assuming they are in JSON string format)
     const inFolderFiles = jobData.in_folder
         ? JSON.parse(jobData.in_folder)
         : [];
@@ -51,6 +64,7 @@ function assignFilesToFolders(jobData, files) {
 
     // Helper function to add files to the appropriate drop zone
     function addFilesToDropZone(zone, files, allfiles) {
+        
         files.forEach(function (file) {
             // Check if the file is already in the drop zone
             if (
@@ -60,7 +74,6 @@ function assignFilesToFolders(jobData, files) {
             ) {
                 fileFound = isFileInArray(file, allfiles);
                 if (fileFound) {
-                    console.log(allfiles);
                     removeFileFromFolders(file); // Remove the file from all folder arrays
                     var existingFile = zone.find(`div:contains('${file}')`);
                     if (existingFile.length > 0) {
@@ -81,48 +94,69 @@ function assignFilesToFolders(jobData, files) {
 
                     // Create delete button
                     var deleteButton = $("<button></button>")
-                        .text("Delete")
-                        .css({
-                            position: "absolute",
-                            right: "5px",
-                            top: "5px",
-                            background: "red",
-                            color: "white",
-                            border: "none",
-                            borderRadius: "3px",
-                            padding: "2px 5px",
-                            cursor: "pointer",
-                        })
+                        .text("X")
+                        .addClass("delete-button")
                         .data("file-name", file)
                         .on("click", function () {
-                            var fileNameToRestore = $(this).data("file-name");
-                            console.log("Restoring file:", fileNameToRestore);
-
-                            // Restore file to the list
                             var listItem = $("<li></li>")
-                                .addClass("list-inline-item draggable-file")
-                                .attr("draggable", true)
-                                .attr("data-file-name", fileNameToRestore)
-                                .text(fileNameToRestore)
+                                .addClass("list-inline-item")
+                                .attr("data-file-name", file) // Store file name in a data attribute
                                 .css({
                                     marginRight: "15px",
                                     padding: "5px 10px",
                                     border: "1px solid #ccc",
                                     borderRadius: "5px",
-                                    cursor: "grab",
+                                    position: "relative",
                                 });
 
-                            $("#fileList").append(listItem); // Restore file to the list
-                            droppedItem.remove(); // Remove from drop area
+                            // Display the file name
+                            var fileNameText = $("<span></span>").text(file);
 
-                            setupDragAndDrop(); // Reinitialize drag events for restored files
+                            var menuButton = $("<button>&#8942;</button>")
+                                .css({
+                                    background: "none",
+                                    border: "none",
+                                    cursor: "pointer",
+                                    fontSize: "16px",
+                                    padding: "0 5px",
+                                    color: "#555",
+                                    marginLeft: "10px",
+                                })
+                                .on("click", function (event) {
+                                    event.stopPropagation();
+                                    toggleMenu(listItem);
+                                });
+
+                            var folderMenu =
+                                $("<ul></ul>").addClass("folder-menu");
+
+                            $.each(folders, function (index, folder) {
+                                var folderOption = $("<li></li>")
+                                    .text(folder.name)
+                                    .css({
+                                        padding: "5px 10px",
+                                        cursor: "pointer",
+                                    })
+                                    .on("click", function () {
+                                        transferFileToFolder(file, folder.name);
+                                        folderMenu.hide();
+                                    });
+                                folderMenu.append(folderOption);
+                            });
+
+                            listItem
+                                .append(fileNameText)
+                                .append(menuButton)
+                                .append(folderMenu);
+                            $("#fileList").append(listItem); // Add back to file list
+                            droppedItem.remove(); // Remove from folder area
                         });
 
-                    droppedItem.append(deleteButton); // Add delete button to the dropped item
-                    zone.append(droppedItem); // Add the dropped file inside the drop area
+                    droppedItem.append(deleteButton);
                     $("#fileList")
                         .find(`li[data-file-name="${file}"]`)
                         .remove();
+                    zone.append(droppedItem);
                 }
             }
         });
@@ -135,47 +169,214 @@ function assignFilesToFolders(jobData, files) {
 }
 
 function displayFiles(files) {
+   
+
     $("#fileList").empty(); // Clear the existing list
 
-    // Add files to the list and make them draggable
     $.each(files, function (index, file) {
         var listItem = $("<li></li>")
-            .addClass("list-inline-item draggable-file")
-            .attr("draggable", true) // Make it draggable
+            .addClass("list-inline-item")
             .attr("data-file-name", file.file_name) // Store file name in a data attribute
-            .text(file.file_name)
             .css({
                 marginRight: "15px",
                 padding: "5px 10px",
                 border: "1px solid #ccc",
                 borderRadius: "5px",
-                cursor: "grab",
+                position: "relative",
             });
 
+        // Display the file name
+        var fileNameText = $("<span></span>").text(file.file_name);
+
+        // Create the three dots menu button
+        var menuButton = $("<button>&#8942;</button>")
+            .css({
+                background: "none",
+                border: "none",
+                cursor: "pointer",
+                fontSize: "16px",
+                padding: "0 5px",
+                color: "#555",
+                marginLeft: "10px",
+            })
+            .on("click", function (event) {
+                event.stopPropagation();
+                toggleMenu(listItem);
+            });
+
+        // Create a folder options menu
+        var folderMenu = $("<ul></ul>").addClass("folder-menu");
+
+        // Populate the folder options menu
+        $.each(folders, function (index, folder) {
+            var folderOption = $("<li></li>")
+                .text(folder.name)
+                .css({
+                    padding: "5px 10px",
+                    cursor: "pointer",
+                })
+                .on("click", function () {
+                    transferFileToFolder(file.file_name, folder.name);
+                    folderMenu.hide(); // Hide menu after selection
+                });
+            folderMenu.append(folderOption);
+        });
+
+        listItem.append(fileNameText).append(menuButton).append(folderMenu);
         $("#fileList").append(listItem);
     });
 
-    setupDragAndDrop();
+    $(document).on("click", function () {
+        $(".folder-menu").hide();
+    });
 }
+
+function transferFileToFolder(fileName, folderName) {
+    
+
+    const folder = folders.find((f) => f.name === folderName);
+    if (!folder) {
+        console.error(`Folder "${folderName}" not found.`);
+        return;
+    }
+
+    // Create the dropped item with delete button
+    var droppedItem = $("<div></div>").text(fileName).css({
+        padding: "5px 10px",
+        border: "1px solid #ccc",
+        borderRadius: "5px",
+        marginBottom: "10px",
+        position: "relative",
+    });
+
+    // Create delete button
+    var deleteButton = $("<button></button>")
+        .text("X")
+        .addClass("delete-button")
+        .data("file-name", fileName)
+        .on("click", function () {
+            var listItem = $("<li></li>")
+                .addClass("list-inline-item")
+                .attr("data-file-name", fileName) // Store file name in a data attribute
+                .css({
+                    marginRight: "15px",
+                    padding: "5px 10px",
+                    border: "1px solid #ccc",
+                    borderRadius: "5px",
+                    position: "relative",
+                });
+
+            // Display the file name
+            var fileNameText = $("<span></span>").text(fileName);
+
+            var menuButton = $("<button>&#8942;</button>")
+                .css({
+                    background: "none",
+                    border: "none",
+                    cursor: "pointer",
+                    fontSize: "16px",
+                    padding: "0 5px",
+                    color: "#555",
+                    marginLeft: "10px",
+                })
+                .on("click", function (event) {
+                    event.stopPropagation();
+                    toggleMenu(listItem);
+                });
+
+            var folderMenu = $("<ul></ul>").addClass("folder-menu");
+
+            $.each(folders, function (index, folder) {
+                var folderOption = $("<li></li>")
+                    .text(folder.name)
+                    .css({
+                        padding: "5px 10px",
+                        cursor: "pointer",
+                    })
+                    .on("click", function () {
+                        transferFileToFolder(fileName, folder.name);
+                        folderMenu.hide();
+                    });
+                folderMenu.append(folderOption);
+            });
+
+            listItem.append(fileNameText).append(menuButton).append(folderMenu);
+            $("#fileList").append(listItem); // Add back to file list
+            droppedItem.remove(); // Remove from folder area
+        });
+
+    droppedItem.append(deleteButton);
+
+    $("#fileList").find(`li[data-file-name="${fileName}"]`).remove();
+    $(`#${folder.div}`).append(droppedItem);
+}
+
+function toggleMenu(listItem) {
+    $(".folder-menu").hide(); // Hide other open menus
+    listItem.find(".folder-menu").toggle(); // Toggle the current menu
+}
+
 function mapUploadedFiles() {
+    
     let fileInput = document.getElementById("file");
     const files = fileInput.files;
     // Add files to the list and make them draggable
     $.each(files, function (index, file) {
+        fileName = file.name;
         var listItem = $("<li></li>")
-            .addClass("list-inline-item draggable-file")
-            .attr("draggable", true) // Make it draggable
-            .attr("data-file-name", file.name) // Store file name in a data attribute
-            .text(file.name)
+            .addClass("list-inline-item")
+            .attr("data-file-name", fileName) // Store file name in a data attribute
             .css({
                 marginRight: "15px",
                 padding: "5px 10px",
                 border: "1px solid #ccc",
                 borderRadius: "5px",
-                cursor: "grab",
+                position: "relative",
             });
 
+        // Display the file name
+        var fileNameText = $("<span></span>").text(fileName);
+
+        // Create the three dots menu button
+        var menuButton = $("<button>&#8942;</button>")
+            .css({
+                background: "none",
+                border: "none",
+                cursor: "pointer",
+                fontSize: "16px",
+                padding: "0 5px",
+                color: "#555",
+                marginLeft: "10px",
+            })
+            .on("click", function (event) {
+                event.stopPropagation();
+                toggleMenu(listItem);
+            });
+
+        // Create a folder options menu
+        var folderMenu = $("<ul></ul>").addClass("folder-menu");
+
+        // Populate the folder options menu
+        $.each(folders, function (index, folder) {
+            var folderOption = $("<li></li>")
+                .text(folder.name)
+                .css({
+                    padding: "5px 10px",
+                    cursor: "pointer",
+                })
+                .on("click", function () {
+                    transferFileToFolder(fileName, folder.name);
+                    folderMenu.hide(); // Hide menu after selection
+                });
+            folderMenu.append(folderOption);
+        });
+
+        listItem.append(fileNameText).append(menuButton).append(folderMenu);
         $("#fileList").append(listItem);
+    });
+
+    $(document).on("click", function () {
+        $(".folder-menu").hide();
     });
 }
 function setupDragAndDrop() {
@@ -237,18 +438,8 @@ function setupDragAndDrop() {
 
         // Create delete button
         var deleteButton = $("<button></button>")
-            .text("Delete")
-            .css({
-                position: "absolute",
-                right: "5px",
-                top: "5px",
-                background: "red",
-                color: "white",
-                border: "none",
-                borderRadius: "3px",
-                padding: "2px 5px",
-                cursor: "pointer",
-            })
+            .text("X")
+            .addClass("delete-button")
             .data("file-name", droppedFile) // Store the file name in the button's data attributes
             .on("click", function () {
                 var fileNameToRestore = $(this).data("file-name"); // Retrieve the file name when clicked
@@ -323,18 +514,8 @@ function setupDragAndDrop() {
 
         // Create delete button
         var deleteButton = $("<button></button>")
-            .text("Delete")
-            .css({
-                position: "absolute",
-                right: "5px",
-                top: "5px",
-                background: "red",
-                color: "white",
-                border: "none",
-                borderRadius: "3px",
-                padding: "2px 5px",
-                cursor: "pointer",
-            })
+            .text("X")
+            .addClass("delete-button")
             .data("file-name", droppedFile) // Store the file name in the button's data attributes
             .on("click", function () {
                 var fileNameToRestore = $(this).data("file-name"); // Retrieve the file name when clicked
@@ -408,18 +589,8 @@ function setupDragAndDrop() {
 
         // Create delete button
         var deleteButton = $("<button></button>")
-            .text("Delete")
-            .css({
-                position: "absolute",
-                right: "5px",
-                top: "5px",
-                background: "red",
-                color: "white",
-                border: "none",
-                borderRadius: "3px",
-                padding: "2px 5px",
-                cursor: "pointer",
-            })
+            .text("X")
+            .addClass("delete-button")
             .data("file-name", droppedFile) // Store the file name in the button's data attributes
             .on("click", function () {
                 var fileNameToRestore = $(this).data("file-name"); // Retrieve the file name when clicked

@@ -7,7 +7,7 @@ function fetchJobData(mailId) {
         },
         success: function (response) {
             mapJobData(response);
-            fetchFilesFromTP(response.mail_id_tp, mailId,response);
+            fetchFilesFromTP(response.mail_id_tp, mailId, response);
         },
         error: function (xhr, status, error) {
             console.error("Error fetching job data:", error);
@@ -90,9 +90,57 @@ function createJob(mailId) {
         headers: {
             "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
         },
-        success: function (response) {},
+        success: function (response) {
+            const errorContainer = $("#taskErrors"); // Select the error container
+            errorContainer.empty(); // Clear any previous errors
+
+            // Check for the first type of response structure (autoPlaning)
+            if (response.status === 200 && response.autoPlaning) {
+                const tasks = response.autoPlaning.Tasks;
+
+                for (const taskName in tasks) {
+                    const task = tasks[taskName];
+
+                    if (task.status === 500) {
+                        errorContainer.append(
+                            `<h4>Errors for ${taskName}:</h4>`
+                        );
+                        const errorList = $("<ul></ul>");
+
+                        task.msg.forEach((error) => {
+                            if (!Array.isArray(error)) {
+                                errorList.append(`<li>${error}</li>`);
+                            }
+                        });
+
+                        errorContainer.append(errorList);
+                    }
+                }
+            }
+            // Check for the second type of response structure (original.data)
+            else if (
+                response.original &&
+                response.original.data &&
+                response.original.data.status === 500
+            ) {
+                errorContainer.append(`<h4>Error:</h4>`);
+                const errorList = $("<ul></ul>");
+
+                response.original.data.msg.forEach((error) => {
+                    if (!Array.isArray(error)) {
+                        errorList.append(`<li>${error}</li>`);
+                    }
+                });
+
+                errorContainer.append(errorList);
+            }
+            errorContainer.show(); // Make sure the container is visible before fading out
+            setTimeout(() => {
+                errorContainer.fadeOut(500); // Fade out the error container
+            }, 5000);
+        },
         error: function (xhr, status, error) {
-            console.error("Error fetching job data:", error);
+            console.error("An error occurred:", error);
         },
         complete: function () {
             $("#loadingOverlay").hide();

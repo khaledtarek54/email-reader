@@ -6,6 +6,7 @@ use CURLFile;
 use DateTime;
 use Exception;
 use DateInterval;
+use Carbon\Carbon;
 use App\Models\File;
 use App\Models\Autoplan;
 use App\Services\MailService;
@@ -259,6 +260,7 @@ class JobService
             'tasks_estimation' => $task_estimation,
         ];
 
+        //return $apiPayload;
 
         $ch = curl_init($this->apiUrl);
         curl_setopt($ch, CURLOPT_USERPWD, "$username:$password");
@@ -273,7 +275,7 @@ class JobService
             } else {
                 return response()->json(['error' => 'File not found.', 'path' => $fullPath], 404);
             }
-            $curlFolders["folder[$index]"] = $foldersArray[$index]; 
+            $curlFolders["folder[$index]"] = $foldersArray[$index];
         }
 
         $postFields = array_merge($apiPayload, $curlFiles, $curlFolders);
@@ -287,6 +289,8 @@ class JobService
             return response()->json(['error' => 'An error occurred.', 'message' => $error_msg], 500);
         }
         curl_close($ch);
+        
+        //$this->mailService->updateMailJobId($response,$id);
         return response()->json(['data' => json_decode($response, true)]);
     }
     private function getJobData($inputData)
@@ -298,8 +302,8 @@ class JobService
             'JobName' => $inputData['job_name'] ?? null,
             'JobAmount' => $inputData['amount'] ?? null,
             'JobUnitId' => $inputData['unit'] ?? null,
-            'JobStartDate' => $inputData['startDate'] ?? null,
-            'JobDeliveryDate' => $inputData['deliveryDate'] ?? null,
+            'JobStartDate' =>  $inputData['startDate'] ? Carbon::parse($inputData['startDate'])->format('Y-m-d H:i:s') : null,
+            'JobDeliveryDate' => $inputData['deliveryDate'] ? Carbon::parse($inputData['deliveryDate'])->format('Y-m-d H:i:s') : null,
             'JobPhaseTypeId' => $inputData['workflow'] ?? null, // Adjust mapping if needed
             'JobAutoPlan' => "1", // Assuming it's the same
             'JobAutoplanStrategyId' => $inputData['autoPlanStrategy'] ?? null,

@@ -63,7 +63,7 @@ class JobController extends Controller
     public function createJob(Request $request, $id)
     {
         try {
-            $result = $this->jobService->createJob($request, $id);
+            $result = $this->jobService->createJob($request->input(), $id);
             return response()->json($result);
         } catch (Exception $e) {
             return response()->json([
