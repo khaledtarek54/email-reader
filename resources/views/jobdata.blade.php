@@ -69,24 +69,21 @@
 
             <!-- Start Date and Delivery Date Section -->
             <div class="row">
-                <div class="col-md-4">
-                    <div class="form-group">
-                        <label for="startDate">Start Date <span class="text-danger">*</span></label>
-                        <input type="datetime-local" id="startDate">
-                    </div>
+                <div class="col-md-6">
+                <div class="form-group">
+                    <label for="startDate">Start Date <span class="text-danger">*</span></label>
+                    <input type="datetime-local" id="startDate">
                 </div>
-                <div class="col-md-4">
+                </div>
+                <div class="col-md-6">
                     <div class="form-group">
                         <label for="deliveryDate">Delivery Date <span class="text-danger">*</span></label>
                         <input type="datetime-local" id="deliveryDate">
                     </div>
                 </div>
-                <div class="col-md-4">
-                    <div class="form-group">
-                        <label for="deliveryDateTimezone">Delivery Date Timezone<span class="text-danger">*</span></label>
-                        <input type="text" id="deliveryDateTimezone" name="deliveryDateTimezone">
-                    </div>
-                </div>
+                        
+                        <input type="hidden" id="deliveryDateTimezone" name="deliveryDateTimezone">
+                   
             </div>
 
             <!-- Amount and Unit Section -->
@@ -357,5 +354,13 @@
             });
         });
         
+    });
+    document.addEventListener("DOMContentLoaded", function () {
+        const startDateInput = document.getElementById("startDate");
+        const now = new Date();
+        
+        // Format the date to 'YYYY-MM-DDTHH:MM' which is required by the datetime-local input
+        const formattedDate = now.toISOString().slice(0, 16);
+        startDateInput.value = formattedDate;
     });
 </script>
