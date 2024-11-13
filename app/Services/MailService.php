@@ -32,7 +32,7 @@ class MailService
             ->where('TP_PM_ID', session::get('user_id'))
             ->where('trash', 0)
             ->orderBy('creation_time', 'desc')
-            ->paginate(5);
+            ->paginate(8);
 
         return $mails;
     }
@@ -48,7 +48,7 @@ class MailService
             ->where('TP_PM_ID', session::get('user_id'))
             ->where('trash', 1)
             ->orderBy('creation_time', 'desc')
-            ->paginate(5);
+            ->paginate(8);
 
         return $mails;
     }

@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\MailService;
 use Illuminate\Http\Request;
+use App\Services\MailService;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Mail;
 
 class MailController extends Controller
 {
@@ -13,6 +14,12 @@ class MailController extends Controller
     public function __construct(MailService $mailService)
     {
         $this->mailService = $mailService;
+    }
+    public function index()
+    {
+        // Load the first 5 mails for initial page load
+        $mails = $this->mailService->fetchMails();
+        return view('mails', compact('mails'));
     }
     public function showAllMails()
     {
@@ -52,6 +59,32 @@ class MailController extends Controller
         } else {
             return redirect()->back()->with('error', 'Failed to recover mail.');
         }
+    }
+    public function loadMoreEmails(Request $request)
+    {
+        // Only for AJAX requests; loads the next set of mails
+        if ($request->ajax()) {
+            // Load the next set based on the pagination `page` query parameter
+            $mails = $this->mailService->fetchMails();
+
+            // Return the partial view with just the email items
+            return view('partials.email_items', compact('mails'))->render();
+        }
+
+        return response()->json(['error' => 'Bad request'], 400); // Only allow AJAX
+    }
+    public function loadMoreTrash(Request $request)
+    {
+        // Only for AJAX requests; loads the next set of mails
+        if ($request->ajax()) {
+            // Load the next set based on the pagination `page` query parameter
+            $mails = $this->mailService->fetchTrashMails();
+
+            // Return the partial view with just the email items
+            return view('partials.email_items', compact('mails'))->render();
+        }
+
+        return response()->json(['error' => 'Bad request'], 400); // Only allow AJAX
     }
     
 }

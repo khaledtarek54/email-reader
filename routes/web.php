@@ -11,13 +11,16 @@ use App\Http\Controllers\ExtractorController;
 
 Route::middleware(['auth'])->group(function () {
 
+    Route::get('/emails/load', [MailController::class, 'loadEmails'])->name('emails.load');
     Route::get('/', [MailController::class, 'showAllMails'])->name('mails');
     Route::get('/', [MailController::class, 'refreshMails'])->name('refresh-mails');
-    Route::get('/mails', [MailController::class, 'showAllMails'])->name('mails');
+    Route::get('/mails', [MailController::class, 'index'])->name('mails.index');    
     Route::get('/trash', [MailController::class, 'showAllTrashedMails'])->name('trash');
     Route::post('mail/trash/{id}', [MailController::class, 'trashMail'])->name('mail.trash');
     Route::post('mail/recover/{id}', [MailController::class, 'recoverMail'])->name('mail.recover');
     Route::get('/mailview/{id}', [MailController::class, 'showMail'])->name('mailview');
+    Route::get('/mails/load', [MailController::class, 'loadMoreEmails'])->name('mails.load');
+    Route::get('/trash/load', [MailController::class, 'loadMoreTrash'])->name('trash.load');
 
 
     Route::post('/jobdata/{id}', [JobSpecController::class, 'JobData'])->name('jobdata');
