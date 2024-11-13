@@ -37,11 +37,15 @@
             </div>
         </div>
 
-        <!-- Name Field -->
-        <div class="form-group">
-            <label for="name">Job Name <span class="text-danger">*</span></label>
-            <input type="text" id="job_name" name="job_name" placeholder="Enter job name"
-                value="{{ $mail->subject }}">
+        <div class="row">
+            <div class="col-md-6">
+                <!-- Name Field -->
+                <div class="form-group">
+                    <label for="name">Job Name <span class="text-danger">*</span></label>
+                    <input type="text" id="job_name" name="job_name" placeholder="Enter job name"
+                        value="{{ $mail->subject }}">
+                </div>
+            </div>
         </div>
 
         <!-- Job Type and Workflow Section -->
@@ -297,7 +301,7 @@
 
 
 
-
+        console.log( <?= json_encode($plans) ?>)
         // const currentDate = new Date();
         // const timezoneOffsetInMinutes = currentDate.getTimezoneOffset();
         // const timezoneOffsetInHours = timezoneOffsetInMinutes / 60;
@@ -321,54 +325,54 @@
 
         $('#account').select2({
             placeholder: 'Select a account', // Optional placeholder text
-            allowClear: true ,// Optional allow clearing the selection
+            allowClear: true, // Optional allow clearing the selection
             width: '100%'
         });
         $('#sourceLanguage').select2({
             placeholder: 'Select a source language', // Optional placeholder text
-            allowClear: true ,// Optional allow clearing the selection
+            allowClear: true, // Optional allow clearing the selection
             width: '100%', // Ensure full width to match the container
             dropdownParent: $('#sourceLanguage').parent() // Append dropdown to parent div
         });
         $('#targetLanguage').select2({
             placeholder: 'Select a target language', // Optional placeholder text
-            allowClear: true ,// Optional allow clearing the selection
+            allowClear: true, // Optional allow clearing the selection
             width: '100%', // Ensure full width to match the container
             dropdownParent: $('#targetLanguage').parent() // Append dropdown to parent div
         });
         $('#Job_Type').select2({
             placeholder: 'Select a Job Type', // Optional placeholder text
-            allowClear: true ,// Optional allow clearing the selection
+            allowClear: true, // Optional allow clearing the selection
             width: '100%'
         });
         $('#workflow').select2({
             placeholder: 'Select a workflow', // Optional placeholder text
-            allowClear: true ,// Optional allow clearing the selection
+            allowClear: true, // Optional allow clearing the selection
             width: '100%'
         });
         $('#unit').select2({
             placeholder: 'Select a unit', // Optional placeholder text
-            allowClear: true ,// Optional allow clearing the selection
+            allowClear: true, // Optional allow clearing the selection
             width: '100%'
         });
         $('#subjectMatter').select2({
             placeholder: 'Select a subject Matter', // Optional placeholder text
-            allowClear: true ,// Optional allow clearing the selection
+            allowClear: true, // Optional allow clearing the selection
             width: '100%'
         });
         $('#contentType').select2({
             placeholder: 'Select a content Type', // Optional placeholder text
-            allowClear: true ,// Optional allow clearing the selection
+            allowClear: true, // Optional allow clearing the selection
             width: '100%'
         });
         $('#autoPlanStrategy').select2({
             placeholder: 'Select a autoPlan Strategy', // Optional placeholder text
-            allowClear: true ,// Optional allow clearing the selection
+            allowClear: true, // Optional allow clearing the selection
             width: '100%'
         });
         $('#selectionPlan').select2({
             placeholder: 'Select a selectionPlan', // Optional placeholder text
-            allowClear: true ,// Optional allow clearing the selection
+            allowClear: true, // Optional allow clearing the selection
             width: '100%'
         });
         ///////on change jobtype
@@ -431,7 +435,8 @@
         });
 
     });
-     function setStartDateNow() {
+
+    function setStartDateNow() {
         const startDateInput = document.getElementById("startDate");
         const now = new Date();
 

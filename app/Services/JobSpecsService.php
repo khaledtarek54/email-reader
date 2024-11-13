@@ -126,10 +126,11 @@ class JobSpecsService
     }
     public function fetchPlans()
     {
-        $plans = $this->connection->table('plans')
-            ->select('id', 'name')
+        $plans = $this->connection->table('brands_plans')
+            ->join('plans', 'brands_plans.plan_id', '=', 'plans.id')
+            ->where('brands_plans.brand_id', session::get('brand_id'))
+            ->select('plans.*')
             ->where('record_status', "a")
-            ->orderBy('name', 'asc')
             ->get();
 
         return $plans;

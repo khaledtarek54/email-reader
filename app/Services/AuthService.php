@@ -46,6 +46,7 @@ class AuthService
             // Log in the local user to the Laravel application
             Auth::login($localUser);
             Session::put('user_id', $localUser->external_id);
+            
             return true;
         }
 
@@ -59,7 +60,7 @@ class AuthService
         ->where('login_id', $externalUser->id)
         ->first();
         Session::put('contact_id', $user->contact_id);
-
+        Session::put('brand_id', $user->brand_id);
         $localUser = User::where('external_id', $user->id)->first();
 
         // If the user doesn't exist locally, create it

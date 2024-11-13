@@ -58,7 +58,7 @@ class JobSpecController extends Controller
             $subjectMatters = Cache::remember('subject_matters', 3600, function () {
                 return $this->jobSpecsService->fetchSubjectMatters();
             });
-
+                
             $plans = Cache::remember('plans', 3600, function () {
                 return $this->jobSpecsService->fetchPlans();
             });
