@@ -296,6 +296,8 @@
         fetchJobData(mailId);
 
 
+
+
         // const currentDate = new Date();
         // const timezoneOffsetInMinutes = currentDate.getTimezoneOffset();
         // const timezoneOffsetInHours = timezoneOffsetInMinutes / 60;
@@ -317,7 +319,58 @@
         });
         ///////////////
 
-
+        $('#account').select2({
+            placeholder: 'Select a account', // Optional placeholder text
+            allowClear: true ,// Optional allow clearing the selection
+            width: '100%'
+        });
+        $('#sourceLanguage').select2({
+            placeholder: 'Select a source language', // Optional placeholder text
+            allowClear: true ,// Optional allow clearing the selection
+            width: '100%', // Ensure full width to match the container
+            dropdownParent: $('#sourceLanguage').parent() // Append dropdown to parent div
+        });
+        $('#targetLanguage').select2({
+            placeholder: 'Select a target language', // Optional placeholder text
+            allowClear: true ,// Optional allow clearing the selection
+            width: '100%', // Ensure full width to match the container
+            dropdownParent: $('#targetLanguage').parent() // Append dropdown to parent div
+        });
+        $('#Job_Type').select2({
+            placeholder: 'Select a Job Type', // Optional placeholder text
+            allowClear: true ,// Optional allow clearing the selection
+            width: '100%'
+        });
+        $('#workflow').select2({
+            placeholder: 'Select a workflow', // Optional placeholder text
+            allowClear: true ,// Optional allow clearing the selection
+            width: '100%'
+        });
+        $('#unit').select2({
+            placeholder: 'Select a unit', // Optional placeholder text
+            allowClear: true ,// Optional allow clearing the selection
+            width: '100%'
+        });
+        $('#subjectMatter').select2({
+            placeholder: 'Select a subject Matter', // Optional placeholder text
+            allowClear: true ,// Optional allow clearing the selection
+            width: '100%'
+        });
+        $('#contentType').select2({
+            placeholder: 'Select a content Type', // Optional placeholder text
+            allowClear: true ,// Optional allow clearing the selection
+            width: '100%'
+        });
+        $('#autoPlanStrategy').select2({
+            placeholder: 'Select a autoPlan Strategy', // Optional placeholder text
+            allowClear: true ,// Optional allow clearing the selection
+            width: '100%'
+        });
+        $('#selectionPlan').select2({
+            placeholder: 'Select a selectionPlan', // Optional placeholder text
+            allowClear: true ,// Optional allow clearing the selection
+            width: '100%'
+        });
         ///////on change jobtype
         $('#Job_Type').change(function() {
             var jobTypeId = $(this).val();
@@ -378,12 +431,18 @@
         });
 
     });
-    document.addEventListener("DOMContentLoaded", function() {
+     function setStartDateNow() {
         const startDateInput = document.getElementById("startDate");
         const now = new Date();
 
-        // Format the date to 'YYYY-MM-DDTHH:MM' which is required by the datetime-local input
-        const formattedDate = now.toISOString().slice(0, 16);
+        // Format the date to 'YYYY-MM-DDTHH:MM' in local time
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0'); // Months are zero-indexed
+        const day = String(now.getDate()).padStart(2, '0');
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+
+        const formattedDate = `${year}-${month}-${day}T${hours}:${minutes}`;
         startDateInput.value = formattedDate;
-    });
+    };
 </script>
