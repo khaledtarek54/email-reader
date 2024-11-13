@@ -3,11 +3,12 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Http\JsonResponse;
-use App\Services\FileUploadService;
 use App\Services\MailService;
-
+use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
+
+use App\Services\FileUploadService;
+use Illuminate\Support\Facades\Cache;
 use Symfony\Component\Console\Input\Input;
 
 class FileUploadController extends Controller
@@ -65,7 +66,9 @@ class FileUploadController extends Controller
     public function uploadedMailFiles($id)
     {
 
-        $fileData = $this->fileUploadService->getAndDecodeAttachment($id);
+        $fileData = Cache::remember("mail_files_{$id}", 3600, function () use ($id) {
+            return  $this->fileUploadService->getAndDecodeAttachment($id);
+        });
         //return $fileData;
         if (is_array($fileData) && isset($fileData['success'])) {
             return response()->json([

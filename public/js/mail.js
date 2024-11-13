@@ -1,4 +1,5 @@
 function fetchFilesForMail(mailIdTP) {
+    $("#loadingOverlay").show();
     $.ajax({
         url: "/fetch-mail-files/" + mailIdTP,
         type: "POST",
@@ -8,7 +9,9 @@ function fetchFilesForMail(mailIdTP) {
         success: function (response) {
             const fileListContainer = $("#fileList");
             fileListContainer.empty();
-            if (response.message && response.message.length) {
+            if (!Array.isArray(response.message)) {
+                $("#loadingOverlay").hide();
+            } else if (response.message && response.message.length != 0) {
                 response.message.forEach(function (filename) {
                     const fileItem = $("<div></div>").css({
                         display: "flex",
@@ -32,10 +35,12 @@ function fetchFilesForMail(mailIdTP) {
                     fileItem.append(fileIcon, fileNameText);
                     fileListContainer.append(fileItem);
                 });
-            } 
+            }
+            $("#loadingOverlay").hide();
         },
         error: function () {
             $("#fileList").append("<p>Failed to load files.</p>");
+            $("#loadingOverlay").hide();
         },
     });
 }

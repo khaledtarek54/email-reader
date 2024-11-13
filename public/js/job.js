@@ -19,7 +19,7 @@ function fetchJobData(mailId) {
 }
 function mapJobData(data) {
     if (data.job_type !== null) {
-        document.getElementById("Job_Type").value = data.job_type;
+        $("#Job_Type").val(data.job_type).trigger("change");
         getWorkflow(data.job_type);
     }
     if (data.start_date !== null)
@@ -32,11 +32,11 @@ function mapJobData(data) {
             data.delivery_timezone;
     if (data.amount !== null)
         document.getElementById("amount").value = data.amount;
-    if (data.unit !== null) document.getElementById("unit").value = data.unit;
+    if (data.unit !== null) $("#unit").val(data.unit).trigger("change");
     if (data.source_language !== null)
         document.getElementById("sourceLanguage").value = data.source_language;
     if (data.target_language !== null)
-        document.getElementById("targetLanguage").value = data.target_language;
+        $("#targetLanguage").val(data.target_language).trigger("change");
     if (data.subject_matter !== null)
         document.getElementById("subjectMatter").value = data.subject_matter;
     if (data.content_type !== null)
@@ -117,8 +117,7 @@ function createJob(mailId) {
                         errorContainer.append(errorList);
                     }
                 }
-            }
-            else if (response.status === 500) {
+            } else if (response.status === 500) {
                 errorContainer.append(`<h4>Error:</h4>`);
                 const errorList = $("<ul></ul>");
 

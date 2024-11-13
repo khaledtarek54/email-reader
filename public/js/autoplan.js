@@ -124,6 +124,9 @@ function getAutoPlanSpecs() {
         contentType: false, // Important for FormData
         success: function (response) {
             $("#autoPlanModal .modal-body").html(response.html);
+            $("#autoPlanModal .modal-body select").select2({
+                width: '100%' // Ensure it takes full width
+            });
             //$("#autoPlanModal").modal("show");
         },
         error: function (xhr, status, error) {

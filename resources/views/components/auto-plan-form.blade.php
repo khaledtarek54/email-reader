@@ -3,18 +3,18 @@
     <input type="hidden" name="oldSpecs" value="{{ json_encode($response) }}">
     <div class="tab-content">
         <div class="row">
-            <div class="col-md-4 mb-15">
+            <div class="col-md-4 mb-3">
                 <label class="font-bold control-label no-padding-top">
                     Plan Start
                 </label>
-                <input class="form-control" type="datetime-local" id="planstart" name="planstart"
+                <input class="form-control autoplan" type="datetime-local" id="planstart" name="planstart"
                     onchange="changeAutoPlan('{{ $weekDaysJson }}', '{{ $data->end_date}}')"
                     value="{{ $data['start_date'] }}">
 
-                <label class="font-bold control-label no-padding-top">
+                <label class="font-bold control-label mt-2 ">
                     Plan Amount
                 </label>
-                <input class="form-control" type="text" id="planamount" name="planamount"
+                <input class="form-control autoplan" type="text" id="planamount" name="planamount"
                     onchange="changeAutoPlan('{{ $weekDaysJson }}', '{{ $data->end_date }}')"
                     value="{{ $data['amount'] }}">
             </div>
@@ -65,15 +65,15 @@
             <div class="tab-pane fade {{ $isFirst ? 'show active' : '' }}" id="task{{ $taskId }}" role="tabpanel"
                 aria-labelledby="nav-home-tab" tabindex="0">
                 <div class="row">
-                    <div class="col-md-6 mb-15">
+                    <div class="col-md-6 mb-2 mt-3">
                         <label class="font-bold control-label no-padding-top">
                             Amount ({{ $job['unit_name'] }})
                         </label>
-                        <input class="form-control" type="text" id="TaskAmount_{{ $taskId }}"
+                        <input class="form-control autoplan" type="text" id="TaskAmount_{{ $taskId }}"
                             name="TaskAmount_{{ $taskId }}" value="{{ $job['amount'] }}">
                     </div>
 
-                    <div class="col-md-6 mb-15">
+                    <div class="col-md-6 mb-2 mt-3">
                         <label class="form-check-label" for="TaskEstimated_{{ $taskId }}">
                             Estimated
                         </label><br>
@@ -82,27 +82,27 @@
                             name="TaskEstimated_{{ $taskId }}" value="1" style="margin-bottom: 17px;">
                     </div>
 
-                    <div class="col-md-6 mb-15">
+                    <div class="col-md-6 mb-2">
                         <label class="font-bold control-label no-padding-top">
                             Phase Start
                         </label>
-                        <input class="form-control" type="datetime-local" id="start_date_{{ $taskId }}"
+                        <input class="form-control autoplan" type="datetime-local" id="start_date_{{ $taskId }}"
                             name="start_date_{{ $taskId }}" value="{{ $job['start_date'] }}">
                     </div>
 
-                    <div class="col-md-6 mb-15">
+                    <div class="col-md-6 mb-2">
                         <label class="font-bold control-label no-padding-top">
                             Phase End
                         </label>
-                        <input class="form-control" type="datetime-local" id="end_date_{{ $taskId }}"
+                        <input class="form-control autoplan" type="datetime-local" id="end_date_{{ $taskId }}"
                             name="end_date_{{ $taskId }}" value="{{ $job['end_date'] }}">
                     </div>
 
-                    <div class="col-md-6 mb-15">
+                    <div class="col-md-6 mb-2">
                         <label class="font-bold control-label no-padding-top">
                             Selection Plan
                         </label>
-                        <select id="TaskPlanId_{{ $taskId }}" name="TaskPlanId_{{ $taskId }}" data-placeholder="select plan" class="form-control">
+                        <select id="TaskPlanId_{{ $taskId }}" name="TaskPlanId_{{ $taskId }}" data-placeholder="select plan" class="form-control autoplan">
                             <option selected="selected"> </option>
                             @foreach ($job['plans']['values'] as $plankey => $planvalue)
                             <option value="{{ $plankey }}" {{ $plankey == $job['plans']['selected'] ? 'selected="selected"' : '' }}>
@@ -112,32 +112,32 @@
                         </select>
                     </div>
 
-                    <div class="col-md-6 mb-15">
+                    <div class="col-md-6 mb-2">
                         <label class="font-bold control-label no-padding-top">
                             Max Price ($)
                         </label>
-                        <input class="form-control" type="text" id="TaskMaxPrice_{{ $taskId }}"
+                        <input class="form-control autoplan" type="text" id="TaskMaxPrice_{{ $taskId }}"
                             name="TaskMaxPrice_{{ $taskId }}">
                     </div>
 
-                    <div class="col-md-12 mb-15">
+                    <div class="col-md-12 mb-2">
                         <label class="font-bold control-label no-padding-top">
                             Shared Job Instructions
                         </label>
-                        <textarea class="form-control" id="TaskSharedPhaseInstructions_{{ $taskId }}" rows="2"
+                        <textarea class="form-control autoplan" id="TaskSharedPhaseInstructions_{{ $taskId }}" rows="2"
                             name="TaskSharedPhaseInstructions_{{ $taskId }}"></textarea>
                     </div>
                 </div>
 
                 <div class="row">
                     @foreach ($job['filds'] as $spec => $specs)
-                    <div class="col-md-6 mb-15 colu-item">
+                    <div class="col-md-6 mb-2 colu-item">
                         <label class="font-bold control-label no-padding-top">
                             {{ $specs['label'] }}
                         </label><br>
                         <select id="{{ $specs['name'] }}_{{ $taskId }}"
                             name="{{ $specs['name'] }}_{{ $taskId }}"
-                            data-placeholder="select {{ $specs['label'] }}" class="form-control">
+                            data-placeholder="select {{ $specs['label'] }}" class="form-control autoplan">
                             <option selected="selected"> </option>
                             @foreach ($specs['values'] as $specKey => $specValue)
                             <option value="{{ $specKey }}" {{ $specKey == $specs['selected'] ? 'selected="selected"' : '' }}>

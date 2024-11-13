@@ -54,7 +54,7 @@
                 <div class="form-group">
                     <label for="Job_Type">Job Type <span class="text-danger">*</span></label>
                     <select id="Job_Type" name="Job_Type">
-                        <option value="" selected hidden></option>
+                        <option value="" selected hidden>Select a Job Type</option>
                         @foreach ($jobTypes as $jobType)
                         <option value="{{ $jobType->id }}">{{ $jobType->name }}</option>
                         @endforeach
@@ -102,7 +102,7 @@
                 <div class="form-group">
                     <label for="unit">Unit <span class="text-danger">*</span></label>
                     <select id="unit">
-                        <option value="" selected hidden></option>
+                        <option value="" selected hidden>Select a unit</option>
                         @foreach ($units as $unit)
                         <option value="{{ $unit->id }}">{{ $unit->name }}</option>
                         @endforeach
@@ -130,7 +130,7 @@
                 <div class="form-group">
                     <label for="targetLanguage">Target Language <span class="text-danger">*</span></label>
                     <select id="targetLanguage">
-                        <option value="" selected hidden></option>
+                        <option value="" selected hidden>Select a target language</option>
                         @foreach ($targetLanguages as $targetLanguage)
                         <option value="{{ $targetLanguage->id }}">{{ $targetLanguage->name }}</option>
                         @endforeach
@@ -301,7 +301,7 @@
 
 
 
-        console.log( <?= json_encode($plans) ?>)
+        console.log(<?= json_encode($plans) ?>)
         // const currentDate = new Date();
         // const timezoneOffsetInMinutes = currentDate.getTimezoneOffset();
         // const timezoneOffsetInHours = timezoneOffsetInMinutes / 60;
@@ -345,6 +345,7 @@
             allowClear: true, // Optional allow clearing the selection
             width: '100%'
         });
+
         $('#workflow').select2({
             placeholder: 'Select a workflow', // Optional placeholder text
             allowClear: true, // Optional allow clearing the selection
@@ -355,6 +356,7 @@
             allowClear: true, // Optional allow clearing the selection
             width: '100%'
         });
+        
         $('#subjectMatter').select2({
             placeholder: 'Select a subject Matter', // Optional placeholder text
             allowClear: true, // Optional allow clearing the selection
@@ -378,7 +380,8 @@
         ///////on change jobtype
         $('#Job_Type').change(function() {
             var jobTypeId = $(this).val();
-            if (jobTypeId) {
+            console.log(jobTypeId);
+            if (jobTypeId != "") {
                 getWorkflow(jobTypeId);
             } else {
                 $('#workflow').empty();

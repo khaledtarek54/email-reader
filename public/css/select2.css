@@ -24,3 +24,14 @@
     font-family: 'YourFont', sans-serif !important;
     color: #000000 !important; /* Ensure the placeholder looks like your design */
 }
+.select2-container .select2-dropdown {
+    z-index: 99999 !important; /* Increase this value to be higher than the modal's */
+}
+.autoplan {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #92929e;
+    background-color: #f8f9fa;
+}
+
