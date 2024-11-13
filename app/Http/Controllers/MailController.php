@@ -48,7 +48,7 @@ class MailController extends Controller
     {
         $result = $this->mailService->recoverMail($id);
         if ($result) {
-            return redirect()->back()->with('success', 'Mail successfully recovered.');
+            return redirect('/mails')->with('success', 'Mail successfully recovered.');
         } else {
             return redirect()->back()->with('error', 'Failed to recover mail.');
         }
