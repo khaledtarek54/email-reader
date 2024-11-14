@@ -110,7 +110,7 @@ class FileUploadService
             $responseData = $response->json();
             return $responseData;
         } else {
-            return response()->json(['error' => 'Failed to fetch data from the API'], 500);
+            return false;
         }
     }
 }

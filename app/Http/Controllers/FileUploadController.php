@@ -69,13 +69,15 @@ class FileUploadController extends Controller
         $fileData = Cache::remember("mail_files_{$id}", 3600, function () use ($id) {
             return  $this->fileUploadService->getAndDecodeAttachment($id);
         });
+        //$fileData =  $this->fileUploadService->getAndDecodeAttachment($id);
         //return $fileData;
-        if (is_array($fileData) && isset($fileData['success'])) {
+        if (!$fileData) {
             return response()->json([
                 'message' => 'No files uploaded',
                 'email_id' => $id,
             ]);
-        } else if (isset($fileData['error'])) {
+        }
+        if (is_array($fileData) && isset($fileData['success'])) {
             return response()->json([
                 'message' => 'No files uploaded',
                 'email_id' => $id,

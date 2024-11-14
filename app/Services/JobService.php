@@ -44,6 +44,7 @@ class JobService
         try {
             $job_specs = [
                 'user_id' => Session::get('user_id'),
+                //'user_id' => "445476",
                 'amount' => $data['amount'],
                 'start_date' => $data['start_date'],
                 'end_date' => $data['end_date'],
@@ -53,6 +54,7 @@ class JobService
                 'plan_id' => $data['plan_id'],
                 'phase_type_id' => $data['phase_type_id'] ?? "NULLVAL",
                 'account_id' => $data['account_id'],
+                //'account_id' => "22511785",
                 'job_specifications[source_language_id]' => $data['source_language_id'],
                 'job_specifications[target_language_id]' => $data['target_language_id'],
                 'job_specifications[subject_matter_id]' => $data['subject_matter_id'],
@@ -251,13 +253,15 @@ class JobService
 
     public function createJob($data, $id)
     {
-
-
         //return $data;
         $mailAutoPlan = $this->mailService->fetchAutoPlanById($id);
         $userId = session::get('user_id');
         $jobData = $this->getJobData($data);
-        $task_estimation = $mailAutoPlan->specs;
+        if ($mailAutoPlan) {
+            $task_estimation = json_decode($mailAutoPlan->specs, true);
+        } else {
+            $task_estimation = null;
+        }
 
         ////////get file folders
         $inFolderFiles = explode(',', $data['inFolderFiles'] ?? '');
@@ -271,10 +275,11 @@ class JobService
         ////////////////////
 
         $apiPayload = [
+            //'user_id' => "445476",
             'user_id' => $userId,
             'draft_id' => $id,
-            'jobData' => $jobData,
-            'tasks_estimation' => $task_estimation,
+            'jobData' => json_encode($jobData),
+            'tasks_estimation' => json_encode($task_estimation),
         ];
 
         //return $apiPayload;
@@ -299,13 +304,22 @@ class JobService
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $postFields);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            'Cache-Control: no-cache, no-store, must-revalidate',
+            'Pragma: no-cache',
+            'Expires: 0'
+        ]);
+
         $response = curl_exec($ch);
+
         if (curl_errno($ch)) {
             $error_msg = curl_error($ch);
             curl_close($ch);
             return response()->json(['error' => 'An error occurred.', 'message' => $error_msg], 500);
         }
         curl_close($ch);
+        $decodedResponse = json_decode($response, true);
+        //return $postFields;
         $this->apiLogService->log(
             $this->apiUrlCreateJob,
             'post',
@@ -313,14 +327,20 @@ class JobService
             $response,
             200
         );
-        //$this->mailService->updateMailJobId($response,$id);
-        return response()->json(['data' => json_decode($response, true)]);
+
+        if (isset($decodedResponse['job_id']) && $decodedResponse['status'] == 200) {
+            $jobId = $decodedResponse['job_id'];
+            $this->mailService->updateMailWithJobId($jobId, $id);
+        }
+        return $decodedResponse;
     }
     private function getJobData($inputData)
     {
         $mappedData = [
             'JobAccountId' => $inputData['account'] ?? null,
+            //'JobAccountId' => "22511785",
             'JobContactId' => $inputData['contact_id'] ?? null,
+            //'JobContactId' => "1472957",
             'JobJobTypeId' => $inputData['Job_Type'] ?? null, // Adjust mapping if needed
             'JobName' => $inputData['job_name'] ?? null,
             'JobAmount' => $inputData['amount'] ?? null,

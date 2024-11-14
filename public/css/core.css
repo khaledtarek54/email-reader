@@ -426,8 +426,6 @@ body {
     margin-bottom: 20px;
 }
 
-
-
 .btn-login {
     background-color: #d93025;
     color: white;
@@ -627,7 +625,6 @@ li.tabs-li a {
     line-height: 1;
 }
 
-
 .folder-menu li {
     padding: 5px 10px;
     cursor: pointer;
@@ -653,3 +650,59 @@ li.tabs-li a {
     font-size: 18px; /* Increase font size */
 }
 
+/* General styles for the error container */
+#taskErrors {
+    margin: 20px;
+    padding: 15px;
+    border-radius: 5px;
+    font-family: Arial, sans-serif;
+    display: none; /* Initially hidden */
+}
+
+/* Success message style */
+.success-message {
+    color: green;
+    font-weight: bold;
+    font-size: 1.5em;
+    margin-bottom: 20px;
+}
+
+/* Error headers */
+.error-header {
+    color: #d9534f; /* Bootstrap's danger red */
+    font-size: 1.2em;
+    margin-top: 10px;
+}
+
+/* General error list styling */
+#taskErrors ul {
+    list-style-type: none;
+    padding-left: 20px;
+}
+
+/* Style for each error list item */
+#taskErrors li {
+    margin: 5px 0;
+    font-size: 1em;
+}
+
+/* Warning/Error for general errors */
+#taskErrors .error-list {
+    background-color: #f9d6d5; /* Light red background */
+    padding: 10px;
+    border-left: 5px solid #d9534f;
+}
+
+/* Warning style for non-500 errors */
+#taskErrors .warning-list {
+    background-color: #fff3cd; /* Light yellow background */
+    padding: 10px;
+    border-left: 5px solid #ffc107; /* Yellow color */
+}
+
+/* Success list for tasks that were successful */
+#taskErrors .success-list {
+    background-color: #d4edda; /* Light green background */
+    padding: 10px;
+    border-left: 5px solid #28a745; /* Green color */
+}

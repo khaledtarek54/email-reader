@@ -113,4 +113,14 @@ class MailService
         Savedjob::where('mail_id', $id)
             ->update(['mail_attachment_fetched' => 1]);
     }
+    public function updateMailWithJobId($jobId, $id)
+    {
+        $result = $this->connection->table('mails')
+            ->where('id', $id)
+            ->update([
+                'tp_job_id' => $jobId
+            ]);
+            
+
+    }
 }
