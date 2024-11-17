@@ -1,7 +1,6 @@
 function changeAutoPlan(weekdayss, end_date) {
-    
     $("#loadingOverlay").show();
-    
+
     const planStart = document.getElementById("planstart").value;
     const planAmount = document.getElementById("planamount").value;
     const autoplanid = document.getElementById("autoPlanStrategy").value;
@@ -75,11 +74,11 @@ function saveAutoPlanSpecs(mailId) {
     $.ajax({
         data: formData,
         type: "post",
-        url: "/saveAutoPlanSpecs/"+mailId,
+        url: "/saveAutoPlanSpecs/" + mailId,
         dataType: "json",
         success: function (data, textStatus) {
             $("#loadingOverlay").hide();
-            $("#autoPlanModal").modal('hide');
+            $("#autoPlanModal").modal("hide");
         },
     });
 }
@@ -87,8 +86,14 @@ function saveAutoPlanSpecs(mailId) {
 function getAutoPlanSpecs() {
     const formData = new FormData();
     formData.append("amount", document.getElementById("amount").value);
-    formData.append("start_date", document.getElementById("startDate").value);
-    formData.append("end_date", document.getElementById("deliveryDate").value);
+    formData.append(
+        "start_date",
+        formatDateForAutoPlan(document.getElementById("startDate").value)
+    );
+    formData.append(
+        "end_date",
+        formatDateForAutoPlan(document.getElementById("deliveryDate").value)
+    );
     formData.append(
         "JobAutoplanStrategyId",
         document.getElementById("autoPlanStrategy").value
@@ -125,7 +130,7 @@ function getAutoPlanSpecs() {
         success: function (response) {
             $("#autoPlanModal .modal-body").html(response.html);
             $("#autoPlanModal .modal-body select").select2({
-                width: '100%' // Ensure it takes full width
+                width: "100%", // Ensure it takes full width
             });
             //$("#autoPlanModal").modal("show");
         },
@@ -133,4 +138,12 @@ function getAutoPlanSpecs() {
             console.error("Error loading auto plan:", xhr.responseText);
         },
     });
+}
+function formatDateForAutoPlan(inputDate) {
+    const [datePart, timePart] = inputDate.split(" ");
+    const [day, month, year] = datePart.split("-");
+    const [hours, minutes] = timePart.split(":");
+
+    // Reformat into 'YYYY-MM-DDTHH:MM'
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
 }
