@@ -13,6 +13,8 @@
     <link rel="stylesheet" href="{{ asset('css/select2.css') }}" class="template-customizer-select2-css"/>
     <!-- Include Select2 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link rel="stylesheet" type="text/css" href="{{ asset('css/DateTimePicker.css') }}" />
+
     
 </head>
 
@@ -52,6 +54,7 @@
     <script src="{{ asset('js/job.js') }}"></script>
     <script src="{{ asset('js/files.js') }}"></script>
     <script src="{{ asset('js/mail.js') }}"></script>
+    <script  src="{{ asset('js/DateTimePicker.js') }}"></script>
 
     <!-- Include Select2 JS -->
     

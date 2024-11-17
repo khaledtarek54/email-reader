@@ -23,10 +23,10 @@ function mapJobData(data) {
         getWorkflow(data.job_type);
     }
     if (data.start_date !== null)
-        document.getElementById("startDate").value = data.start_date;
+        document.getElementById("startDate").value = formatDate(data.start_date);
     else setStartDateNow();
     if (data.delivery_time !== null)
-        document.getElementById("deliveryDate").value = data.delivery_time;
+        document.getElementById("deliveryDate").value = formatDate(data.delivery_time);
     if (data.delivery_timezone !== null)
         document.getElementById("deliveryDateTimezone").value =
             data.delivery_timezone;

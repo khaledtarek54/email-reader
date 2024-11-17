@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Services\MailService;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Cache;
 
 class MailController extends Controller
 {
@@ -34,13 +35,18 @@ class MailController extends Controller
 
     public function showMail($id)
     {
-        $mail = $this->mailService->fetchMailById($id);
+        //$mail = $this->mailService->fetchMailById($id);
+        $mail = Cache::remember("fetched_mail_{$id}", 3600, function () use ($id) {
+            return $this->mailService->fetchMailById($id);
+        });
         return view('mailview', compact('mail'));
+        
     }
     public function refreshMails()
     {
         $mails = $this->mailService->fetchMails();
         return view('mails', compact('mails'));
+        
     }
     public function trashMail($id)
     {

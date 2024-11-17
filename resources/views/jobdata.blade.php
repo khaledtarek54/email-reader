@@ -76,16 +76,18 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="startDate">Start Date <span class="text-danger">*</span></label>
-                        <input type="datetime-local" id="startDate">
+                        {{-- <input type="datetime-local" id="startDate"> --}}
+                        <input type="text" data-field="datetime" id="startDate">
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="deliveryDate">Delivery Date <span class="text-danger">*</span></label>
-                        <input type="datetime-local" id="deliveryDate">
+                        {{-- <input type="datetime-local" id="deliveryDate"> --}}
+                        <input type="text" data-field="datetime" id="deliveryDate">
                     </div>
                 </div>
-
+                <div id="dtBox"></div>
                 <input type="hidden" id="deliveryDateTimezone" name="deliveryDateTimezone">
 
             </div>
@@ -298,7 +300,7 @@
         var mailIdTP = <?= json_encode($mail->mail_id) ?>; // Wrap in json_encode to handle quotes
         $('#loadingOverlay').show();
         fetchJobData(mailId);
-
+        $("#dtBox").DateTimePicker();
 
 
         console.log(<?= json_encode($plans) ?>)
@@ -455,7 +457,23 @@
         const hours = String(now.getHours()).padStart(2, '0');
         const minutes = String(now.getMinutes()).padStart(2, '0');
 
-        const formattedDate = `${year}-${month}-${day}T${hours}:${minutes}`;
+        const formattedDate = `${day}-${month}-${year} ${hours}:${minutes}`;
         startDateInput.value = formattedDate;
+    };
+
+    function formatDate(inputDate) {
+        const isoDate = inputDate.replace(' ', 'T');
+
+        const now = new Date(isoDate);
+
+        // Format the date to 'YYYY-MM-DDTHH:MM' in local time
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0'); // Months are zero-indexed
+        const day = String(now.getDate()).padStart(2, '0');
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+
+        const formattedDate = `${day}-${month}-${year} ${hours}:${minutes}`;
+        return formattedDate;
     };
 </script>
