@@ -149,4 +149,14 @@ class JobSpecsService
     {
         return File::where('email_id', $id)->get();
     }
+    public function fetchCountries()
+    {
+        $countries = $this->connection->table('countries')
+            ->select('name', 'timezone')
+            ->where('record_status', "a")
+            ->orderBy('timezone', 'asc')
+            ->get();
+
+        return $countries;
+    }
 }

@@ -58,14 +58,18 @@ class JobSpecController extends Controller
             $subjectMatters = Cache::remember('subject_matters', 3600, function () {
                 return $this->jobSpecsService->fetchSubjectMatters();
             });
-                
+
             $plans = Cache::remember('plans', 3600, function () {
                 return $this->jobSpecsService->fetchPlans();
+            });
+            
+            $countries = Cache::remember('countries', 3600, function () {
+                return $this->jobSpecsService->fetchCountries();
             });
         } catch (Exception $e) {
             return redirect()->back()->withErrors(['error' => 'An error occurred: ' . $e->getMessage()]);
         }
-        return view('jobdata', compact('mail', 'contact', 'accounts', 'jobTypes', 'sourceLanguages', 'targetLanguages', 'units', 'contentTypes', 'subjectMatters', 'plans'));
+        return view('jobdata', compact('mail', 'contact', 'accounts', 'jobTypes', 'sourceLanguages', 'targetLanguages', 'units', 'contentTypes', 'subjectMatters', 'plans', 'countries'));
     }
     public function Workflows(Request $request)
     {

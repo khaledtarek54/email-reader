@@ -22,14 +22,21 @@ function mapJobData(data) {
         $("#Job_Type").val(data.job_type).trigger("change");
         getWorkflow(data.job_type);
     }
-    if (data.start_date !== null)
-        document.getElementById("startDate").value = formatDate(data.start_date);
-    else setStartDateNow();
+
+    document.getElementById("startDate").value = setDateNow();
+    var deliveryTime = formatDate(data.delivery_time);
     if (data.delivery_time !== null)
-        document.getElementById("deliveryDate").value = formatDate(data.delivery_time);
-    if (data.delivery_timezone !== null)
+        document.getElementById("deliveryDate").value = isDateAfterNow(
+            deliveryTime.toString()
+        )
+            ? deliveryTime
+            : null;
+
+    if (data.delivery_timezone !== null) {
         document.getElementById("deliveryDateTimezone").value =
             data.delivery_timezone;
+    }
+
     if (data.amount !== null)
         document.getElementById("amount").value = data.amount;
     if (data.unit !== null) $("#unit").val(data.unit).trigger("change");
@@ -93,7 +100,6 @@ function createJob(mailId) {
             "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
         },
         success: function (response) {
-            console.log(response);
             const errorContainer = $("#taskErrors"); // Select the error container
             errorContainer.empty(); // Clear any previous errors
 
@@ -140,7 +146,6 @@ function createJob(mailId) {
             }
 
             errorContainer.show();
-           
         },
         error: function (xhr, status, error) {
             console.error("An error occurred:", error);
@@ -207,4 +212,116 @@ function getJobDataFromFields() {
     formData.append("referenceFolderFiles", files.referenceFolder);
 
     return formData;
+}
+function isDateAfterNow(dateString) {
+    // Split the input date and time
+    const [datePart, timePart] = dateString.split(" ");
+    const [day, month, year] = datePart.split("-").map(Number);
+    const [hours, minutes] = timePart.split(":").map(Number);
+
+    // Create a new Date object in the proper format
+    const inputDate = new Date(year, month - 1, day, hours, minutes); // Month is 0-indexed in JavaScript
+
+    // Get the current date and time
+    const now = new Date();
+
+    // Compare the input date with the current date
+    return inputDate > now;
+}
+function setDateNow() {
+    const now = new Date();
+
+    // Format the date to 'YYYY-MM-DDTHH:MM' in local time
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, "0"); // Months are zero-indexed
+    const day = String(now.getDate()).padStart(2, "0");
+    const hours = String(now.getHours()).padStart(2, "0");
+    const minutes = String(now.getMinutes()).padStart(2, "0");
+
+    const formattedDate = `${day}-${month}-${year} ${hours}:${minutes}`;
+    return formattedDate;
+}
+function formatDate(inputDate) {
+    const isoDate = inputDate.replace(" ", "T");
+
+    const now = new Date(isoDate);
+
+    // Format the date to 'YYYY-MM-DDTHH:MM' in local time
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, "0"); // Months are zero-indexed
+    const day = String(now.getDate()).padStart(2, "0");
+    const hours = String(now.getHours()).padStart(2, "0");
+    const minutes = String(now.getMinutes()).padStart(2, "0");
+
+    const formattedDate = `${day}-${month}-${year} ${hours}:${minutes}`;
+    return formattedDate;
+}
+function applyTimezoneOffset(dateStr, offset) {
+    const [day, month, year, hour, minute] = dateStr
+        .split(/[-\s:]+/)
+        .map(Number);
+
+    // Create a Date object with the given date
+    const date = new Date(year, month - 1, day, hour, minute);
+
+    // Calculate the offset in minutes (e.g. +02:00 => 120 minutes)
+    const offsetMinutes =
+        parseInt(offset.slice(1, 3)) * 60 + parseInt(offset.slice(4, 6));
+
+    // Adjust the date based on the offset
+    const newDate = new Date(
+        date.getTime() + (offset[0] === "+" ? 1 : -1) * offsetMinutes * 60000
+    );
+
+    // Format the adjusted date in the required format (dd-mm-yyyy hh:mm)
+    const formattedDate = `${String(newDate.getDate()).padStart(
+        2,
+        "0"
+    )}-${String(newDate.getMonth() + 1).padStart(
+        2,
+        "0"
+    )}-${newDate.getFullYear()} ${String(newDate.getHours()).padStart(
+        2,
+        "0"
+    )}:${String(newDate.getMinutes()).padStart(2, "0")}`;
+
+    // Return the formatted date
+    return formattedDate;
+}
+function getUserTimezoneOffset() {
+    const offsetMinutes = new Date().getTimezoneOffset(); // Get timezone offset in minutes
+
+    // Calculate absolute hours and minutes from the offset
+    const hours = Math.abs(Math.floor(offsetMinutes / 60)); // Absolute hours
+    const minutes = Math.abs(offsetMinutes % 60); // Remaining minutes
+
+    // Determine sign based on offset (positive or negative)
+    const sign = offsetMinutes > 0 ? "-" : "+";
+
+    // Format and return the offset as +hh:mm or -hh:mm
+    return `${sign}${String(hours).padStart(2, "0")}:${String(minutes).padStart(
+        2,
+        "0"
+    )}`;
+}
+function setTimeZone(timezone) {
+    const selectElement = document.getElementById("timezoneSelector");
+
+    const option = Array.from(selectElement.options).find(
+        (opt) => opt.value == timezone
+    );
+    if (option) {
+        selectElement.value = timezone;
+    }
+}
+function invertOffset(offset) {
+    if (
+        !offset ||
+        typeof offset !== "string" ||
+        !/^[+-]\d{2}:\d{2}$/.test(offset)
+    ) {
+        throw new Error("Invalid offset format. Expected format: ±HH:MM");
+    }
+    const sign = offset[0] === "+" ? "-" : "+";
+    return sign + offset.slice(1);
 }

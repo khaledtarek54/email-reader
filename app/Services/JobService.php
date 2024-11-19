@@ -10,6 +10,7 @@ use Carbon\Carbon;
 use App\Models\File;
 use App\Models\Autoplan;
 use App\Services\MailService;
+use App\Traits\TimezoneUpdater;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Http;
@@ -20,6 +21,7 @@ use Illuminate\Support\Facades\Storage;
 
 class JobService
 {
+    use TimezoneUpdater;
     protected $connection;
     protected $mailService;
     protected $apiUrlCreateJob = 'https://stg.gotransparent.com/addJobAPI/FunctionsV2/createJobsForAiEmails';
@@ -43,8 +45,8 @@ class JobService
         // return $response;
         try {
             $job_specs = [
-                'user_id' => Session::get('user_id'),
-                //'user_id' => "445476",
+                //'user_id' => Session::get('user_id'),
+                'user_id' => "445476",
                 'amount' => $data['amount'],
                 'start_date' => $data['start_date'],
                 'end_date' => $data['end_date'],
@@ -53,8 +55,8 @@ class JobService
                 'unit_id' => $data['unit_id'],
                 'plan_id' => $data['plan_id'],
                 'phase_type_id' => $data['phase_type_id'] ?? "NULLVAL",
-                'account_id' => $data['account_id'],
-                //'account_id' => "22511785",
+                //'account_id' => $data['account_id'],
+                'account_id' => "22511785",
                 'job_specifications[source_language_id]' => $data['source_language_id'],
                 'job_specifications[target_language_id]' => $data['target_language_id'],
                 'job_specifications[subject_matter_id]' => $data['subject_matter_id'],
@@ -88,9 +90,8 @@ class JobService
 
         foreach ($tasks['tasks'] as $taskId => $task) {
             /////////change date to GMT
-            $timezone = 0;
-            $formattedStartDate = isset($task['start_date']) ? $this->formatDate($task['start_date'], $timezone) : '';
-            $formattedEndDate = isset($task['end_date']) ? $this->formatDate($task['end_date'], $timezone) : '';
+            $formattedStartDate = isset($task['start_date']) ? $this->updateTimezone($task['start_date'], Session::get('time_zone')) : '';
+            $formattedEndDate = isset($task['end_date']) ? $this->updateTimezone($task['end_date'], Session::get('time_zone')) : '';
             $selected_plan = $task['plans']['selected'];
             $taskPlanId = $selected_plan ? $selected_plan : "NULLVAL";
             $specification = [
@@ -114,13 +115,6 @@ class JobService
         }
 
         return $taskObject;
-    }
-    private function formatDate($date, $offset)
-    {
-        $datetime = new DateTime($date);
-        $interval = new DateInterval("PT" . abs($offset) . "H");
-        $datetime->sub($interval);
-        return $datetime->format('Y-m-d H:i:s');
     }
     public function getUpdatedJobAutoPlanFromTransparent($data)
     {
@@ -165,14 +159,8 @@ class JobService
             );
         }
     }
-    public function saveAutoPlanSpecs($data, $mailId)
-    {
-        $response =  $this->updateJobSpecs($data, $mailId);
-        return $response;
-    }
     public function updateJobSpecs($data, $mailId)
     {
-        //Log::info('Incoming data:', $data); // Log incoming data
         $jsonArray = json_decode($data['oldSpecs'], true);
         // Ensure tasks contain default values for specified keys
         if (isset($jsonArray['tasks'])) {
@@ -275,8 +263,8 @@ class JobService
         ////////////////////
 
         $apiPayload = [
-            //'user_id' => "445476",
-            'user_id' => $userId,
+            'user_id' => "445476",
+            //'user_id' => $userId,
             'draft_id' => $id,
             'jobData' => json_encode($jobData),
             'tasks_estimation' => json_encode($task_estimation),
@@ -337,16 +325,16 @@ class JobService
     private function getJobData($inputData)
     {
         $mappedData = [
-            'JobAccountId' => $inputData['account'] ?? null,
-            //'JobAccountId' => "22511785",
+            //'JobAccountId' => $inputData['account'] ?? null,
+            'JobAccountId' => "22511785",
             'JobContactId' => $inputData['contact_id'] ?? null,
             //'JobContactId' => "1472957",
             'JobJobTypeId' => $inputData['Job_Type'] ?? null, // Adjust mapping if needed
             'JobName' => $inputData['job_name'] ?? null,
             'JobAmount' => $inputData['amount'] ?? null,
             'JobUnitId' => $inputData['unit'] ?? null,
-            'JobStartDate' =>  $inputData['startDate'] ? Carbon::parse($inputData['startDate'])->format('Y-m-d H:i:s') : null,
-            'JobDeliveryDate' => $inputData['deliveryDate'] ? Carbon::parse($inputData['deliveryDate'])->format('Y-m-d H:i:s') : null,
+            'JobStartDate' =>  $inputData['startDate'] ? $this->updateTimezone(Carbon::parse($inputData['startDate'])->format('Y-m-d H:i:s'),Session::get('time_zone')) : null,
+            'JobDeliveryDate' => $inputData['deliveryDate'] ? $this->updateTimezone(Carbon::parse($inputData['deliveryDate'])->format('Y-m-d H:i:s'),Session::get('time_zone')) : null,
             'JobPhaseTypeId' => $inputData['workflow'] ?? null, // Adjust mapping if needed
             'JobAutoPlan' => "1", // Assuming it's the same
             'JobAutoplanStrategyId' => $inputData['autoPlanStrategy'] ?? null,

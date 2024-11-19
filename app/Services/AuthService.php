@@ -35,7 +35,7 @@ class AuthService
         return false;
     }
 
-    public function login($username, $password)
+    public function login($username, $password,$timeZone)
     {
         $user = $this->validateCredentials($username, $password);
 
@@ -46,7 +46,7 @@ class AuthService
             // Log in the local user to the Laravel application
             Auth::login($localUser);
             Session::put('user_id', $localUser->external_id);
-            
+            Session::put('time_zone', $timeZone);
             return true;
         }
 

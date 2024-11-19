@@ -27,8 +27,8 @@ class UserController
     public function login(Request $request)
     {
         
-        $credentials = $request->only('username', 'password');
-        if ($this->authService->login($credentials['username'], $credentials['password'])) {
+        $credentials = $request->only('username', 'password','userTimeZone');
+        if ($this->authService->login($credentials['username'], $credentials['password'], $credentials['userTimeZone'])) {
             return redirect()->intended('mails');
         }
 

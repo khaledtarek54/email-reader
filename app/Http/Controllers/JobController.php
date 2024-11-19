@@ -50,7 +50,7 @@ class JobController extends Controller
     public function saveAutoPlanSpecs(Request $request, $id)
     {
         try {
-            $result = $this->jobService->saveAutoPlanSpecs($request->input(), $id);
+            $result = $this->jobService->updateJobSpecs($request->input(), $id);
             return response()->json($result);
         } catch (Exception $e) {
             return response()->json([

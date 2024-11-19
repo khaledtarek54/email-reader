@@ -77,14 +77,14 @@
                     <div class="form-group">
                         <label for="startDate">Start Date <span class="text-danger">*</span></label>
                         {{-- <input type="datetime-local" id="startDate"> --}}
-                        <input type="text" data-field="datetime" id="startDate">
+                        <input type="text" data-field="datetime" id="startDate" class="startDate">
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="deliveryDate">Delivery Date <span class="text-danger">*</span></label>
                         {{-- <input type="datetime-local" id="deliveryDate"> --}}
-                        <input type="text" data-field="datetime" id="deliveryDate">
+                        <input type="text" data-field="datetime" id="deliveryDate" class="deliveryDate">
                     </div>
                 </div>
                 <div id="dtBox"></div>
@@ -291,23 +291,48 @@
 
 <script>
     $(document).ready(function() {
+
+
+        const userOffset = getUserTimezoneOffset();
+        window.timezones = @json($countries);
+
+
+
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
         });
+
         var mailId = <?= json_encode($mail->id) ?>; // Assuming mail->id is numeric
         var mailIdTP = <?= json_encode($mail->mail_id) ?>; // Wrap in json_encode to handle quotes
         $('#loadingOverlay').show();
         fetchJobData(mailId);
-        $("#dtBox").DateTimePicker();
+        $("#dtBox").DateTimePicker({
+            dateTimeFormat: "dd-MM-yyyy HH:mm",
+            buttonClicked: function(sButtonType, oElement) {
+                var className = oElement.className;
+                oDTP = this;
+                if (sButtonType === "SET") {
+                    DateWithClientTimeZone = applyTimezoneOffset(oDTP.getDateTimeStringInFormat(),
+                        $(
+                            "#timezoneSelector").val());
+                    invertedUserOffset = invertOffset(userOffset);
+                    DateWithUserTimeZone = applyTimezoneOffset(DateWithClientTimeZone, invertedUserOffset);
+                    setTimeout(function() {
+                        $('.' + className).val(DateWithUserTimeZone);
+                    }, 0);
+
+                }
+            },
+            afterShow: function() {
+                if ($('#deliveryDateTimezone').val() != null) {
+                    setTimeZone($('#deliveryDateTimezone').val())
+                }
+            },
+        });
 
 
-        console.log(<?= json_encode($plans) ?>)
-        // const currentDate = new Date();
-        // const timezoneOffsetInMinutes = currentDate.getTimezoneOffset();
-        // const timezoneOffsetInHours = timezoneOffsetInMinutes / 60;
-        // console.log(timezoneOffsetInHours);
 
         //////// autoplan button 
         const setupButton = document.querySelector(
@@ -352,7 +377,6 @@
             allowClear: true, // Optional allow clearing the selection
             width: '100%'
         });
-
         $('#workflow').select2({
             placeholder: 'Select a workflow', // Optional placeholder text
             allowClear: true, // Optional allow clearing the selection
@@ -363,7 +387,6 @@
             allowClear: true, // Optional allow clearing the selection
             width: '100%'
         });
-
         $('#subjectMatter').select2({
             placeholder: 'Select a subject Matter', // Optional placeholder text
             allowClear: true, // Optional allow clearing the selection
@@ -387,7 +410,6 @@
         ///////on change jobtype
         $('#Job_Type').change(function() {
             var jobTypeId = $(this).val();
-            console.log(jobTypeId);
             if (jobTypeId != "") {
                 getWorkflow(jobTypeId);
             } else {
@@ -445,35 +467,4 @@
         });
 
     });
-
-    function setStartDateNow() {
-        const startDateInput = document.getElementById("startDate");
-        const now = new Date();
-
-        // Format the date to 'YYYY-MM-DDTHH:MM' in local time
-        const year = now.getFullYear();
-        const month = String(now.getMonth() + 1).padStart(2, '0'); // Months are zero-indexed
-        const day = String(now.getDate()).padStart(2, '0');
-        const hours = String(now.getHours()).padStart(2, '0');
-        const minutes = String(now.getMinutes()).padStart(2, '0');
-
-        const formattedDate = `${day}-${month}-${year} ${hours}:${minutes}`;
-        startDateInput.value = formattedDate;
-    };
-
-    function formatDate(inputDate) {
-        const isoDate = inputDate.replace(' ', 'T');
-
-        const now = new Date(isoDate);
-
-        // Format the date to 'YYYY-MM-DDTHH:MM' in local time
-        const year = now.getFullYear();
-        const month = String(now.getMonth() + 1).padStart(2, '0'); // Months are zero-indexed
-        const day = String(now.getDate()).padStart(2, '0');
-        const hours = String(now.getHours()).padStart(2, '0');
-        const minutes = String(now.getMinutes()).padStart(2, '0');
-
-        const formattedDate = `${day}-${month}-${year} ${hours}:${minutes}`;
-        return formattedDate;
-    };
 </script>

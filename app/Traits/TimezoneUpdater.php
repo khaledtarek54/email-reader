@@ -18,19 +18,19 @@ trait TimezoneUpdater
     public function updateTimezone($date, $timezoneOffset)
     {
         try {
-            // Parse the given date using Carbon
+            // Normalize the input timezone offset (e.g., +2 becomes +02:00, -3 becomes -03:00)
+            $formattedOffset = sprintf('%+03d:00', (int) $timezoneOffset);
+
+            // Parse the input date using Carbon, accounting for various possible formats
             $carbonDate = Carbon::parse($date);
 
-            // Convert the timezone offset to a valid format (e.g., +02:00 or -03:00)
-            $formattedOffset = sprintf('%+03d:00', (int) $timezoneOffset);  // Ensures proper formatting
-
-            // Set the timezone using the numeric offset
+            // Convert the date to the provided timezone offset
             $carbonDate->setTimezone($formattedOffset);
 
-            // Return the updated date as a string
-            return $carbonDate->toDateTimeString(); // You can adjust the format if needed
+            // Return the updated date in the desired format (ISO 8601 or custom format)
+            return $carbonDate->format('Y-m-d H:i:s'); // Adjust the format as needed
         } catch (Exception $e) {
-            // If an error occurs (e.g., invalid date or timezone), rethrow it
+            // Handle invalid date or timezone offset errors gracefully
             throw new Exception("Error updating timezone: " . $e->getMessage());
         }
     }

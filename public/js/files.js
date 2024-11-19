@@ -369,7 +369,6 @@ function getDroppedFiles() {
 function mapUploadedFiles() {
     let fileInput = document.getElementById("file");
     const files = fileInput.files;
-    console.log(files);
     // Add files to the list and make them draggable
     $.each(files, function (index, file) {
         let fileName = file.name;
@@ -416,7 +415,6 @@ function mapUploadedFiles() {
                     cursor: "pointer",
                 })
                 .on("click", function () {
-                    console.log(fileName);
                     transferFileToFolder(fileName, folder.name);
                     folderMenu.hide(); // Hide menu after selection
                 });
