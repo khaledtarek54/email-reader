@@ -24,13 +24,14 @@ function mapJobData(data) {
     }
 
     document.getElementById("startDate").value = setDateNow();
-    var deliveryTime = formatDate(data.delivery_time);
-    if (data.delivery_time !== null)
+    if (data.delivery_time != null) {
+        var deliveryTime = formatDate(data.delivery_time);
         document.getElementById("deliveryDate").value = isDateAfterNow(
             deliveryTime.toString()
         )
             ? deliveryTime
             : null;
+    }
 
     if (data.delivery_timezone !== null) {
         document.getElementById("deliveryDateTimezone").value =

@@ -68,9 +68,6 @@
                 loading = false; // Reset the loading flag
                 $("#loading").hide(); // Hide loading indicator
             },
-            error: function() {
-                alert("Error loading more emails.");
-            }
         });
     }
 
