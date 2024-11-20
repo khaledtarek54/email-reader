@@ -1,0 +1,708 @@
+body {
+    font-family: "Arial", sans-serif;
+    background-color: #f5f5f5;
+}
+
+/* Gmail-like red header */
+.navbar {
+    background-color: #d93025;
+    color: white;
+    padding: 10px;
+}
+
+.navbar .navbar-brand {
+    color: white;
+    font-weight: bold;
+}
+
+.navbar .navbar-toggler {
+    color: white;
+}
+
+/* Form Container */
+.container {
+    background-color: white;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    max-width: 100%;
+    margin-top: 20px;
+}
+
+.form-header {
+    font-size: 1.8em;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    font-weight: bold;
+}
+
+.form-group select,
+.form-group input[type="text"],
+.form-group input[type="datetime-local"],
+.form-group input[type="file"] {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #92929e;
+    background-color: #f8f9fa;
+}
+
+.file-upload {
+    width: 100%;
+    padding: 12px;
+    border-radius: 5px;
+    border: 1px solid #ced4da;
+    background-color: #f8f9fa;
+}
+
+.rich-text-editor {
+    width: 100%;
+    height: 120px;
+    padding: 12px;
+    border: 1px solid #ced4da;
+    border-radius: 5px;
+    background-color: #f8f9fa;
+    resize: vertical;
+}
+
+/* Submit Button */
+.btn-submit {
+    background-color: #d93025;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.btn-submit:hover {
+    background-color: #c5221f;
+}
+
+/* Section Titles */
+.section-title {
+    font-size: 1.2em;
+    font-weight: bold;
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+
+/* Responsive design for smaller screens */
+@media (max-width: 768px) {
+    .toggle-group {
+        flex-direction: column;
+    }
+
+    .toggle-group .btn {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+}
+
+.toggle-group {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 30px;
+}
+
+.toggle-group .btn {
+    width: 150px;
+    padding: 12px;
+    border-radius: 50px;
+    border: 1px solid #ced4da;
+    cursor: pointer;
+    margin-right: 5px;
+}
+
+.btn-active {
+    background-color: #d93025;
+    color: white;
+}
+
+.form-check-input {
+    margin-right: 10px;
+}
+
+.navbar .navbar-brand i {
+    margin-right: 10px;
+}
+
+/* Search bar */
+.search-bar {
+    display: flex;
+    align-items: center;
+    background-color: white;
+    padding: 8px;
+    border-radius: 24px;
+    margin-top: 15px;
+    margin-bottom: 10px;
+    box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.search-bar input {
+    border: none;
+    outline: none;
+    background-color: transparent;
+    flex-grow: 1;
+    padding: 5px;
+}
+
+.search-bar i {
+    color: #9aa0a6;
+    margin-left: 10px;
+}
+
+/* Email list styling */
+.email-list {
+    margin: 0;
+    padding: 0;
+}
+
+.email-item {
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    padding: 15px 10px;
+    background-color: white;
+    border-bottom: 1px solid #e0e0e0;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.email-item:hover {
+    background-color: #f1f3f4;
+}
+
+/* Left side: Avatar, sender, subject */
+.email-left {
+    display: flex;
+    align-items: center;
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #e0e0e0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    color: white;
+    margin-right: 10px;
+}
+
+.email-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.email-info .sender {
+    font-weight: bold;
+    color: #202124;
+}
+
+.email-info .subject {
+    color: #5f6368;
+    font-size: 0.9em;
+    font-weight: normal;
+}
+
+.email-info .snippet {
+    color: #5f6368;
+    font-size: 0.85em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Right side: Timestamp and star */
+.email-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.email-time {
+    color: #1a73e8;
+    font-size: 0.85em;
+    white-space: nowrap;
+}
+
+.email-star {
+    color: #c7c7c7;
+    margin-top: 5px;
+}
+
+.email-star:hover {
+    color: #fbbc05;
+}
+
+/* NEW badge */
+.new-badge {
+    background-color: #1a73e8;
+    color: white;
+    font-size: 0.75em;
+    padding: 2px 6px;
+    border-radius: 20px;
+    margin-left: 10px;
+}
+/* Sidebar styles */
+.sidebar {
+    width: 240px;
+    height: 100%;
+    background-color: white;
+    padding: 20px;
+    position: fixed;
+    top: 0;
+    left: -240px; /* Initially hidden off-screen */
+    transition: left 0.3s ease;
+    z-index: 1000; /* Ensure it's above other elements */
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+}
+
+.sidebar a {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    color: #202124;
+    font-weight: bold;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+.sidebar a:hover {
+    background-color: #f1f3f4;
+}
+
+.sidebar a i {
+    margin-right: 10px;
+    color: #d93025;
+}
+
+/* Main content styling */
+.main-content {
+    padding: 20px;
+    transition: margin-left 0.3s ease;
+}
+
+/* Overlay styles */
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+    display: none; /* Hidden by default */
+    z-index: 999; /* Below sidebar but above content */
+}
+
+/* When sidebar is active */
+.sidebar-active {
+    left: 0; /* Slide in */
+}
+
+.overlay-active {
+    display: block; /* Show overlay */
+}
+
+/* Floating action button (FAB) */
+.fab {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #d93025;
+    color: white;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 24px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+}
+
+/* Email Preview Header */
+.email-header {
+    background-color: white;
+    padding: 15px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.email-header .subject {
+    font-size: 1.2em;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.email-header .sender {
+    font-weight: bold;
+    color: #202124;
+    margin-bottom: 5px;
+}
+
+.email-header .email-time {
+    color: #5f6368;
+    font-size: 0.85em;
+    margin-bottom: 10px;
+}
+
+.email-header .avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #e0e0e0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    color: white;
+    margin-right: 10px;
+}
+
+/* Email body content */
+.email-body {
+    background-color: white;
+    padding: 20px;
+    line-height: 1.6;
+    border-bottom: 1px solid #e0e0e0;
+    white-space: pre-wrap; /* for preserving text formatting */
+}
+
+/* Email action buttons */
+.email-actions {
+    padding: 15px;
+    display: flex;
+    justify-content: space-around;
+    background-color: white;
+    border-top: 1px solid #e0e0e0;
+    position: flex;
+    bottom: 0;
+    width: 100%;
+}
+
+.email-actions button {
+    border: none;
+    background-color: transparent;
+    font-size: 1.2em;
+    color: #5f6368;
+    position: flex;
+    cursor: pointer;
+}
+
+.email-actions button:hover {
+    color: #d93025;
+}
+
+/* Back button */
+.back-btn {
+    color: white;
+    margin-right: 20px;
+}
+
+/* Centered form container */
+.login-container {
+    max-width: 400px;
+    margin: 100px auto;
+    background-color: white;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.login-container h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.btn-login {
+    background-color: #d93025;
+    color: white;
+    width: 100%;
+    padding: 10px;
+    border-radius: 24px;
+    margin-top: 20px;
+}
+
+.btn-login:hover {
+    background-color: #c1271c;
+}
+
+.form-text {
+    text-align: center;
+    margin-top: 15px;
+}
+.logout-link {
+    cursor: pointer; /* Change cursor to pointer */
+    color: inherit; /* Inherit color from parent */
+}
+#loadingOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(
+        0,
+        0,
+        0,
+        0.5
+    ); /* Semi-transparent black background */
+    z-index: 999999; /* Ensure it's above other elements */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#loadingSpinner {
+    border: 8px solid #f3f3f3; /* Light grey */
+    border-top: 8px solid #3498db; /* Blue */
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    animation: spin 1s linear infinite;
+}
+.drop-area {
+    border: 2px dashed #ccc;
+    padding: 20px;
+    text-align: center;
+    margin-bottom: 20px;
+    cursor: pointer;
+}
+
+.drop-area.dragover {
+    border-color: #666;
+}
+
+.file-icon {
+    display: inline-block;
+    margin-right: 10px;
+}
+
+.file-name {
+    display: inline-block;
+}
+
+.file-draggable {
+    cursor: grab;
+    display: inline-flex;
+    align-items: center;
+}
+
+.dragging {
+    opacity: 0.5;
+}
+.file-drop-area {
+    position: relative;
+    border: 2px dashed #ccc;
+    padding: 20px;
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+.file-drop-zone {
+    color: #888;
+    font-size: 16px;
+}
+
+.file-drop-area.dragover {
+    border-color: #007bff;
+    background-color: #f0f8ff;
+}
+.dragover {
+    background-color: #f0f8ff; /* Add a background color when dragging over */
+    border: 2px dashed #007bff;
+}
+
+.draggable-file {
+    background-color: #fff;
+    border: 1px solid #ccc;
+    padding: 5px;
+    border-radius: 4px;
+    display: inline-block;
+    margin-right: 10px;
+}
+.file-upload-drop-zone {
+    background-color: #f9f9f9;
+    text-align: center;
+}
+
+.file-upload-drop-zone.dragover {
+    background-color: #e0e0e0;
+    border-color: #000;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+li.active.tabs-li a,
+li.active.tabs-li a:hover,
+li.tabs-li a:hover,
+li.active.tabs-li a:focus,
+li.tabs-li a:focus {
+    background: #00afdf;
+    border: 0;
+    color: #fff;
+}
+li.tabs-li:first-child a {
+    border-radius: 15px 0px 0px 15px !important;
+}
+li.tabs-li:last-child a {
+    border-radius: 0px 15px 15px 0px !important;
+}
+li.tabs-li a {
+    background: #e9ecf1;
+    border: 0;
+    color: #000;
+    border-radius: 0;
+}
+.tabs-cust {
+    border-bottom: 0 !important;
+    margin-bottom: 15px;
+    display: inline-block;
+}
+.tabbable-spcs {
+    margin: 20px 0 0 0;
+    display: block;
+    text-align: center;
+}
+.padd-top-40 {
+    padding-top: 40px;
+}
+.day-div {
+    display: table;
+    float: left;
+    margin: 0 7px;
+}
+.label-day {
+    display: table-row;
+}
+/* Center tabs within the modal */
+.nav-tabs {
+    display: flex;
+    justify-content: center;
+}
+
+/* Set the active tab color to red */
+.nav-tabs .nav-link.active {
+    background-color: red !important;
+    color: white !important;
+    border-color: red !important;
+}
+
+/* Style inactive tabs for contrast */
+.nav-tabs .nav-link {
+    color: black;
+}
+.delete-button {
+    position: absolute;
+    right: 5px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    color: red;
+    border: none;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    padding: 0 5px;
+    line-height: 1;
+}
+
+.folder-menu li {
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+/* Add hover effect */
+.folder-menu li:hover {
+    background-color: #f0f0f0; /* Light grey background on hover */
+}
+.folder-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    list-style: none;
+    padding: 10px 0; /* Increase vertical padding */
+    margin: 5px 0 0 0;
+    z-index: 1000;
+    min-width: 160px; /* Increase the width of the dropdown */
+    font-size: 18px; /* Increase font size */
+}
+
+/* General styles for the error container */
+#taskErrors {
+    margin: 20px;
+    padding: 15px;
+    border-radius: 5px;
+    font-family: Arial, sans-serif;
+    display: none; /* Initially hidden */
+}
+
+/* Success message style */
+.success-message {
+    color: green;
+    font-weight: bold;
+    font-size: 1.5em;
+    margin-bottom: 20px;
+}
+
+/* Error headers */
+.error-header {
+    color: #d9534f; /* Bootstrap's danger red */
+    font-size: 1.2em;
+    margin-top: 10px;
+}
+
+/* General error list styling */
+#taskErrors ul {
+    list-style-type: none;
+    padding-left: 20px;
+}
+
+/* Style for each error list item */
+#taskErrors li {
+    margin: 5px 0;
+    font-size: 1em;
+}
+
+/* Warning/Error for general errors */
+#taskErrors .error-list {
+    background-color: #f9d6d5; /* Light red background */
+    padding: 10px;
+    border-left: 5px solid #d9534f;
+}
+
+/* Warning style for non-500 errors */
+#taskErrors .warning-list {
+    background-color: #fff3cd; /* Light yellow background */
+    padding: 10px;
+    border-left: 5px solid #ffc107; /* Yellow color */
+}
+
+/* Success list for tasks that were successful */
+#taskErrors .success-list {
+    background-color: #d4edda; /* Light green background */
+    padding: 10px;
+    border-left: 5px solid #28a745; /* Green color */
+}

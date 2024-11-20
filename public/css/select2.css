@@ -1,0 +1,37 @@
+/* Custom Select2 container style */
+.select2-container {
+    width: 100% !important;  /* Ensure it takes up full width */
+}
+
+/* Override Select2 height */
+.select2-container--default .select2-selection--single {
+    height: 44px !important; /* Match your original select height */
+    padding-top: 5px !important; /* Adjust padding */
+    font-size: 16px !important; /* Match your font size */
+    font-weight: solid;
+    font-family: 'Courier New', Courier, monospace !important;
+    background-color: #f8f9fa !important;
+    border: 1px solid #92929e !important;
+}
+
+/* Override Select2 arrow position */
+.select2-selection__arrow {
+    top: 5px !important; /* Adjust to your design */
+}
+
+/* Match font-family and other styles */
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    font-family: 'YourFont', sans-serif !important;
+    color: #000000 !important; /* Ensure the placeholder looks like your design */
+}
+.select2-container .select2-dropdown {
+    z-index: 99999 !important; /* Increase this value to be higher than the modal's */
+}
+.autoplan {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #92929e;
+    background-color: #f8f9fa;
+}
+
