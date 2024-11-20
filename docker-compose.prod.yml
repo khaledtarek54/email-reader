@@ -1,43 +1,54 @@
 version: '3.8'
 
 services:
-  # Laravel application container
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: laravel_app
-    restart: always
-    environment:
-      APP_ENV: production
-      APP_DEBUG: false
-      APP_KEY: '${APP_KEY}'  # Set this in your .env file
-      DB_CONNECTION: mysql
-      DB_HOST: db  # Refers to the db service name defined below
-      DB_PORT: 3306  # MySQL default port
-      DB_DATABASE: '${DB_DATABASE}'  # Set this in your .env file
-      DB_USERNAME: '${DB_USERNAME}'  # Set this in your .env file
-      DB_PASSWORD: '${DB_PASSWORD}'  # Set this in your .env file
-    ports:
-      - '80:9000'
-    volumes:
-      - './storage:/var/www/html/storage'
-    depends_on:
-      - db  # Ensure the app container starts after the database container is ready
+    app:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        container_name: laravel_app
+        restart: always
+        environment:
+            APP_ENV: production
+            APP_DEBUG: false
+            APP_KEY: '${APP_KEY}' # Set this in your .env file
+            DB_CONNECTION: mysql
+            DB_HOST: '${DB_HOST}' # Use a managed database host in production
+            DB_PORT: '${DB_PORT}'
+            DB_DATABASE: '${DB_DATABASE}'
+            DB_USERNAME: '${DB_USERNAME}'
+            DB_PASSWORD: '${DB_PASSWORD}'
+        ports:
+            - '80:80' # Expose port 80 for HTTP
+        volumes:
+            - './storage:/var/www/html/storage'
+            - './nginx/default.conf:/etc/nginx/sites-available/default' # Mount the Nginx config
+        depends_on:
+            - db
+            - nginx
 
-  # MySQL database container
-  db:
-    image: 'mysql/mysql-server:8.0'
-    environment:
-      MYSQL_ROOT_PASSWORD: '${DB_PASSWORD}'  # Set this in your .env file
-      MYSQL_DATABASE: '${DB_DATABASE}'  # Set this in your .env file
-      MYSQL_USER: '${DB_USERNAME}'  # Set this in your .env file
-      MYSQL_PASSWORD: '${DB_PASSWORD}'  # Set this in your .env file
-    ports:
-      - '3306:3306'  # Expose MySQL on port 3306
-    volumes:
-      - db_data:/var/lib/mysql  # Persist database data even if the container is removed
+    nginx:
+        image: nginx:alpine
+        container_name: nginx
+        restart: always
+        ports:
+            - "80:80"
+        volumes:
+            - './nginx/default.conf:/etc/nginx/nginx.conf' # Mount the Nginx config
+            - './:/var/www/html' # Mount the app folder
+        depends_on:
+            - app
 
-# Volumes for persistent database storage
+    db:
+        image: mysql/mysql-server:8.0
+        environment:
+            MYSQL_ROOT_PASSWORD: '${DB_PASSWORD}'
+            MYSQL_DATABASE: '${DB_DATABASE}'
+            MYSQL_USER: '${DB_USERNAME}'
+            MYSQL_PASSWORD: '${DB_PASSWORD}'
+        ports:
+            - '3306:3306'
+        volumes:
+            - db_data:/var/lib/mysql
+
 volumes:
-  db_data:
+    db_data:

@@ -17,6 +17,7 @@ RUN apt-get update && apt-get install -y \
     unzip \
     git \
     curl \
+    nginx \
     && docker-php-ext-install pdo_mysql gd mbstring exif pcntl bcmath opcache \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
@@ -33,8 +34,11 @@ RUN composer install --no-dev --optimize-autoloader
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
-# Expose port 9000 for PHP-FPM
-EXPOSE 9000
+# Copy the Nginx configuration file
+COPY ./nginx/default.conf /etc/nginx/sites-available/default
 
-# Start PHP-FPM
-CMD ["php-fpm"]
+# Expose port 80 for Nginx
+EXPOSE 80
+
+# Start PHP-FPM and Nginx
+CMD service nginx start && php-fpm
