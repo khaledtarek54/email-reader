@@ -1,10 +1,10 @@
-# Stage 1: Build
-FROM php:8.2-fpm AS builder
+# Use the official PHP image with FPM
+FROM php:8.2-fpm
 
 # Set working directory
 WORKDIR /var/www/html
 
-# Install system dependencies
+# Install system dependencies required for production
 RUN apt-get update && apt-get install -y \
     zip \
     unzip \
@@ -19,39 +19,16 @@ RUN apt-get update && apt-get install -y \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip
 
-# Install Composer
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+# Install Composer for PHP dependency management
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-# Copy application files
+# Copy application files into the container
 COPY . .
 
-# Install PHP dependencies
+# Install production PHP dependencies (no development dependencies)
 RUN composer install --no-dev --optimize-autoloader
 
-# Set permissions for storage and cache
-RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
-
-# Stage 2: Production Image
-FROM php:8.2-fpm
-
-# Set working directory
-WORKDIR /var/www/html
-
-# Install runtime dependencies (dependencies for the production environment)
-RUN apt-get update && apt-get install -y \
-    libpng-dev \
-    libjpeg-dev \
-    libfreetype6-dev \
-    libonig-dev \
-    libxml2-dev \
-    libzip-dev \
-    && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip
-
-# Copy application from the builder stage
-COPY --from=builder /var/www/html /var/www/html
-
-# Set permissions for storage and cache
+# Set permissions for storage and cache directories
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
 # Expose the default PHP-FPM port
