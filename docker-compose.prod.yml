@@ -10,43 +10,43 @@ services:
         environment:
             APP_ENV: production
             APP_DEBUG: false
-            APP_KEY: '${APP_KEY}' # Set this in your .env file
+            APP_KEY: '${APP_KEY}'  # Set this in your .env file
             DB_CONNECTION: mysql
-            DB_HOST: '${DB_HOST}' # Use a managed database host in production
+            DB_HOST: '${DB_HOST}'  # Use a managed database host in production
             DB_PORT: '${DB_PORT}'
             DB_DATABASE: '${DB_DATABASE}'
             DB_USERNAME: '${DB_USERNAME}'
             DB_PASSWORD: '${DB_PASSWORD}'
         ports:
-            - '80:80' # Expose port 80 for HTTP
+            - '9000:9000'  # Expose PHP-FPM port
         volumes:
             - './storage:/var/www/html/storage'
-            - './nginx/default.conf:/etc/nginx/sites-available/default' # Mount the Nginx config
+            - './:/var/www/html'  # Mount the application code
         depends_on:
             - db
-            - nginx
 
     nginx:
         image: nginx:alpine
         container_name: nginx
         restart: always
         ports:
-            - "80:80"
+            - '80:80'  # Expose Nginx port
         volumes:
-            - './nginx/default.conf:/etc/nginx/nginx.conf' # Mount the Nginx config
-            - './:/var/www/html' # Mount the app folder
+            - './nginx/default.conf:/etc/nginx/nginx.conf'  # Mount Nginx configuration
+            - './:/var/www/html'  # Mount the application code
         depends_on:
-            - app
+            - app  # Ensure Nginx starts after the app container
 
     db:
         image: mysql/mysql-server:8.0
+        container_name: mysql_db
         environment:
             MYSQL_ROOT_PASSWORD: '${DB_PASSWORD}'
             MYSQL_DATABASE: '${DB_DATABASE}'
             MYSQL_USER: '${DB_USERNAME}'
             MYSQL_PASSWORD: '${DB_PASSWORD}'
         ports:
-            - '3306:3306'
+            - '3306:3306'  # Expose MySQL port
         volumes:
             - db_data:/var/lib/mysql
 
