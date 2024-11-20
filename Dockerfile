@@ -35,7 +35,7 @@ RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
 # Copy the Nginx configuration file to the correct location
-COPY ./nginx/default.conf /etc/nginx/conf.d/default.conf
+COPY ./nginx/default.conf /etc/nginx/nginx.conf
 
 # Expose port 80 for Nginx
 EXPOSE 80
