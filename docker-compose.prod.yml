@@ -5,48 +5,43 @@ services:
         build:
             context: .
             dockerfile: Dockerfile
-        container_name: laravel_app
-        restart: always
         environment:
             APP_ENV: production
             APP_DEBUG: false
-            APP_KEY: '${APP_KEY}'  # Set this in your .env file
+            APP_KEY: '${APP_KEY}'
             DB_CONNECTION: mysql
-            DB_HOST: '${DB_HOST}'  # Use a managed database host in production
-            DB_PORT: '${DB_PORT}'
+            DB_HOST: db
+            DB_PORT: 3306
             DB_DATABASE: '${DB_DATABASE}'
             DB_USERNAME: '${DB_USERNAME}'
             DB_PASSWORD: '${DB_PASSWORD}'
-        ports:
-            - '9000:9000'  # Expose PHP-FPM port
         volumes:
-            - './storage:/var/www/html/storage'
-            - './:/var/www/html'  # Mount the application code
+            - './:/var/www/html'  # Application code
         depends_on:
             - db
+        expose:
+            - 9000  # Expose PHP-FPM port for Nginx
 
     nginx:
-        image: nginx:alpine
-        container_name: nginx
-        restart: always
-        ports:
-            - '80:80'  # Expose Nginx port
+        image: nginx:latest
         volumes:
-            - './nginx/default.conf:/etc/nginx/nginx.conf'  # Mount Nginx configuration
-            - './:/var/www/html'  # Mount the application code
+            - './nginx.conf:/etc/nginx/nginx.conf'  # Your custom Nginx configuration
+            - './:/var/www/html'  # Application code
+        ports:
+            - '80:80'  # Expose port 80 for web traffic
         depends_on:
-            - app  # Ensure Nginx starts after the app container
+            - app
 
     db:
         image: mysql/mysql-server:8.0
-        container_name: mysql_db
+        restart: always
         environment:
             MYSQL_ROOT_PASSWORD: '${DB_PASSWORD}'
             MYSQL_DATABASE: '${DB_DATABASE}'
             MYSQL_USER: '${DB_USERNAME}'
             MYSQL_PASSWORD: '${DB_PASSWORD}'
         ports:
-            - '3306:3306'  # Expose MySQL port
+            - '3306:3306'
         volumes:
             - db_data:/var/lib/mysql
 
