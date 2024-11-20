@@ -22,8 +22,8 @@ services:
         volumes:
             - './storage:/var/www/html/storage'
         depends_on:
-            - mysql
-mysql:
+            - db
+db:
     image: 'mysql/mysql-server:8.0'
     environment:
         MYSQL_ROOT_PASSWORD: '${DB_PASSWORD}'
