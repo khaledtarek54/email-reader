@@ -21,3 +21,21 @@ services:
             - '80:9000'
         volumes:
             - './storage:/var/www/html/storage'
+        depends_on:
+            - database
+database:
+    image: 'mysql/mysql-server:8.0'
+    restart: always
+    environment:
+        MYSQL_ROOT_PASSWORD: '${DB_ROOT_PASSWORD}'
+        MYSQL_DATABASE: '${DB_DATABASE}' 
+        MYSQL_USER: '${DB_USERNAME}' 
+        MYSQL_PASSWORD: '${DB_PASSWORD}' 
+    ports:
+        - '3306:3306' 
+    volumes:
+        - db_data:/var/lib/mysql 
+
+
+volumes:
+    db_data:
