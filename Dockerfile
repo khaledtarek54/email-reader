@@ -37,7 +37,7 @@ FROM php:8.2-fpm
 # Set working directory
 WORKDIR /var/www/html
 
-# Install runtime dependencies
+# Install runtime dependencies (dependencies for the production environment)
 RUN apt-get update && apt-get install -y \
     libpng-dev \
     libjpeg-dev \
