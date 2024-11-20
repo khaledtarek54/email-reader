@@ -25,6 +25,9 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 # Copy application files into the container
 COPY . .
 
+RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache \
+    && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
+
 # Install production PHP dependencies (no development dependencies)
 RUN composer install --no-dev --optimize-autoloader
 
